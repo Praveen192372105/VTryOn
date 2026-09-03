@@ -1,0 +1,48 @@
+# Production Dockerfile for Stateless FastAPI API Replicas
+# Excludes CUDA, PyTorch, and AI model weights to maximize build speed, agility, and minimal attack surface.
+
+FROM python:3.10-slim AS builder
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    default-libmysqlclient-dev \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt
+
+# Runner stage
+FROM python:3.10-slim AS runner
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libmariadb3 \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy installed python wheels from builder
+COPY --from=builder /root/.local /root/.local
+ENV PATH=/root/.local/bin:$PATH
+
+# Non-root user for security
+RUN groupadd -g 1001 appgroup && \
+    useradd -u 1001 -g appgroup -s /bin/sh appuser
+
+COPY app/ ./app/
+COPY alembic.ini .
+COPY pyproject.toml .
+
+RUN chown -R appuser:appgroup /app
+USER appuser
+
+ENV PYTHONUNBUFFERED=1
+ENV APP_ENV=production
+
+EXPOSE 8000
+
+# Run with 4 uvicorn workers for production concurrency
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]

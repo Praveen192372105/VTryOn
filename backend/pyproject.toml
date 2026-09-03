@@ -1,0 +1,59 @@
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q --strict-markers"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+asyncio_mode = "auto"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::starlette.exceptions.StarletteDeprecationWarning",
+]
+markers = [
+    "unit: Fast isolated unit tests without network or DB",
+    "service: Service layer tests with transactional DB",
+    "api: HTTP endpoint and contract tests",
+    "integration: Multi-system or migration tests",
+    "security: Error model, authentication, rate limiting and security tests",
+    "gpu: Hardware tests requiring NVIDIA CUDA GPU",
+    "ai_smoke: Real CatVTON generative smoke tests",
+    "slow: Tests with prolonged execution duration",
+]
+
+[tool.coverage.run]
+source = ["app"]
+omit = [
+    "app/ai/catvton/*",
+    "app/db/migrations/*",
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+exclude = [
+    ".git",
+    ".venv",
+    "CatVTON",
+    "alembic",
+    "storage",
+    "media",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+exclude = [
+    "CatVTON/",
+    "alembic/",
+]
