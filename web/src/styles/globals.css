@@ -1,0 +1,96 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/inter";
+@import "./tokens.css";
+@import "./motion.css";
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+    color-scheme: dark;
+    background-color: #000000;
+    color: #fafafa;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    color-scheme: dark;
+    background-color: #000000;
+  }
+
+  /* Custom WebKit/Blink Scrollbar (Chrome, Edge, Safari, Opera) */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    background-color: #000000;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #000000;
+    background-color: #000000;
+  }
+
+  ::-webkit-scrollbar-track-piece {
+    background: #000000;
+    background-color: #000000;
+  }
+
+  ::-webkit-scrollbar-button {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: #000000;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb, rgba(255, 255, 255, 0.2));
+    border-radius: 9999px;
+    border: 2px solid #000000;
+    background-clip: padding-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-hover, rgba(255, 255, 255, 0.35));
+  }
+
+  ::-webkit-scrollbar-thumb:active {
+    background-color: var(--scrollbar-thumb-active, rgba(255, 255, 255, 0.5));
+  }
+
+  /* Firefox Fallback */
+  @supports not selector(::-webkit-scrollbar) {
+    html {
+      scrollbar-width: thin;
+      scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+    }
+  }
+
+  /* Section scroll offset for sticky header */
+  [data-section] {
+    scroll-margin-top: calc(4rem + 1.5rem);
+  }
+
+  /* Height-responsive adjustments for compact screens */
+  @media (max-height: 760px) {
+    .auth-card-compact {
+      padding-top: 1.25rem !important;
+      padding-bottom: 1.25rem !important;
+    }
+  }
+
+  @media (max-height: 600px) {
+    .auth-viewport-short {
+      justify-content: flex-start !important;
+      padding-top: 0.75rem !important;
+    }
+  }
+}
+
