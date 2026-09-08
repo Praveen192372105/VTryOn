@@ -1,125 +1,155 @@
-import io
+"""
+Preprocessing pipeline for CatVTON: AutoMasker (DensePose + SCHP),
+agnostic mask generation, image resizing, and content-addressed mask caching.
+"""
+
+import hashlib
 import logging
+import os
+import sys
 from pathlib import Path
-from typing import Any, Optional, Tuple, Union
-from PIL import Image, ImageDraw, ImageFilter
+from typing import Optional, Tuple
+from PIL import Image
 
-from app.ai.catvton.exceptions import CatVTONInvalidInputError, CatVTONPreprocessingError
-from app.domain.enums import OutfitCategory
+from app.ai.catvton.exceptions import CatVTONInputError, CatVTONPreprocessingError
+from app.ai.catvton.settings import CatVTONSettings
 
-logger = logging.getLogger("vtryon.ai.preprocessing")
+logger = logging.getLogger("vtryon.catvton.preprocessing")
+
+# Category translation from V Try-On canonical enum to CatVTON cloth_type
+CATEGORY_MAP = {
+    "upper_body": "upper",
+    "upper": "upper",
+    "lower_body": "lower",
+    "lower": "lower",
+    "dresses": "overall",
+    "dress": "overall",
+    "overall": "overall",
+    "inner": "inner",
+    "outer": "outer",
+}
 
 
-def map_outfit_category(category: Union[OutfitCategory, str]) -> str:
+class CatVTONPreprocessor:
     """
-    Map backend OutfitCategory enum to CatVTON cloth_type string.
-    Supported upstream values: 'upper', 'lower', 'overall'.
+    Manages long-lived AutoMasker (DensePose + SCHP) models and provides
+    fast in-memory preprocessing with optional disk caching.
     """
-    cat_val = category.value if hasattr(category, "value") else str(category).lower().strip()
-    mapping = {
-        "upper_body": "upper",
-        "lower_body": "lower",
-        "dresses": "overall",
-        "dress": "overall",
-        "upper": "upper",
-        "lower": "lower",
-        "overall": "overall",
-    }
-    if cat_val not in mapping:
-        raise CatVTONInvalidInputError(f"Unsupported garment category '{category}'. Allowed: upper_body, lower_body, dresses.")
-    return mapping[cat_val]
 
+    def __init__(self, settings: CatVTONSettings, repo_path: str):
+        self.settings = settings
+        self.repo_path = repo_path
+        self._automasker = None
+        self._mask_processor = None
+        self._cache_dir = settings.catvton_root.parent / "media" / "cache" / "catvton" / "masks"
+        if self.settings.cache_preprocessing:
+            self._cache_dir.mkdir(parents=True, exist_ok=True)
 
-def resize_and_crop(image: Image.Image, size: Tuple[int, int]) -> Image.Image:
-    """Resize and center-crop image to fill target dimensions."""
-    target_w, target_h = size
-    w, h = image.size
-    scale = max(target_w / w, target_h / h)
-    new_w, new_h = int(w * scale), int(h * scale)
-    image = image.resize((new_w, new_h), Image.Resampling.BILINEAR)
+    def _ensure_automasker_loaded(self):
+        """Initializes AutoMasker once within the worker process."""
+        if self._automasker is not None:
+            return
 
-    left = (new_w - target_w) // 2
-    top = (new_h - target_h) // 2
-    right = left + target_w
-    bottom = top + target_h
-    return image.crop((left, top, right, bottom))
+        # Ensure CatVTON root is on sys.path
+        catvton_path = str(self.settings.catvton_root)
+        if catvton_path not in sys.path:
+            sys.path.insert(0, catvton_path)
 
+        try:
+            from model.cloth_masker import AutoMasker
+            from diffusers.image_processor import VaeImageProcessor
 
-def resize_and_padding(image: Image.Image, size: Tuple[int, int]) -> Image.Image:
-    """Resize and center-pad image onto a pure white background."""
-    target_w, target_h = size
-    w, h = image.size
-    scale = min(target_w / w, target_h / h)
-    new_w, new_h = int(w * scale), int(h * scale)
-    image = image.resize((new_w, new_h), Image.Resampling.BILINEAR)
+            logger.info("Initializing persistent AutoMasker (DensePose + SCHP)...")
+            densepose_ckpt = os.path.join(self.repo_path, "DensePose")
+            schp_ckpt = os.path.join(self.repo_path, "SCHP")
 
-    padded = Image.new("RGB", size, (255, 255, 255))
-    left = (target_w - new_w) // 2
-    top = (target_h - new_h) // 2
-    padded.paste(image, (left, top))
-    return padded
+            self._automasker = AutoMasker(
+                densepose_ckpt=densepose_ckpt,
+                schp_ckpt=schp_ckpt,
+                device=self.settings.automasker_device,
+            )
+            self._mask_processor = VaeImageProcessor(
+                vae_scale_factor=8,
+                do_normalize=False,
+                do_binarize=True,
+                do_convert_grayscale=True,
+            )
+            logger.info("AutoMasker (DensePose + SCHP) successfully loaded into memory.")
+        except Exception as exc:
+            raise CatVTONPreprocessingError(f"Failed to load AutoMasker models: {exc}") from exc
 
+    def _compute_cache_key(self, person_bytes: bytes, cloth_type: str, width: int, height: int) -> str:
+        h = hashlib.sha256()
+        h.update(person_bytes)
+        h.update(cloth_type.encode("utf-8"))
+        h.update(f"{width}x{height}_v1".encode("utf-8"))
+        return h.hexdigest()
 
-def load_image_rgb(input_source: Union[str, Path, bytes, Image.Image]) -> Image.Image:
-    """Safely decode and normalize any image input to an RGB PIL Image."""
-    try:
-        if isinstance(input_source, (str, Path)):
-            with Image.open(str(input_source)) as img:
-                return img.convert("RGB")
-        elif isinstance(input_source, bytes):
-            with Image.open(io.BytesIO(input_source)) as img:
-                return img.convert("RGB")
-        elif isinstance(input_source, Image.Image):
-            return input_source.convert("RGB")
-        else:
-            raise CatVTONInvalidInputError(f"Unsupported image input type: {type(input_source)}")
-    except CatVTONInvalidInputError:
-        raise
-    except Exception as exc:
-        raise CatVTONInvalidInputError(f"Failed to decode image input: {str(exc)}") from exc
+    def process(
+        self,
+        person_path: Path,
+        garment_path: Path,
+        category: str,
+        target_width: Optional[int] = None,
+        target_height: Optional[int] = None,
+    ) -> Tuple[Image.Image, Image.Image, Image.Image]:
+        """
+        Preprocesses person, garment, and generates or retrieves cached agnostic mask.
+        Returns: (person_image, garment_image, mask_image) all at target resolution.
+        """
+        if not person_path.exists():
+            raise CatVTONInputError(f"Person image file missing: {person_path}")
+        if not garment_path.exists():
+            raise CatVTONInputError(f"Garment image file missing: {garment_path}")
 
+        target_w = target_width or self.settings.width
+        target_h = target_height or self.settings.height
+        cloth_type = CATEGORY_MAP.get(category.lower(), "upper")
 
-def prepare_images(
-    person_image_input: Union[str, Path, bytes, Image.Image],
-    garment_image_input: Union[str, Path, bytes, Image.Image],
-    target_width: int = 768,
-    target_height: int = 1024,
-) -> Tuple[Image.Image, Image.Image]:
-    """
-    Load, normalize to RGB, and resize/pad images for CatVTON pipeline.
-    """
-    person_img = load_image_rgb(person_image_input)
-    garment_img = load_image_rgb(garment_image_input)
+        # Load images
+        try:
+            person_img = Image.open(person_path).convert("RGB")
+            garment_img = Image.open(garment_path).convert("RGB")
+        except Exception as exc:
+            raise CatVTONInputError(f"Failed to read input images: {exc}") from exc
 
-    person_img = resize_and_crop(person_img, (target_width, target_height))
-    garment_img = resize_and_padding(garment_img, (target_width, target_height))
+        # CatVTON geometry resizing
+        catvton_path = str(self.settings.catvton_root)
+        if catvton_path not in sys.path:
+            sys.path.insert(0, catvton_path)
+        from utils import resize_and_crop, resize_and_padding
 
-    return person_img, garment_img
+        person_resized = resize_and_crop(person_img, (target_w, target_h))
+        garment_resized = resize_and_padding(garment_img, (target_w, target_h))
 
+        # Check mask cache
+        mask_img = None
+        cache_file = None
+        if self.settings.cache_preprocessing:
+            with open(person_path, "rb") as f:
+                p_bytes = f.read()
+            cache_key = self._compute_cache_key(p_bytes, cloth_type, target_w, target_h)
+            cache_file = self._cache_dir / f"{cache_key}.png"
+            if cache_file.exists():
+                try:
+                    mask_img = Image.open(cache_file).convert("L")
+                    logger.info(f"Using cached agnostic mask for person hash [{cache_key[:12]}]")
+                except Exception:
+                    mask_img = None
 
-preprocess_for_catvton = prepare_images
+        if mask_img is None:
+            self._ensure_automasker_loaded()
+            try:
+                raw_mask = self._automasker(person_resized, cloth_type)["mask"]
+                mask_img = self._mask_processor.blur(raw_mask, blur_factor=9)
+                
+                # Persist to cache
+                if cache_file is not None:
+                    try:
+                        mask_img.save(cache_file, format="PNG")
+                    except Exception as cache_exc:
+                        logger.warning(f"Failed to save mask cache: {cache_exc}")
+            except Exception as exc:
+                raise CatVTONPreprocessingError(f"AutoMasker failed: {exc}") from exc
 
-
-def generate_fallback_mask(
-    person_img: Image.Image,
-    cloth_type: str,
-) -> Image.Image:
-    """
-    Generate an approximate heuristic mask for testing or environments
-    where SCHP/DensePose checkpoints are not loaded.
-    """
-    width, height = person_img.size
-    mask = Image.new("L", (width, height), 0)
-    draw = ImageDraw.Draw(mask)
-
-    if cloth_type == "upper":
-        # Torso and arm region
-        draw.rectangle([int(width * 0.15), int(height * 0.20), int(width * 0.85), int(height * 0.60)], fill=255)
-    elif cloth_type == "lower":
-        # Lower body and legs
-        draw.rectangle([int(width * 0.20), int(height * 0.50), int(width * 0.80), int(height * 0.95)], fill=255)
-    else:  # overall / dress
-        # Full torso down to ankles
-        draw.rectangle([int(width * 0.15), int(height * 0.20), int(width * 0.85), int(height * 0.90)], fill=255)
-
-    return mask.filter(ImageFilter.GaussianBlur(9))
+        return person_resized, garment_resized, mask_img

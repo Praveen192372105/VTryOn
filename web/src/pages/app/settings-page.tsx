@@ -1,19 +1,19 @@
 import { useDocumentTitle } from "../../hooks/use-document-title"
 import { AccountProfile } from "../../features/account"
+import { PageHeader } from "../../components/layout"
 
 export default function SettingsPage() {
   useDocumentTitle("Account Settings")
 
   return (
-    <div className="space-y-6">
-      <div className="pb-4 border-b border-zinc-900">
-        <h1 className="text-2xl font-light tracking-tight text-zinc-100">Account Settings</h1>
-        <p className="text-xs sm:text-sm text-zinc-400">
-          Manage your account profile, security credentials, and active session.
-        </p>
-      </div>
+    <div className="w-full max-w-3xl mx-auto py-2 sm:py-6 space-y-6 sm:space-y-8 animate-in fade-in duration-300">
+      <PageHeader
+        title="Account & Settings"
+        description="Manage your account profile, theme preferences, and active session."
+      />
 
       <AccountProfile />
     </div>
   )
 }
+

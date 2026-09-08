@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/surface_primary">
+
+    <com.example.vtryon.core.designsystem.component.AppToolbar
+        android:id="@+id/tryOnToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:toolbarShowBack="true"
+        app:toolbarTitle="Try-On Studio"
+        app:toolbarSubtitle="Inference" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toTopOf="@id/bottomActionContainer"
+        app:layout_constraintTop_toBottomOf="@id/tryOnToolbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/screen_padding_horizontal"
+            android:paddingVertical="@dimen/spacing_16">
+
+            <TextView
+                style="@style/TextAppearance.VTryOn.TitleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1. Select Person Photo" />
+
+            <com.example.vtryon.core.designsystem.component.MediaSurfaceView
+                android:id="@+id/ivPersonPhoto"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:layout_marginTop="@dimen/spacing_8"
+                app:mediaCornerRadius="@dimen/radius_lg" />
+
+            <com.example.vtryon.core.designsystem.component.AppButton
+                android:id="@+id/btnPickPhoto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_8"
+                app:btnVariant="secondary"
+                app:btnText="Choose Photo" />
+
+            <TextView
+                style="@style/TextAppearance.VTryOn.TitleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_24"
+                android:text="2. Selected Garment" />
+
+            <TextView
+                android:id="@+id/tvOutfitName"
+                style="@style/TextAppearance.VTryOn.BodyMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_4"
+                android:text="Navy Blue Oxford Shirt"
+                android:textColor="@color/text_secondary" />
+
+            <!-- Progress State Indicator -->
+            <com.example.vtryon.core.designsystem.component.AppLoadingView
+                android:id="@+id/loadingIndicator"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_16"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvErrorMessage"
+                style="@style/TextAppearance.VTryOn.BodySmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_8"
+                android:textColor="@color/text_primary"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/bottomActionContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_surface_card"
+        android:padding="@dimen/spacing_16"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.example.vtryon.core.designsystem.component.AppButton
+            android:id="@+id/btnGenerate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:btnVariant="primary"
+            app:btnText="Generate Try-On" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

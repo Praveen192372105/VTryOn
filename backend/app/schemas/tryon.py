@@ -19,14 +19,14 @@ class CreateTryOnRequest(BaseSchema):
     @classmethod
     def validate_person_upload_id(cls, v: str) -> str:
         if not validate_public_id(v, expected_prefix=ResourcePrefix.UPLOAD):
-            raise ValueError(f"Invalid person_upload_id format: '{v}'. Expected 'upl_<ulid>'")
+            raise ValueError(f"Invalid person_upload_id format: '{v}'. Expected 'upl_<id>'")
         return v
 
     @field_validator("outfit_id")
     @classmethod
     def validate_outfit_id(cls, v: str) -> str:
         if not validate_public_id(v, expected_prefix=ResourcePrefix.OUTFIT):
-            raise ValueError(f"Invalid outfit_id format: '{v}'. Expected 'out_<ulid>'")
+            raise ValueError(f"Invalid outfit_id format: '{v}'. Expected 'out_<id>'")
         return v
 
 

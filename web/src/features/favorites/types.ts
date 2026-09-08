@@ -1,14 +1,19 @@
-import type { Outfit } from "../outfits/types"
-import type { PaginationMeta } from "../../types/pagination"
+import type { OutfitListItem, OutfitPaginationMetadata } from "../outfits/types"
 
+export interface FavoriteItemResponse {
+  outfit: OutfitListItem
+  favorited_at: string
+}
+
+export interface FavoriteListResponse {
+  items: FavoriteItemResponse[]
+  pagination: OutfitPaginationMetadata
+}
+
+// Backward compatibility alias
 export interface Favorite {
   id: string
   outfit_id: string
   created_at: string
-  outfit?: Outfit
-}
-
-export interface FavoriteListResponse {
-  items: Outfit[]
-  meta: PaginationMeta
+  outfit?: OutfitListItem
 }

@@ -50,3 +50,20 @@ export const SECONDARY_NAVIGATION: NavigationItem[] = [
     icon: Settings01Icon,
   },
 ]
+
+export interface LandingNavigationItem {
+  label: string
+  href: string
+}
+
+export const landingNavigation: LandingNavigationItem[] = [
+  { label: "How it works", href: "#how-it-works" },
+  { label: "Experience", href: "#experience" },
+  { label: "Privacy", href: "#privacy" },
+  { label: "Trust", href: "#trust" },
+]
+
+export const appNavigation = {
+  primary: PRIMARY_NAVIGATION,
+  secondary: SECONDARY_NAVIGATION,
+} as const

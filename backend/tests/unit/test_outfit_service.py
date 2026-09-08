@@ -127,3 +127,44 @@ def test_outfit_service_get_active_and_inactive(db_session: Session):
     # Missing raises 404
     with pytest.raises(OutfitNotFoundError):
         service.get_active_outfit("out_01m1hnonexistent00000000000")
+
+
+def test_outfit_service_create_custom_outfit(db_session: Session, current_user):
+    import io
+    from PIL import Image
+    from app.core.exceptions import InvalidImageError
+
+    # 1. Valid custom outfit upload
+    img = Image.new("RGB", (300, 400), color=(100, 150, 200))
+    buf = io.BytesIO()
+    img.save(buf, format="JPEG")
+    jpeg_bytes = buf.getvalue()
+
+    service = OutfitService(db=db_session)
+    res = service.create_custom_outfit(
+        user=current_user,
+        filename="my_custom_jacket.jpg",
+        content=jpeg_bytes,
+        name="My Custom Jacket",
+        category="upper_body",
+    )
+
+    assert res.id.startswith("out_")
+    assert res.name == "My Custom Jacket"
+    assert res.category == OutfitCategory.UPPER_BODY
+    assert res.is_active is True
+    assert "outfits/custom/" in res.image_url
+
+    # Check persistence in database
+    retrieved = service.get_active_outfit(res.id)
+    assert retrieved.name == "My Custom Jacket"
+    assert retrieved.category == OutfitCategory.UPPER_BODY
+
+    # 2. Corrupted bytes raises InvalidImageError
+    with pytest.raises(InvalidImageError):
+        service.create_custom_outfit(
+            user=current_user,
+            filename="corrupt.jpg",
+            content=b"not_an_image_corrupted_data",
+            name="Corrupt",
+        )

@@ -1,4 +1,5 @@
 import json
+import os
 from enum import Enum
 from functools import lru_cache
 from pathlib import Path
@@ -6,6 +7,10 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 from pydantic import BaseModel, Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy.engine import make_url
+
+# Defensive GPU device index normalization
+if os.environ.get("CUDA_VISIBLE_DEVICES") in ("1", ""):
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 # Project backend root: backend/
 BACKEND_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -103,7 +108,7 @@ class MediaSettings(BaseModel):
 
 
 class CatVTONSettings(BaseModel):
-    root: Path
+    root: Path = Field(default_factory=lambda: Path("./storage"))
     device: str = "cuda"
     dtype: str = "bf16"
     width: int = 768
@@ -114,7 +119,7 @@ class CatVTONSettings(BaseModel):
     inference_steps: int = 40
     guidance_scale: float = 2.5
     allow_tf32: bool = True
-    repaint: bool = False
+    repaint: bool = True
 
     @property
     def root_path(self) -> Path:
@@ -138,6 +143,10 @@ class Settings(BaseSettings):
     API_V1_PREFIX: str = "/api/v1"
     API_V1_STR: Optional[str] = None  # Backward compatibility alias
     LOG_LEVEL: str = "INFO"
+    API_HOST: str = "0.0.0.0"
+    API_PORT: int = 8000
+    API_RELOAD: bool = False
+    DEV_LAN_HOST: Optional[str] = None
 
     # 2. Database Settings
     DATABASE_HOST: str = "127.0.0.1"
@@ -209,7 +218,7 @@ class Settings(BaseSettings):
     CATVTON_ROOT: str = "./CatVTON"
     CATVTON_MODEL_DIR: Optional[str] = None
     CATVTON_DEVICE: str = "cuda"
-    CATVTON_DTYPE: str = "bf16"
+    CATVTON_DTYPE: str = "fp16"
     CATVTON_MIXED_PRECISION: Optional[str] = None  # Backward compatibility alias
     CATVTON_WIDTH: int = 768
     CATVTON_IMAGE_WIDTH: Optional[int] = None  # Backward compatibility alias
@@ -226,6 +235,23 @@ class Settings(BaseSettings):
     # Model Versioning & Provenance (Phase 14)
     CATVTON_MODEL_VERSION: str = "catvton-1.0-v1"
     INFERENCE_CONFIG_VERSION: str = "v1-accurate"
+
+    # 6.5 CatVTON Execution & Optimization Settings
+    TRYON_PRIMARY_PROVIDER: str = "catvton"
+    CATVTON_ENABLED: bool = True
+    CATVTON_TARGET_LATENCY_SECONDS: int = 60
+    CATVTON_HARD_TIMEOUT_SECONDS: int = 90
+    CATVTON_WARMUP: bool = True
+    CATVTON_PRESET: str = "fast"
+    CATVTON_DTYPE: str = "bf16"
+    CATVTON_AUTOMASKER_DEVICE: str = "cpu"
+    CATVTON_ALLOW_TF32: bool = True
+    CATVTON_WIDTH: int = 768
+    CATVTON_HEIGHT: int = 1024
+    CATVTON_INFERENCE_STEPS: int = 30
+    CATVTON_GUIDANCE_SCALE: float = 2.5
+    CATVTON_REPAINT: bool = True
+    CATVTON_CACHE_PREPROCESSING: bool = True
 
     # 7. CORS Configuration
     CORS_ORIGINS: Union[str, List[str], Tuple[str, ...]] = (
@@ -431,6 +457,9 @@ class Settings(BaseSettings):
         elif self.MEDIA_ROOT:
             self.STORAGE_ROOT = self.MEDIA_ROOT
 
+        if not self.MAX_UPLOAD_BYTES:
+            self.MAX_UPLOAD_BYTES = self.MAX_UPLOAD_MB * 1024 * 1024
+
         # 7. Unify CatVTON Aliases
         if self.CATVTON_MIXED_PRECISION:
             self.CATVTON_DTYPE = str(self.CATVTON_MIXED_PRECISION).lower()
@@ -561,6 +590,12 @@ class Settings(BaseSettings):
         except Exception:
             return "mysql+pymysql://***:***@redacted/redacted"
 
+    @property
+    def safe_redis_url(self) -> str:
+        """Returns REDIS_URL with redacted credentials for logging and diagnostics."""
+        from app.utils.network import redact_url_credentials
+        return redact_url_credentials(self.REDIS_URL)
+
     # -------------------------------------------------------------------------
     # Typed Sub-Settings Views
     # -------------------------------------------------------------------------
@@ -661,11 +696,11 @@ class Settings(BaseSettings):
             "media_root": str(self.resolved_storage_root),
             "media_base_url": self.MEDIA_BASE_URL,
             "max_upload_mb": self.MAX_UPLOAD_MB,
-            "catvton_root": str(self.resolved_catvton_root),
-            "catvton_device": self.CATVTON_DEVICE,
+            "tryon_provider": self.TRYON_PRIMARY_PROVIDER,
+            "catvton_preset": self.CATVTON_PRESET,
             "catvton_dtype": self.CATVTON_DTYPE,
-            "catvton_resolution": f"{self.CATVTON_WIDTH}x{self.CATVTON_HEIGHT}",
-            "catvton_max_concurrency": self.CATVTON_MAX_CONCURRENCY,
+            "catvton_device": self.CATVTON_DEVICE,
+            "catvton_enabled": self.CATVTON_ENABLED,
         }
 
     def __repr__(self) -> str:

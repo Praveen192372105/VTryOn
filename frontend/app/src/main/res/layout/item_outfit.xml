@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/spacing_6"
+    android:background="@drawable/bg_surface_card"
+    android:orientation="vertical"
+    android:padding="@dimen/spacing_8">
+
+    <com.example.vtryon.core.designsystem.component.MediaSurfaceView
+        android:id="@+id/ivOutfit"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        app:mediaCornerRadius="@dimen/radius_md" />
+
+    <TextView
+        android:id="@+id/tvOutfitName"
+        style="@style/TextAppearance.VTryOn.TitleSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_8"
+        android:ellipsize="end"
+        android:maxLines="1" />
+
+    <TextView
+        android:id="@+id/tvOutfitCategory"
+        style="@style/TextAppearance.VTryOn.Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_2"
+        android:textColor="@color/text_secondary" />
+
+</LinearLayout>

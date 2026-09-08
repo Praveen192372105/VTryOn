@@ -1,10 +1,14 @@
-import axios from "axios"
-import { env } from "../../config/env"
-import { tokenStore } from "../auth/token-store"
+import { bareClient } from "./bare-client"
+import { tokenStore } from "@/lib/auth/token-store"
 import type { ApiSuccess, AuthTokens } from "./types"
 
 let activeRefreshPromise: Promise<string> | null = null
 
+/**
+ * Coordinates single-flight access token refreshing across concurrent 401 callers.
+ * If multiple requests receive 401 simultaneously, they all await this single promise.
+ * Rotated tokens are atomically updated in tokenStore before callers resume.
+ */
 export async function coordinateTokenRefresh(): Promise<string> {
   if (activeRefreshPromise) {
     return activeRefreshPromise
@@ -18,15 +22,9 @@ export async function coordinateTokenRefresh(): Promise<string> {
 
   activeRefreshPromise = (async () => {
     try {
-      const response = await axios.post<ApiSuccess<AuthTokens>>(
-        `${env.apiBaseUrl}/api/v1/auth/refresh`,
-        { refresh_token: refreshToken },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          timeout: 10000,
-        }
+      const response = await bareClient.post<ApiSuccess<AuthTokens>>(
+        "/auth/refresh",
+        { refresh_token: refreshToken }
       )
 
       const newTokens = response.data.data

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/surface_primary">
+
+    <com.example.vtryon.core.designsystem.component.AppToolbar
+        android:id="@+id/tryOnToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:toolbarShowBack="true"
+        app:toolbarTitle="Try-On Studio"
+        app:toolbarSubtitle="Inference (Tablet)" />
+
+    <!-- Tablet Dual-Column Scrollable Canvas -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toTopOf="@id/bottomActionContainer"
+        app:layout_constraintTop_toBottomOf="@id/tryOnToolbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/screen_padding_horizontal"
+            android:paddingVertical="@dimen/spacing_24">
+
+            <!-- Left Column: Person Selection -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/spacing_16"
+                android:layout_weight="1"
+                android:background="@drawable/bg_surface_card"
+                android:orientation="vertical"
+                android:padding="@dimen/card_padding">
+
+                <TextView
+                    style="@style/TextAppearance.VTryOn.TitleMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1. Select Person Photo" />
+
+                <com.example.vtryon.core.designsystem.component.MediaSurfaceView
+                    android:id="@+id/ivPersonPhoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="320dp"
+                    android:layout_marginTop="@dimen/spacing_12"
+                    app:mediaCornerRadius="@dimen/radius_lg" />
+
+                <com.example.vtryon.core.designsystem.component.AppButton
+                    android:id="@+id/btnPickPhoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_12"
+                    app:btnText="Choose Photo"
+                    app:btnVariant="secondary" />
+
+            </LinearLayout>
+
+            <!-- Right Column: Garment & Inference Status -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_16"
+                android:layout_weight="1"
+                android:background="@drawable/bg_surface_card"
+                android:orientation="vertical"
+                android:padding="@dimen/card_padding">
+
+                <TextView
+                    style="@style/TextAppearance.VTryOn.TitleMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2. Selected Garment" />
+
+                <TextView
+                    android:id="@+id/tvOutfitName"
+                    style="@style/TextAppearance.VTryOn.BodyLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_8"
+                    android:text="Navy Blue Oxford Shirt"
+                    android:textColor="@color/text_secondary" />
+
+                <!-- Progress State Indicator -->
+                <com.example.vtryon.core.designsystem.component.AppLoadingView
+                    android:id="@+id/loadingIndicator"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_24"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tvErrorMessage"
+                    style="@style/TextAppearance.VTryOn.BodySmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_12"
+                    android:textColor="@color/state_error"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Bottom Action Bar -->
+    <LinearLayout
+        android:id="@+id/bottomActionContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_surface_card"
+        android:gravity="end"
+        android:paddingHorizontal="@dimen/screen_padding_horizontal"
+        android:paddingVertical="@dimen/spacing_16"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.example.vtryon.core.designsystem.component.AppButton
+            android:id="@+id/btnGenerate"
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            app:btnText="Generate Try-On"
+            app:btnVariant="primary" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

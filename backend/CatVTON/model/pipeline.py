@@ -31,20 +31,38 @@ class CatVTONPipeline:
         compile=False,
         skip_safety_check=False,
         use_tf32=True,
+        sequential_cfg=None,
     ):
         self.device = device
         self.weight_dtype = weight_dtype
         self.skip_safety_check = skip_safety_check
 
+        if sequential_cfg is None:
+            if str(device).startswith("cuda") and torch.cuda.is_available():
+                total_mem_gb = torch.cuda.get_device_properties(device).total_memory / (1024**3)
+                self.sequential_cfg = total_mem_gb <= 8.0
+            else:
+                self.sequential_cfg = False
+        else:
+            self.sequential_cfg = sequential_cfg
+
         self.noise_scheduler = DDIMScheduler.from_pretrained(base_ckpt, subfolder="scheduler")
-        self.vae = AutoencoderKL.from_pretrained("stabilityai/sd-vae-ft-mse").to(device, dtype=weight_dtype)
+        self.vae = AutoencoderKL.from_pretrained(
+            "stabilityai/sd-vae-ft-mse", torch_dtype=torch.float32, low_cpu_mem_usage=True
+        ).to(device)
         if not skip_safety_check:
             self.feature_extractor = CLIPImageProcessor.from_pretrained(base_ckpt, subfolder="feature_extractor")
-            self.safety_checker = StableDiffusionSafetyChecker.from_pretrained(base_ckpt, subfolder="safety_checker").to(device, dtype=weight_dtype)
-        self.unet = UNet2DConditionModel.from_pretrained(base_ckpt, subfolder="unet").to(device, dtype=weight_dtype)
+            self.safety_checker = StableDiffusionSafetyChecker.from_pretrained(
+                base_ckpt, subfolder="safety_checker", torch_dtype=weight_dtype, low_cpu_mem_usage=True
+            ).to(device)
+        self.unet = UNet2DConditionModel.from_pretrained(
+            base_ckpt, subfolder="unet", torch_dtype=weight_dtype, low_cpu_mem_usage=True
+        ).to(device)
         init_adapter(self.unet, cross_attn_cls=SkipAttnProcessor)  # Skip Cross-Attention
         self.attn_modules = get_trainable_module(self.unet, "attention")
         self.auto_attn_ckpt_load(attn_ckpt, attn_ckpt_version)
+        if str(device).startswith("cuda") and torch.cuda.is_available():
+            torch.cuda.empty_cache()
         # Pytorch 2.0 Compile
         if compile:
             self.unet = torch.compile(self.unet)
@@ -54,6 +72,11 @@ class CatVTONPipeline:
         if use_tf32:
             torch.set_float32_matmul_precision("high")
             torch.backends.cuda.matmul.allow_tf32 = True
+
+        # Turing GPU safeguard: NVIDIA GTX 1650 (TU117) lacks tensor cores and has a known cuDNN FP16 NaN conv bug.
+        # If running in float16 on CUDA, disable cuDNN to prevent NaNs in convolution kernels.
+        if str(device).startswith("cuda") and weight_dtype == torch.float16:
+            torch.backends.cudnn.enabled = False
 
     def auto_attn_ckpt_load(self, attn_ckpt, version):
         sub_folder = {
@@ -131,18 +154,19 @@ class CatVTONPipeline:
         # Mask image
         masked_image = image * (mask < 0.5)
         # VAE encoding
-        masked_latent = compute_vae_encodings(masked_image, self.vae)
-        condition_latent = compute_vae_encodings(condition_image, self.vae)
+        masked_latent = compute_vae_encodings(masked_image, self.vae).to(dtype=self.weight_dtype)
+        condition_latent = compute_vae_encodings(condition_image, self.vae).to(dtype=self.weight_dtype)
         mask_latent = torch.nn.functional.interpolate(mask, size=masked_latent.shape[-2:], mode="nearest")
         del image, mask, condition_image
         # Concatenate latents
-        masked_latent_concat = torch.cat([masked_latent, condition_latent], dim=concat_dim)
-        mask_latent_concat = torch.cat([mask_latent, torch.zeros_like(mask_latent)], dim=concat_dim)
+        masked_latent_cond = torch.cat([masked_latent, condition_latent], dim=concat_dim)
+        masked_latent_uncond = torch.cat([masked_latent, torch.zeros_like(condition_latent)], dim=concat_dim)
+        mask_latent_single = torch.cat([mask_latent, torch.zeros_like(mask_latent)], dim=concat_dim)
         # Prepare noise
         latents = randn_tensor(
-            masked_latent_concat.shape,
+            masked_latent_cond.shape,
             generator=generator,
-            device=masked_latent_concat.device,
+            device=masked_latent_cond.device,
             dtype=self.weight_dtype,
         )
         # Prepare timesteps
@@ -150,42 +174,63 @@ class CatVTONPipeline:
         timesteps = self.noise_scheduler.timesteps
         latents = latents * self.noise_scheduler.init_noise_sigma
         # Classifier-Free Guidance
-        if do_classifier_free_guidance := (guidance_scale > 1.0):
-            masked_latent_concat = torch.cat(
-                [
-                    torch.cat([masked_latent, torch.zeros_like(condition_latent)], dim=concat_dim),
-                    masked_latent_concat,
-                ]
-            )
-            mask_latent_concat = torch.cat([mask_latent_concat] * 2)
+        do_classifier_free_guidance = (guidance_scale > 1.0)
+        if not self.sequential_cfg and do_classifier_free_guidance:
+            masked_latent_concat = torch.cat([masked_latent_uncond, masked_latent_cond], dim=0)
+            mask_latent_concat = torch.cat([mask_latent_single] * 2, dim=0)
+        else:
+            masked_latent_concat = masked_latent_cond
+            mask_latent_concat = mask_latent_single
+
+        # Offload VAE to CPU during denoising loop if sequential_cfg is active on CUDA
+        vae_on_cpu = False
+        if self.sequential_cfg and str(self.device).startswith("cuda"):
+            self.vae.to("cpu")
+            torch.cuda.empty_cache()
+            vae_on_cpu = True
 
         # Denoising loop
         extra_step_kwargs = self.prepare_extra_step_kwargs(generator, eta)
         num_warmup_steps = (len(timesteps) - num_inference_steps * self.noise_scheduler.order)
         with tqdm.tqdm(total=num_inference_steps) as progress_bar:
             for i, t in enumerate(timesteps):
-                # expand the latents if we are doing classifier free guidance
-                non_inpainting_latent_model_input = (torch.cat([latents] * 2) if do_classifier_free_guidance else latents)
-                non_inpainting_latent_model_input = self.noise_scheduler.scale_model_input(non_inpainting_latent_model_input, t)
-                # prepare the input for the inpainting model
-                inpainting_latent_model_input = torch.cat([non_inpainting_latent_model_input, mask_latent_concat, masked_latent_concat], dim=1)
-                # predict the noise residual
-                noise_pred= self.unet(
-                    inpainting_latent_model_input,
-                    t.to(self.device),
-                    encoder_hidden_states=None, # FIXME
-                    return_dict=False,
-                )[0]
-                # perform guidance
-                if do_classifier_free_guidance:
-                    noise_pred_uncond, noise_pred_text = noise_pred.chunk(2)
-                    noise_pred = noise_pred_uncond + guidance_scale * (
-                        noise_pred_text - noise_pred_uncond
-                    )
+                if self.sequential_cfg and do_classifier_free_guidance:
+                    t_dev = t.to(self.device)
+                    scaled_latents = self.noise_scheduler.scale_model_input(latents, t)
+                    # Unconditional pass (batch size 1)
+                    input_uncond = torch.cat([scaled_latents, mask_latent_single, masked_latent_uncond], dim=1)
+                    noise_pred_uncond = self.unet(input_uncond, t_dev, encoder_hidden_states=None, return_dict=False)[0]
+                    del input_uncond
+                    # Conditional pass (batch size 1)
+                    input_cond = torch.cat([scaled_latents, mask_latent_single, masked_latent_cond], dim=1)
+                    noise_pred_text = self.unet(input_cond, t_dev, encoder_hidden_states=None, return_dict=False)[0]
+                    del input_cond
+                    noise_pred = noise_pred_uncond + guidance_scale * (noise_pred_text - noise_pred_uncond)
+                    del noise_pred_uncond, noise_pred_text
+                else:
+                    non_inpainting_latent_model_input = (torch.cat([latents] * 2) if do_classifier_free_guidance else latents)
+                    non_inpainting_latent_model_input = self.noise_scheduler.scale_model_input(non_inpainting_latent_model_input, t)
+                    inpainting_latent_model_input = torch.cat([non_inpainting_latent_model_input, mask_latent_concat, masked_latent_concat], dim=1)
+                    noise_pred = self.unet(
+                        inpainting_latent_model_input,
+                        t.to(self.device),
+                        encoder_hidden_states=None,
+                        return_dict=False,
+                    )[0]
+                    del inpainting_latent_model_input, non_inpainting_latent_model_input
+                    if do_classifier_free_guidance:
+                        noise_pred_uncond, noise_pred_text = noise_pred.chunk(2)
+                        noise_pred = noise_pred_uncond + guidance_scale * (
+                            noise_pred_text - noise_pred_uncond
+                        )
+                        del noise_pred_uncond, noise_pred_text
                 # compute the previous noisy sample x_t -> x_t-1
                 latents = self.noise_scheduler.step(
                     noise_pred, t, latents, **extra_step_kwargs
                 ).prev_sample
+                del noise_pred
+                if self.sequential_cfg and str(self.device).startswith("cuda"):
+                    torch.cuda.empty_cache()
                 # call the callback, if provided
                 if i == len(timesteps) - 1 or (
                     (i + 1) > num_warmup_steps
@@ -193,10 +238,18 @@ class CatVTONPipeline:
                 ):
                     progress_bar.update()
 
+        # Bring VAE back to GPU if offloaded
+        if vae_on_cpu:
+            self.vae.to(self.device)
+
         # Decode the final latents
         latents = latents.split(latents.shape[concat_dim] // 2, dim=concat_dim)[0]
         latents = 1 / self.vae.config.scaling_factor * latents
-        image = self.vae.decode(latents.to(self.device, dtype=self.weight_dtype)).sample
+        if torch.isnan(latents).any():
+            latents = torch.nan_to_num(latents, nan=0.0)
+        image = self.vae.decode(latents.to(self.device, dtype=self.vae.dtype)).sample
+        if torch.isnan(image).any():
+            image = torch.nan_to_num(image, nan=0.0)
         image = (image / 2 + 0.5).clamp(0, 1)
         # we always cast to float32 as this does not cause significant overhead and is compatible with bfloat16
         image = image.cpu().permute(0, 2, 3, 1).float().numpy()
@@ -251,8 +304,8 @@ class CatVTONPix2PixPipeline(CatVTONPipeline):
         image = prepare_image(image).to(self.device, dtype=self.weight_dtype)
         condition_image = prepare_image(condition_image).to(self.device, dtype=self.weight_dtype)
         # VAE encoding
-        image_latent = compute_vae_encodings(image, self.vae)
-        condition_latent = compute_vae_encodings(condition_image, self.vae)
+        image_latent = compute_vae_encodings(image, self.vae).to(dtype=self.weight_dtype)
+        condition_latent = compute_vae_encodings(condition_image, self.vae).to(dtype=self.weight_dtype)
         del image, condition_image
         # Concatenate latents
         condition_latent_concat = torch.cat([image_latent, condition_latent], dim=concat_dim)
@@ -313,7 +366,11 @@ class CatVTONPix2PixPipeline(CatVTONPipeline):
         # Decode the final latents
         latents = latents.split(latents.shape[concat_dim] // 2, dim=concat_dim)[0]
         latents = 1 / self.vae.config.scaling_factor * latents
-        image = self.vae.decode(latents.to(self.device, dtype=self.weight_dtype)).sample
+        if torch.isnan(latents).any():
+            latents = torch.nan_to_num(latents, nan=0.0)
+        image = self.vae.decode(latents.to(self.device, dtype=self.vae.dtype)).sample
+        if torch.isnan(image).any():
+            image = torch.nan_to_num(image, nan=0.0)
         image = (image / 2 + 0.5).clamp(0, 1)
         # we always cast to float32 as this does not cause significant overhead and is compatible with bfloat16
         image = image.cpu().permute(0, 2, 3, 1).float().numpy()

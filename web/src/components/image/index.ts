@@ -1,0 +1,6 @@
+export { ImageFrame } from "./image-frame"
+export type { ImageFrameProps } from "./image-frame"
+export { AuthenticatedImage } from "./authenticated-image"
+export type { AuthenticatedImageProps } from "./authenticated-image"
+export { ImageCompare } from "./image-compare"
+export type { ImageCompareProps } from "./image-compare"

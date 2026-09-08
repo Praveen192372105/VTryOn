@@ -57,10 +57,19 @@ def create_application() -> FastAPI:
     # 2. Register exception handlers
     register_exception_handlers(app)
 
-    # 3. Mount static storage for local development
+    # 3. Mount static storage for local development with revalidation & CORS headers
+    class StaticMediaFiles(StaticFiles):
+        async def get_response(self, path: str, scope):
+            response = await super().get_response(path, scope)
+            response.headers["Cache-Control"] = "no-cache, must-revalidate"
+            response.headers["Access-Control-Allow-Origin"] = "*"
+            return response
+
     storage_path = current_settings.resolved_storage_root
     storage_path.mkdir(parents=True, exist_ok=True)
-    app.mount("/storage", StaticFiles(directory=str(storage_path), check_dir=False), name="storage")
+    app.mount("/storage", StaticMediaFiles(directory=str(storage_path), check_dir=False), name="storage")
+    if current_settings.MEDIA_BASE_URL != "/storage":
+        app.mount(current_settings.MEDIA_BASE_URL, StaticMediaFiles(directory=str(storage_path), check_dir=False), name="media")
 
     # 4. Mount root health endpoints (/health, /ready)
     app.include_router(root_health_router)

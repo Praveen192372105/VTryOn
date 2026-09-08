@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Basic neutrals -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="transparent">#00000000</color>
+
+    <!-- Legacy / compatibility bridge -->
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF18181B</color>
+    <color name="purple_700">#FF09090B</color>
+    <color name="teal_200">#FFFAFAFA</color>
+    <color name="teal_700">#FFE4E4E7</color>
+
+    <!-- VTO Design System Tokens (Light Theme: Monochrome Editorial) -->
+    <color name="vto_background">#FFFAFAFA</color>
+    <color name="vto_surface_primary">#FFFFFFFF</color>
+    <color name="vto_surface_secondary">#FFF4F4F5</color>
+    <color name="vto_surface_elevated">#FFFFFFFF</color>
+    <color name="vto_surface_pressed">#FFE4E4E7</color>
+    <color name="vto_surface_subtle">#FFFAFAFA</color>
+
+    <color name="vto_content_primary">#FF09090B</color>
+    <color name="vto_content_secondary">#FF52525B</color>
+    <color name="vto_content_tertiary">#FF71717A</color>
+    <color name="vto_content_inverse">#FFFFFFFF</color>
+    <color name="vto_content_disabled">#FFA1A1AA</color>
+
+    <color name="vto_border_subtle">#FFF4F4F5</color>
+    <color name="vto_border_default">#FFE4E4E7</color>
+    <color name="vto_border_strong">#FFD4D4D8</color>
+    <color name="vto_border_focus">#FF09090B</color>
+
+    <color name="vto_control_primary">#FF09090B</color>
+    <color name="vto_control_primary_content">#FFFFFFFF</color>
+    <color name="vto_control_disabled">#FFE4E4E7</color>
+
+    <color name="vto_overlay_scrim">#80000000</color>
+    <color name="vto_skeleton">#FFE4E4E7</color>
+
+    <color name="vto_error">#FFE11D48</color>
+    <color name="vto_warning">#FFF59E0B</color>
+    <color name="vto_success">#FF10B981</color>
+
+    <!-- Legacy / Compatibility Tokens -->
+    <!-- Surfaces -->
+    <color name="surface_primary">@color/vto_surface_primary</color>
+    <color name="surface_secondary">@color/vto_surface_secondary</color>
+    <color name="surface_elevated">@color/vto_surface_elevated</color>
+    <color name="surface_subtle">@color/vto_surface_subtle</color>
+
+    <!-- Content (Typography / Icons) -->
+    <color name="content_primary">@color/vto_content_primary</color>
+    <color name="content_secondary">@color/vto_content_secondary</color>
+    <color name="content_tertiary">@color/vto_content_tertiary</color>
+    <color name="content_inverse">@color/vto_content_inverse</color>
+    <color name="content_disabled">@color/vto_content_disabled</color>
+    <color name="text_primary">@color/content_primary</color>
+    <color name="text_secondary">@color/content_secondary</color>
+    <color name="text_tertiary">@color/content_tertiary</color>
+
+    <!-- Borders -->
+    <color name="border_subtle">#FFF4F4F5</color>
+    <color name="border_default">#FFE4E4E7</color>
+    <color name="border_strong">#FFD4D4D8</color>
+
+    <!-- Controls / Interactive -->
+    <color name="control_primary">#FF09090B</color>
+    <color name="control_primary_content">#FFFFFFFF</color>
+    <color name="control_disabled">#FFE4E4E7</color>
+
+    <!-- Button states (Light) -->
+    <color name="btn_primary_bg">#FF09090B</color>
+    <color name="btn_primary_pressed">#FF27272A</color>
+    <color name="btn_primary_text">#FFFFFFFF</color>
+
+    <color name="btn_secondary_bg">#FFF4F4F5</color>
+    <color name="btn_secondary_pressed">#FFE4E4E7</color>
+    <color name="btn_secondary_text">#FF09090B</color>
+
+    <color name="btn_ghost_bg">#00000000</color>
+    <color name="btn_ghost_pressed">#0D09090B</color>
+    <color name="btn_ghost_text">#FF09090B</color>
+
+    <color name="btn_danger_bg">#FFE11D48</color>
+    <color name="btn_danger_pressed">#FFBE123C</color>
+    <color name="btn_danger_text">#FFFFFFFF</color>
+
+    <!-- Input states (Light) -->
+    <color name="input_bg">#FFFFFFFF</color>
+    <color name="input_border_default">#FFE4E4E7</color>
+    <color name="input_border_focused">#FF09090B</color>
+    <color name="input_border_error">#FFE11D48</color>
+    <color name="input_text">#FF09090B</color>
+    <color name="input_placeholder">#FFA1A1AA</color>
+
+    <!-- Overlays / Scrims -->
+    <color name="overlay_scrim">#80000000</color>
+    <color name="skeleton_shimmer">#FFE4E4E7</color>
+
+    <!-- Restrained Status Colors -->
+    <color name="state_success">#FF10B981</color>
+    <color name="state_warning">#FFF59E0B</color>
+    <color name="state_error">#FFE11D48</color>
+    <color name="state_info">#FF3B82F6</color>
+
+    <!-- Brand Logo compatibility -->
+    <color name="brand_foreground">#FF09090B</color>
+    <color name="brand_background">#FFFFFFFF</color>
+    <color name="brand_surface">#FFF4F4F5</color>
+    <color name="brand_surface_subtle">#FFFAFAFA</color>
+    <color name="brand_border">#FFE4E4E7</color>
+    <color name="brand_muted">#FF71717A</color>
+</resources>

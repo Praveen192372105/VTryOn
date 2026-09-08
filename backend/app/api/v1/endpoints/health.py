@@ -4,9 +4,6 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app import __version__
-from app.ai.catvton.config import ai_settings
-from app.ai.catvton.loader import get_model_load_state
-from app.ai.catvton.validator import inspect_catvton_runtime
 from app.core.config import settings
 from app.core.exceptions import DatabaseUnavailableError, RedisUnavailableError, StorageUnavailableError
 from app.core.redis import check_redis_connectivity
@@ -93,7 +90,6 @@ def health_live() -> ApiResponse[HealthData]:
 def health_ready(db: Session = Depends(get_db)) -> ApiResponse[ReadinessData]:
     """
     Readiness probe: verifies core API dependencies (MySQL, Redis, Media Storage).
-    Does not load or allocate CatVTON GPU models in the API process.
     """
     return _check_readiness(db)
 
@@ -128,17 +124,13 @@ def root_ready(db: Session = Depends(get_db)) -> ApiResponse[ReadinessData]:
 # -----------------------------------------------------------------------------
 def ai_system_status() -> ApiResponse[Dict[str, Any]]:
     """
-    Internal AI diagnostics endpoint reporting CatVTON configuration & loader state.
+    Internal AI diagnostics endpoint reporting AI provider configuration.
     """
-    inspection = inspect_catvton_runtime()
     return ApiResponse(
         data={
-            "catvton_configured": inspection.root_exists,
-            "catvton_model_state": get_model_load_state().value,
-            "target_device": ai_settings.device,
-            "mixed_precision": ai_settings.dtype,
-            "target_resolution": f"{ai_settings.width}x{ai_settings.height}",
-            "cuda_available": inspection.cuda_available,
+            "provider": settings.TRYON_PRIMARY_PROVIDER,
+            "mistral_model": settings.MISTRAL_MODEL,
+            "mistral_enabled": settings.MISTRAL_ENABLED,
         }
     )
 

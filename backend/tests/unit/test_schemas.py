@@ -56,3 +56,12 @@ def test_create_tryon_request_validation():
             person_upload_id=valid_upload_id,
             outfit_id="upl_01j7q9abcde123456789012345",
         )
+
+    # Valid seed catalogue outfit id
+    seed_req = CreateTryOnRequest(
+        person_upload_id="upl_01m1rfnf9q254f74j0bqs6t6w7",
+        outfit_id="out_01jseedoutfit000000000004",
+    )
+    assert seed_req.person_upload_id == "upl_01m1rfnf9q254f74j0bqs6t6w7"
+    assert seed_req.outfit_id == "out_01jseedoutfit000000000004"
+

@@ -1,0 +1,19 @@
+# Cache-Control and Security Headers for Static CDN Hosting
+
+# Hashed assets: cache for 1 year, immutable
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTML and root documents: must-revalidate to ensure immediate updates
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Global security headers
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()

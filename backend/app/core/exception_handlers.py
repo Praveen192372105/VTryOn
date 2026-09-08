@@ -71,18 +71,19 @@ def register_exception_handlers(app: FastAPI) -> None:
                 "message": msg,
             })
 
+        http_422 = getattr(status, "HTTP_422_UNPROCESSABLE_CONTENT", 422)
         logger.info(
             f"RequestValidationError: {details}",
             extra={
                 "request_id": request_id,
                 "path": request.url.path,
                 "method": request.method,
-                "status_code": status.HTTP_422_UNPROCESSABLE_ENTITY,
+                "status_code": http_422,
             },
         )
 
         return JSONResponse(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=http_422,
             content={
                 "success": False,
                 "error": {

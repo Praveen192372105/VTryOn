@@ -4,8 +4,8 @@
     "name": "Classic White Linen Shirt",
     "slug": "classic-white-linen-shirt",
     "category": "upper_body",
-    "image_storage_key": "outfits/samples/classic_white_shirt.jpg",
-    "thumbnail_storage_key": "outfits/samples/classic_white_shirt_thumb.jpg",
+    "image_storage_key": "outfits/samples/garment_classic_white_shirt.jpg",
+    "thumbnail_storage_key": "outfits/samples/garment_classic_white_shirt_thumb.jpg",
     "description": "Breathable 100% linen button-down shirt in crisp white.",
     "sort_order": 1,
     "is_active": true
@@ -15,8 +15,8 @@
     "name": "Navy Blue Oxford Shirt",
     "slug": "navy-blue-oxford-shirt",
     "category": "upper_body",
-    "image_storage_key": "outfits/samples/navy_oxford_shirt.jpg",
-    "thumbnail_storage_key": "outfits/samples/navy_oxford_shirt_thumb.jpg",
+    "image_storage_key": "outfits/samples/garment_navy_oxford_shirt.jpg",
+    "thumbnail_storage_key": "outfits/samples/garment_navy_oxford_shirt_thumb.jpg",
     "description": "Tailored fit navy blue casual oxford shirt.",
     "sort_order": 2,
     "is_active": true
@@ -26,8 +26,8 @@
     "name": "Slim Fit Denim Jeans",
     "slug": "slim-fit-denim-jeans",
     "category": "lower_body",
-    "image_storage_key": "outfits/samples/slim_fit_jeans.jpg",
-    "thumbnail_storage_key": "outfits/samples/slim_fit_jeans_thumb.jpg",
+    "image_storage_key": "outfits/samples/garment_slim_fit_jeans.jpg",
+    "thumbnail_storage_key": "outfits/samples/garment_slim_fit_jeans_thumb.jpg",
     "description": "Premium mid-wash stretch denim jeans with slim fit silhouette.",
     "sort_order": 3,
     "is_active": true
@@ -37,8 +37,8 @@
     "name": "Summer Floral Midi Dress",
     "slug": "summer-floral-midi-dress",
     "category": "dresses",
-    "image_storage_key": "outfits/samples/summer_floral_dress.jpg",
-    "thumbnail_storage_key": "outfits/samples/summer_floral_dress_thumb.jpg",
+    "image_storage_key": "outfits/samples/garment_summer_floral_dress.jpg",
+    "thumbnail_storage_key": "outfits/samples/garment_summer_floral_dress_thumb.jpg",
     "description": "Flowy A-line summer dress with vibrant botanical floral print.",
     "sort_order": 4,
     "is_active": true
@@ -48,8 +48,8 @@
     "name": "Black Tailored Trousers",
     "slug": "black-tailored-trousers",
     "category": "lower_body",
-    "image_storage_key": "outfits/samples/black_tailored_trousers.jpg",
-    "thumbnail_storage_key": "outfits/samples/black_tailored_trousers_thumb.jpg",
+    "image_storage_key": "outfits/samples/garment_black_tailored_trousers.jpg",
+    "thumbnail_storage_key": "outfits/samples/garment_black_tailored_trousers_thumb.jpg",
     "description": "Classic cut black pleated tailored formal trousers.",
     "sort_order": 5,
     "is_active": true
@@ -59,10 +59,120 @@
     "name": "Emerald Evening Gown",
     "slug": "emerald-evening-gown",
     "category": "dresses",
-    "image_storage_key": "outfits/samples/emerald_evening_gown.jpg",
-    "thumbnail_storage_key": "outfits/samples/emerald_evening_gown_thumb.jpg",
+    "image_storage_key": "outfits/samples/garment_emerald_evening_gown.jpg",
+    "thumbnail_storage_key": "outfits/samples/garment_emerald_evening_gown_thumb.jpg",
     "description": "Elegant emerald green silk satin evening gown.",
     "sort_order": 6,
     "is_active": true
+  },
+  {
+    "public_id": "out_01jseedoutfit000000000007",
+    "name": "Charcoal Leather Biker Jacket",
+    "slug": "charcoal-leather-biker-jacket",
+    "category": "upper_body",
+    "image_storage_key": "outfits/samples/garment_leather_biker_jacket.jpg",
+    "thumbnail_storage_key": "outfits/samples/garment_leather_biker_jacket_thumb.jpg",
+    "description": "Premium textured charcoal black asymmetrical zip leather moto jacket.",
+    "sort_order": 7,
+    "is_active": true
+  },
+  {
+    "public_id": "out_01jseedoutfit000000000008",
+    "name": "Crimson Knit Cashmere Sweater",
+    "slug": "crimson-knit-cashmere-sweater",
+    "category": "upper_body",
+    "image_storage_key": "outfits/samples/garment_crimson_cashmere_sweater.jpg",
+    "thumbnail_storage_key": "outfits/samples/garment_crimson_cashmere_sweater_thumb.jpg",
+    "description": "Soft crimson red ribbed crewneck cashmere knit sweater.",
+    "sort_order": 8,
+    "is_active": true
+  },
+  {
+    "public_id": "out_01jseedoutfit000000000009",
+    "name": "Classic Beige Trench Coat",
+    "slug": "classic-beige-trench-coat",
+    "category": "upper_body",
+    "image_storage_key": "outfits/samples/garment_beige_trench_coat.jpg",
+    "thumbnail_storage_key": "outfits/samples/garment_beige_trench_coat_thumb.jpg",
+    "description": "Double-breasted tailored beige cotton gabardine trench coat with waist belt.",
+    "sort_order": 9,
+    "is_active": true
+  },
+  {
+    "public_id": "out_01jseedoutfit000000000010",
+    "name": "Washed Streetwear Hoodie",
+    "slug": "washed-streetwear-hoodie",
+    "category": "upper_body",
+    "image_storage_key": "outfits/samples/garment_streetwear_hoodie.jpg",
+    "thumbnail_storage_key": "outfits/samples/garment_streetwear_hoodie_thumb.jpg",
+    "description": "Heavyweight washed-black oversized pullover hoodie with ribbed cuffs and hem.",
+    "sort_order": 10,
+    "is_active": true
+  },
+  {
+    "public_id": "out_01jseedoutfit000000000011",
+    "name": "Khaki Cargo Utility Pants",
+    "slug": "khaki-cargo-utility-pants",
+    "category": "lower_body",
+    "image_storage_key": "outfits/samples/garment_cargo_utility_pants.jpg",
+    "thumbnail_storage_key": "outfits/samples/garment_cargo_utility_pants_thumb.jpg",
+    "description": "Relaxed fit khaki cotton twill cargo trousers with functional utility pockets.",
+    "sort_order": 11,
+    "is_active": true
+  },
+  {
+    "public_id": "out_01jseedoutfit000000000012",
+    "name": "Pleated Beige Tennis Skirt",
+    "slug": "pleated-beige-tennis-skirt",
+    "category": "lower_body",
+    "image_storage_key": "outfits/samples/garment_beige_tennis_skirt.jpg",
+    "thumbnail_storage_key": "outfits/samples/garment_beige_tennis_skirt_thumb.jpg",
+    "description": "Crisp high-waisted pleated A-line mini skirt in clean neutral beige.",
+    "sort_order": 12,
+    "is_active": true
+  },
+  {
+    "public_id": "out_01jseedoutfit000000000013",
+    "name": "Light Wash Straight Denim Jeans",
+    "slug": "light-wash-straight-denim-jeans",
+    "category": "lower_body",
+    "image_storage_key": "outfits/samples/garment_light_wash_jeans.jpg",
+    "thumbnail_storage_key": "outfits/samples/garment_light_wash_jeans_thumb.jpg",
+    "description": "Vintage straight leg denim jeans in light sky blue wash with subtle fading.",
+    "sort_order": 13,
+    "is_active": true
+  },
+  {
+    "public_id": "out_01jseedoutfit000000000014",
+    "name": "Scarlet Satin Slip Dress",
+    "slug": "scarlet-satin-slip-dress",
+    "category": "dresses",
+    "image_storage_key": "outfits/samples/garment_scarlet_slip_dress.jpg",
+    "thumbnail_storage_key": "outfits/samples/garment_scarlet_slip_dress_thumb.jpg",
+    "description": "Lustrous scarlet red cowl neck bias-cut satin midi slip dress.",
+    "sort_order": 14,
+    "is_active": true
+  },
+  {
+    "public_id": "out_01jseedoutfit000000000015",
+    "name": "Boho Tiered Floral Maxi Dress",
+    "slug": "boho-tiered-floral-maxi-dress",
+    "category": "dresses",
+    "image_storage_key": "outfits/samples/garment_boho_maxi_dress.jpg",
+    "thumbnail_storage_key": "outfits/samples/garment_boho_maxi_dress_thumb.jpg",
+    "description": "Romantic airy tiered cotton maxi dress with pastel botanical floral print.",
+    "sort_order": 15,
+    "is_active": true
+  },
+  {
+    "public_id": "out_01jseedoutfit000000000016",
+    "name": "Black Velvet Mini Dress",
+    "slug": "black-velvet-mini-dress",
+    "category": "dresses",
+    "image_storage_key": "outfits/samples/garment_black_velvet_dress.jpg",
+    "thumbnail_storage_key": "outfits/samples/garment_black_velvet_dress_thumb.jpg",
+    "description": "Timeless plush black velvet long-sleeve mini dress with subtle sweetheart neckline.",
+    "sort_order": 16,
+    "is_active": true
   }
-]
+]

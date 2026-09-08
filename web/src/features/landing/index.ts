@@ -19,6 +19,16 @@ export { TypingHeadline } from "./components/typing-headline"
 export { ShimmerCta } from "./components/shimmer-cta"
 export { PageProgressController } from "./components/page-progress-controller"
 
+// Appendix C - Marketing Component Inventory Aliases
+export { LandingHeader as MarketingHeader } from "./components/landing-header"
+export { HeroTryonSvg as HeroTryOnVisual } from "./illustrations/hero-tryon-svg"
+export { HowItWorksSection as HowItWorks } from "./components/how-it-works-section"
+export { GarmentRailSvg as ShowcaseRail } from "./illustrations/garment-rail-svg"
+export { ProductThesisSection as FeatureStory } from "./components/product-thesis-section"
+export { PrivacySection as PrivacyCallout } from "./components/privacy-section"
+export { FinalCtaSection as FinalCTA } from "./components/final-cta-section"
+export { LandingFooter as MarketingFooter } from "./components/landing-footer"
+
 // Export illustrations
 export { HeroTryonSvg } from "./illustrations/hero-tryon-svg"
 export { HeroAmbientSvg } from "./illustrations/hero-ambient-svg"

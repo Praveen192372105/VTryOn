@@ -89,8 +89,11 @@ class MetricsRegistry:
         with self._lock:
             self.jobs_failed_total[failure_code] += 1
 
-    def record_catvton_inference(self, duration_seconds: float) -> None:
+    def record_tryon_inference(self, duration_seconds: float) -> None:
         self.catvton_inference_histogram.observe(duration_seconds)
+
+    def record_catvton_inference(self, duration_seconds: float) -> None:
+        self.record_tryon_inference(duration_seconds)
 
     def record_catvton_oom(self) -> None:
         with self._lock:

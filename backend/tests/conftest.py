@@ -56,6 +56,7 @@ def setup_test_storage():
     settings.UPLOAD_ROOT = os.path.join(temp_dir, "uploads")
     settings.RESULT_ROOT = os.path.join(temp_dir, "results")
     settings.TEMP_ROOT = os.path.join(temp_dir, "tmp")
+    settings.TRYON_PRIMARY_PROVIDER = "catvton"
     yield
     shutil.rmtree(temp_dir, ignore_errors=True)
 
@@ -98,3 +99,84 @@ def client(db_session: Session) -> Generator[TestClient, None, None]:
     with TestClient(app) as test_client:
         yield test_client
     app.dependency_overrides.clear()
+
+
+from PIL import Image
+from app.storage.local import LocalMediaStorage
+from app.domain.enums import FailureCode, OutfitCategory, TryOnJobStatus, UploadStatus
+from app.models.outfit import Outfit
+from app.models.tryon_job import TryOnJob
+from app.models.upload import Upload
+from app.models.user import User
+
+
+@pytest.fixture
+def worker_setup(db_session: Session, tmp_path):
+    storage = LocalMediaStorage(root_dir=str(tmp_path))
+
+    # Create test person image on storage
+    person_img = Image.new("RGB", (768, 1024), color=(200, 200, 200))
+    person_key = "uploads/usr_01/person.jpg"
+    storage.save(person_key, person_img.tobytes(), content_type="image/jpeg")
+    person_path = tmp_path / person_key
+    person_path.parent.mkdir(parents=True, exist_ok=True)
+    person_img.save(str(person_path), format="JPEG")
+
+    # Create test garment image on storage
+    garment_img = Image.new("RGB", (768, 1024), color=(50, 100, 150))
+    garment_key = "outfits/shirt.jpg"
+    garment_path = tmp_path / garment_key
+    garment_path.parent.mkdir(parents=True, exist_ok=True)
+    garment_img.save(str(garment_path), format="JPEG")
+
+    user = User(
+        public_id="usr_01j7q9abcde123456789012345",
+        email="workeruser@example.com",
+        name="Worker User",
+        hashed_password="hashed_pwd",
+    )
+    db_session.add(user)
+    db_session.flush()
+
+    upload = Upload(
+        public_id="upl_01j7q9abcde123456789012345",
+        user_id=user.id,
+        storage_key=person_key,
+        original_filename="person.jpg",
+        mime_type="image/jpeg",
+        size_bytes=5000,
+        status=UploadStatus.ACTIVE.value,
+    )
+    db_session.add(upload)
+
+    outfit = Outfit(
+        public_id="out_01j7q9abcde123456789012345",
+        name="Casual Linen Shirt",
+        slug="casual-linen-shirt-worker",
+        category=OutfitCategory.UPPER_BODY.value,
+        storage_key=garment_key,
+        is_active=True,
+    )
+    db_session.add(outfit)
+    db_session.flush()
+
+    job = TryOnJob(
+        public_id="job_01j7q9abcde123456789012345",
+        user_id=user.id,
+        person_upload_id=upload.id,
+        outfit_id=outfit.id,
+        status=TryOnJobStatus.QUEUED.value,
+    )
+    db_session.add(job)
+    db_session.commit()
+
+    return {
+        "user": user,
+        "upload": upload,
+        "outfit": outfit,
+        "job": job,
+        "storage": storage,
+        "tmp_path": tmp_path,
+    }
+
+

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { render, screen } from "@testing-library/react"
 import { Routes, Route } from "react-router-dom"
-import { AuthLayout } from "../../src/layouts/auth-layout"
+import { AuthLayout } from "../../src/components/layout/auth-layout"
 import { LoginForm } from "../../src/features/auth/components/login-form"
 import { RegisterForm } from "../../src/features/auth/components/register-form"
 import { PageProgressController } from "../../src/features/landing/components/page-progress-controller"

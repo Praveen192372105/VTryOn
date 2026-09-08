@@ -1,5 +1,16 @@
+import type { SessionTokens } from "./session"
+
 const ACCESS_TOKEN_KEY = "vtryon_access_token"
 const REFRESH_TOKEN_KEY = "vtryon_refresh_token"
+
+function sanitizeToken(value: unknown): string | null {
+  if (typeof value !== "string") return null
+  const trimmed = value.trim()
+  if (!trimmed || trimmed === "undefined" || trimmed === "null" || trimmed === "[object Object]") {
+    return null
+  }
+  return trimmed
+}
 
 class TokenStore {
   private accessToken: string | null = null
@@ -9,21 +20,47 @@ class TokenStore {
     this.hydrate()
   }
 
-  private hydrate() {
+  private hydrate(): void {
     try {
-      this.accessToken = localStorage.getItem(ACCESS_TOKEN_KEY)
-      this.refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY)
+      this.accessToken = sanitizeToken(localStorage.getItem(ACCESS_TOKEN_KEY))
+      this.refreshToken = sanitizeToken(localStorage.getItem(REFRESH_TOKEN_KEY))
     } catch {
-      // localStorage may be unavailable in private browsing or non-browser contexts
+      // localStorage may be restricted in private browsing or non-browser environments
       this.accessToken = null
       this.refreshToken = null
     }
   }
 
+  /**
+   * Returns current active session tokens if both access and refresh tokens are valid.
+   */
+  getSessionTokens(): SessionTokens | null {
+    const access = this.getAccessToken()
+    const refresh = this.getRefreshToken()
+    if (access && refresh) {
+      return { accessToken: access, refreshToken: refresh }
+    }
+    return null
+  }
+
+  /**
+   * Atomically stores both access and refresh tokens.
+   */
+  setSessionTokens(tokens: SessionTokens): void {
+    this.setTokens(tokens.accessToken, tokens.refreshToken)
+  }
+
+  /**
+   * Atomically purges session tokens from memory and persistent storage.
+   */
+  clearSessionTokens(): void {
+    this.clearTokens()
+  }
+
   getAccessToken(): string | null {
     if (!this.accessToken) {
       try {
-        this.accessToken = localStorage.getItem(ACCESS_TOKEN_KEY)
+        this.accessToken = sanitizeToken(localStorage.getItem(ACCESS_TOKEN_KEY))
       } catch {
         this.accessToken = null
       }
@@ -34,7 +71,7 @@ class TokenStore {
   getRefreshToken(): string | null {
     if (!this.refreshToken) {
       try {
-        this.refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY)
+        this.refreshToken = sanitizeToken(localStorage.getItem(REFRESH_TOKEN_KEY))
       } catch {
         this.refreshToken = null
       }
@@ -43,13 +80,26 @@ class TokenStore {
   }
 
   setTokens(accessToken: string, refreshToken: string): void {
-    this.accessToken = accessToken
-    this.refreshToken = refreshToken
+    const cleanAccess = sanitizeToken(accessToken)
+    const cleanRefresh = sanitizeToken(refreshToken)
+
+    this.accessToken = cleanAccess
+    this.refreshToken = cleanRefresh
+
     try {
-      localStorage.setItem(ACCESS_TOKEN_KEY, accessToken)
-      localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken)
-    } catch (err) {
-      console.warn("Failed to persist auth tokens to storage", err)
+      if (cleanAccess) {
+        localStorage.setItem(ACCESS_TOKEN_KEY, cleanAccess)
+      } else {
+        localStorage.removeItem(ACCESS_TOKEN_KEY)
+      }
+
+      if (cleanRefresh) {
+        localStorage.setItem(REFRESH_TOKEN_KEY, cleanRefresh)
+      } else {
+        localStorage.removeItem(REFRESH_TOKEN_KEY)
+      }
+    } catch {
+      // Storage unavailable or quota exceeded
     }
   }
 
@@ -60,7 +110,7 @@ class TokenStore {
       localStorage.removeItem(ACCESS_TOKEN_KEY)
       localStorage.removeItem(REFRESH_TOKEN_KEY)
     } catch {
-      // Ignore cleanup error
+      // Ignore storage cleanup error
     }
   }
 

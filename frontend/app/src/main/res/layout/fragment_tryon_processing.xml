@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/vto_surface_primary">
+
+    <com.example.vtryon.core.designsystem.component.toolbar.VtoTopBar
+        android:id="@+id/processingToolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:vtoShowBack="true"
+        app:vtoTitle="Generating Look" />
+
+    <LinearLayout
+        android:id="@+id/progressContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/vto_space_xl"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/processingToolbar">
+
+        <com.example.vtryon.core.designsystem.component.feedback.VtoProgressRing
+            android:id="@+id/progressRing"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginBottom="@dimen/vto_space_lg" />
+
+        <TextView
+            android:id="@+id/tvStatusTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Processing Try-On"
+            android:textAppearance="@style/TextAppearance.VTryOn.HeadlineMedium"
+            android:textColor="@color/vto_content_primary" />
+
+        <TextView
+            android:id="@+id/tvStatusSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/vto_space_sm"
+            android:gravity="center"
+            android:lineSpacingExtra="4dp"
+            android:text="CatVTON AI diffusion model is generating your look. You may navigate away; generation continues on the server."
+            android:textAppearance="@style/TextAppearance.VTryOn.BodyMedium"
+            android:textColor="@color/vto_content_secondary" />
+
+        <TextView
+            android:id="@+id/tvJobId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/vto_space_md"
+            android:textAppearance="@style/TextAppearance.VTryOn.Caption"
+            android:textColor="@color/vto_content_tertiary"
+            tools:text="Job ID: 01jseedtryon000000000001" />
+
+        <LinearLayout
+            android:id="@+id/failureContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/vto_space_xl"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tvFailureReason"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.VTryOn.BodyMedium"
+                android:textColor="@color/vto_error"
+                tools:text="Generation encountered an unexpected issue on the server." />
+
+            <com.example.vtryon.core.designsystem.component.AppButton
+                android:id="@+id/btnRetry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vto_space_md"
+                app:btnText="Retry Generation"
+                app:btnVariant="primary" />
+
+            <com.example.vtryon.core.designsystem.component.AppButton
+                android:id="@+id/btnReturn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vto_space_sm"
+                app:btnText="Return to Studio"
+                app:btnVariant="secondary" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

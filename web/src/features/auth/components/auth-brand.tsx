@@ -1,4 +1,4 @@
-import { Logo } from "../../../components/brand/logo"
+import { Logo } from "../../../components/brand/Logo"
 
 export function AuthBrand() {
   return (

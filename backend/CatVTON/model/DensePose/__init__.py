@@ -48,7 +48,6 @@ class DensePose:
         cfg.merge_from_file(self.config_path)
         cfg.merge_from_list(opts)
         cfg.MODEL.WEIGHTS = self.model_path
-        cfg.MODEL.DEVICE = self.device
         cfg.freeze()
         return cfg
 

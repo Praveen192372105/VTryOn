@@ -17,7 +17,7 @@ export const PasswordField = React.forwardRef<HTMLInputElement, PasswordFieldPro
 
     return (
       <div className="space-y-1.5">
-        <Label htmlFor={id} className="text-xs font-medium text-zinc-300">
+        <Label htmlFor={id} className="text-xs font-medium text-foreground">
           {label}
         </Label>
         <div className="relative">
@@ -28,8 +28,8 @@ export const PasswordField = React.forwardRef<HTMLInputElement, PasswordFieldPro
             aria-invalid={!!error}
             aria-describedby={error ? `${id}-error` : helperText ? `${id}-helper` : undefined}
             className={cn(
-              "bg-zinc-950/80 border-zinc-800 text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-500 h-11 pr-12 text-sm",
-              error && "border-red-500/80 focus:border-red-500 focus:ring-red-500/20",
+              "bg-surface-subtle border-border text-foreground placeholder:text-muted-foreground focus:border-ring h-11 pr-12 text-sm",
+              error && "border-danger/80 focus:border-danger focus:ring-danger/20",
               className
             )}
             {...props}
@@ -38,21 +38,21 @@ export const PasswordField = React.forwardRef<HTMLInputElement, PasswordFieldPro
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
             aria-label={showPassword ? "Hide password" : "Show password"}
-            className="absolute right-0 top-0 h-full w-11 flex items-center justify-center text-zinc-400 hover:text-zinc-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 rounded-r-md"
+            className="absolute right-0 top-0 h-full w-11 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-r-md cursor-pointer"
           >
             <HugeiconsIcon
               icon={showPassword ? ViewOffIcon : ViewIcon}
-              className="w-4 h-4"
+              className="size-4"
             />
           </button>
         </div>
         {helperText && !error && (
-          <p id={`${id}-helper`} className="text-[11px] text-zinc-500 font-mono">
+          <p id={`${id}-helper`} className="text-[11px] text-muted-foreground font-mono">
             {helperText}
           </p>
         )}
         {error && (
-          <p id={`${id}-error`} className="text-xs text-red-400">
+          <p id={`${id}-error`} className="text-xs text-danger">
             {error}
           </p>
         )}

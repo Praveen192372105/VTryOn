@@ -5,7 +5,8 @@ import logging
 import re
 import sys
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
+from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field, field_validator
 from PIL import Image
 
@@ -54,16 +55,27 @@ class SeedOutfitManifestItem(BaseModel):
 
 
 def ensure_sample_media(storage_key: str) -> None:
-    """Ensure a minimal valid JPEG exists at storage_key in local storage for development."""
+    """Ensure authentic garment media asset exists at storage_key in local storage."""
     target_path = Path(default_storage.resolve_path(storage_key))
+    filename = Path(storage_key).name
+    source_asset = PROJECT_ROOT / "scripts" / "data" / "samples" / filename
+
+    if source_asset.exists():
+        target_path.parent.mkdir(parents=True, exist_ok=True)
+        if not target_path.exists() or target_path.stat().st_size < 5000:
+            import shutil
+            shutil.copyfile(source_asset, target_path)
+            logger.info(f"Copied realistic garment media asset to '{storage_key}' ({target_path.stat().st_size} bytes)")
+        return
+
     if not target_path.exists():
         target_path.parent.mkdir(parents=True, exist_ok=True)
-        # Create a simple 256x256 test image
+        # Create a simple 256x256 test image as fallback
         img = Image.new("RGB", (256, 256), color=(220, 225, 230))
         out_buf = io.BytesIO()
         img.save(out_buf, format="JPEG", quality=90)
         target_path.write_bytes(out_buf.getvalue())
-        logger.info(f"Generated local sample media asset at '{storage_key}'")
+        logger.info(f"Generated fallback sample media asset at '{storage_key}'")
 
 
 def load_and_validate_manifest(manifest_path: Path) -> List[SeedOutfitManifestItem]:

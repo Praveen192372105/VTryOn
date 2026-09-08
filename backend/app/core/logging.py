@@ -52,11 +52,63 @@ def redact_sensitive_data(data: Any) -> Any:
     return data
 
 
+STATUS_COLORS = {
+    "2": "\033[1;32m",  # 2xx: Bold Green (200, 201, 204)
+    "3": "\033[1;36m",  # 3xx: Bold Cyan (301, 302, 304, 307)
+    "4": "\033[1;33m",  # 4xx: Bold Yellow (400, 401, 403, 404, 422, 429)
+    "5": "\033[1;31m",  # 5xx: Bold Red (500, 502, 503)
+}
+METHOD_COLORS = {
+    "GET": "\033[1;34m",     # Bold Blue
+    "POST": "\033[1;32m",    # Bold Green
+    "PUT": "\033[1;35m",     # Bold Magenta
+    "PATCH": "\033[1;35m",   # Bold Magenta
+    "DELETE": "\033[1;31m",  # Bold Red
+    "OPTIONS": "\033[1;36m", # Bold Cyan
+    "HEAD": "\033[1;36m",    # Bold Cyan
+}
+COLOR_RESET = "\033[0m"
+
+
+def format_colored_status(status_code: Any) -> str:
+    """Returns ANSI colorized status code string."""
+    code_str = str(status_code)
+    prefix = code_str[:1]
+    color = STATUS_COLORS.get(prefix, "\033[1;37m")
+    return f"{color}{code_str}{COLOR_RESET}"
+
+
+def format_colored_method(method: str) -> str:
+    """Returns ANSI colorized HTTP method string."""
+    m = method.upper()
+    color = METHOD_COLORS.get(m, "\033[1;37m")
+    return f"{color}{m}{COLOR_RESET}"
+
+
+def _enable_windows_ansi() -> None:
+    """Enable VT100 virtual terminal processing on Windows terminals."""
+    if sys.platform == "win32":
+        try:
+            import ctypes
+            kernel32 = ctypes.windll.kernel32
+            handle = kernel32.GetStdHandle(-11)  # STD_OUTPUT_HANDLE
+            mode = ctypes.c_ulong()
+            if kernel32.GetConsoleMode(handle, ctypes.byref(mode)):
+                kernel32.SetConsoleMode(handle, mode.value | 0x0004)  # ENABLE_VIRTUAL_TERMINAL_PROCESSING
+        except Exception:
+            pass
+
+
 class JSONFormatter(logging.Formatter):
     """
     Format log records as structured JSON dictionaries for production observability.
     Applies automatic redaction of sensitive credentials, tokens, and authorization headers.
+    Optionally colorizes HTTP status codes and methods for interactive console display.
     """
+    def __init__(self, datefmt: Optional[str] = None, colorize: bool = True):
+        super().__init__(datefmt=datefmt)
+        self.colorize = colorize
+
     def format(self, record: logging.LogRecord) -> str:
         safe_message = redact_sensitive_text(record.getMessage())
         log_obj: Dict[str, Any] = {
@@ -91,24 +143,47 @@ class JSONFormatter(logging.Formatter):
             raw_exc = self.formatException(record.exc_info)
             log_obj["exception"] = redact_sensitive_text(raw_exc)
 
-        return json.dumps(log_obj)
+        raw_json = json.dumps(log_obj)
+
+        if self.colorize:
+            status_code = getattr(record, "status_code", None)
+            method = getattr(record, "method", None)
+
+            if status_code is not None:
+                code_str = str(status_code)
+                colored_status = format_colored_status(status_code)
+                raw_json = raw_json.replace(f" {code_str} ", f" {colored_status} ").replace(
+                    f'"status_code": {code_str}', f'"status_code": {colored_status}'
+                )
+
+            if method and isinstance(method, str):
+                colored_method = format_colored_method(method)
+                raw_json = raw_json.replace(f"HTTP {method} ", f"HTTP {colored_method} ").replace(
+                    f'"method": "{method}"', f'"method": "{colored_method}"'
+                )
+
+        return raw_json
 
 
-def setup_logging(debug: bool = False) -> logging.Logger:
+def setup_logging(debug: bool = False, colorize: bool = True) -> logging.Logger:
     """
-    Configure root application logger with centralized redaction.
+    Configure root application logger with centralized redaction and colorized console output.
     """
+    _enable_windows_ansi()
+
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.DEBUG if debug else logging.INFO)
+
+    formatter = JSONFormatter(colorize=colorize)
 
     # Reconfigure handlers with redaction JSONFormatter
     if not root_logger.handlers:
         handler = logging.StreamHandler(sys.stdout)
-        handler.setFormatter(JSONFormatter())
+        handler.setFormatter(formatter)
         root_logger.addHandler(handler)
     else:
         for handler in root_logger.handlers:
-            handler.setFormatter(JSONFormatter())
+            handler.setFormatter(formatter)
 
     # Suppress verbose 3rd party logs
     logging.getLogger("uvicorn.access").setLevel(logging.WARNING)

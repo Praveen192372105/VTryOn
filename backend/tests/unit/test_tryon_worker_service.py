@@ -4,7 +4,8 @@ import pytest
 from PIL import Image
 from sqlalchemy.orm import Session
 
-from app.ai.catvton.exceptions import CatVTONInferenceError, CatVTONOOMError
+from app.ai.providers import GenerationMode, ProviderRegistry, TryOnProviderResult
+from app.ai.providers.types import ProviderPermanentError
 from app.core.exceptions import StorageError
 from app.domain.enums import FailureCode, OutfitCategory, TryOnJobStatus, UploadStatus
 from app.models.outfit import Outfit
@@ -15,93 +16,38 @@ from app.services.tryon_worker import TryOnWorkerService
 from app.storage.local import LocalMediaStorage
 
 
-@pytest.fixture
-def worker_setup(db_session: Session, tmp_path):
-    storage = LocalMediaStorage(root_dir=str(tmp_path))
-
-    # Create test person image on storage
-    person_img = Image.new("RGB", (768, 1024), color=(200, 200, 200))
-    person_key = "uploads/usr_01/person.jpg"
-    storage.save(person_key, person_img.tobytes(), content_type="image/jpeg")
-    # Save valid JPEG format
-    person_path = tmp_path / person_key
-    person_path.parent.mkdir(parents=True, exist_ok=True)
-    person_img.save(str(person_path), format="JPEG")
-
-    # Create test garment image on storage
-    garment_img = Image.new("RGB", (768, 1024), color=(50, 100, 150))
-    garment_key = "outfits/shirt.jpg"
-    garment_path = tmp_path / garment_key
-    garment_path.parent.mkdir(parents=True, exist_ok=True)
-    garment_img.save(str(garment_path), format="JPEG")
-
-    user = User(
-        public_id="usr_01j7q9abcde123456789012345",
-        email="workeruser@example.com",
-        name="Worker User",
-        hashed_password="hashed_pwd",
-    )
-    db_session.add(user)
-    db_session.flush()
-
-    upload = Upload(
-        public_id="upl_01j7q9abcde123456789012345",
-        user_id=user.id,
-        storage_key=person_key,
-        original_filename="person.jpg",
-        mime_type="image/jpeg",
-        size_bytes=5000,
-        status=UploadStatus.ACTIVE.value,
-    )
-    db_session.add(upload)
-
-    outfit = Outfit(
-        public_id="out_01j7q9abcde123456789012345",
-        name="Casual Linen Shirt",
-        slug="casual-linen-shirt-worker",
-        category=OutfitCategory.UPPER_BODY.value,
-        storage_key=garment_key,
-        is_active=True,
-    )
-    db_session.add(outfit)
-    db_session.flush()
-
-    job = TryOnJob(
-        public_id="job_01j7q9abcde123456789012345",
-        user_id=user.id,
-        person_upload_id=upload.id,
-        outfit_id=outfit.id,
-        status=TryOnJobStatus.QUEUED.value,
-    )
-    db_session.add(job)
-    db_session.commit()
-
-    return {
-        "user": user,
-        "upload": upload,
-        "outfit": outfit,
-        "job": job,
-        "storage": storage,
-        "tmp_path": tmp_path,
-    }
+def _create_mock_registry(generate_return=None, generate_side_effect=None):
+    mock_provider = MagicMock()
+    mock_provider.name = "catvton"
+    if generate_side_effect:
+        mock_provider.generate.side_effect = generate_side_effect
+    else:
+        res_img = generate_return or Image.new("RGB", (768, 1024), color=(255, 255, 255))
+        mock_provider.generate.return_value = TryOnProviderResult(
+            provider="catvton",
+            output_image=res_img,
+            generation_mode=GenerationMode.ACCURATE.value,
+            model="catvton-1.0-v1",
+        )
+    registry = ProviderRegistry(primary_name="catvton")
+    registry.register(mock_provider)
+    return registry, mock_provider
 
 
 def test_tryon_worker_service_success(db_session: Session, worker_setup):
     from tests.conftest import TestingSessionLocal
-    mock_pipeline = MagicMock()
-    mock_result_image = Image.new("RGB", (768, 1024), color=(255, 255, 255))
-    mock_pipeline.generate.return_value = mock_result_image
+    registry, mock_provider = _create_mock_registry()
 
     worker = TryOnWorkerService(
         storage=worker_setup["storage"],
-        pipeline=mock_pipeline,
+        registry=registry,
     )
 
     with patch("app.services.tryon_worker.SessionLocal", side_effect=TestingSessionLocal):
         success = worker.process(worker_setup["job"].public_id)
 
     assert success is True
-    mock_pipeline.generate.assert_called_once()
+    mock_provider.generate.assert_called_once()
 
     # Verify job status reached SUCCEEDED using a fresh query
     with TestingSessionLocal() as check_db:
@@ -117,10 +63,10 @@ def test_tryon_worker_service_idempotency_on_succeeded_job(db_session: Session, 
     worker_setup["job"].status = TryOnJobStatus.SUCCEEDED.value
     db_session.commit()
 
-    mock_pipeline = MagicMock()
+    registry, mock_provider = _create_mock_registry()
     worker = TryOnWorkerService(
         storage=worker_setup["storage"],
-        pipeline=mock_pipeline,
+        registry=registry,
     )
 
     with patch("app.services.tryon_worker.SessionLocal", side_effect=TestingSessionLocal):
@@ -128,7 +74,7 @@ def test_tryon_worker_service_idempotency_on_succeeded_job(db_session: Session, 
 
     assert success is True
     # Asserts that inference was NOT executed for already succeeded job
-    mock_pipeline.generate.assert_not_called()
+    mock_provider.generate.assert_not_called()
 
 
 def test_tryon_worker_service_idempotency_on_failed_job(db_session: Session, worker_setup):
@@ -136,10 +82,10 @@ def test_tryon_worker_service_idempotency_on_failed_job(db_session: Session, wor
     worker_setup["job"].status = TryOnJobStatus.FAILED.value
     db_session.commit()
 
-    mock_pipeline = MagicMock()
+    registry, mock_provider = _create_mock_registry()
     worker = TryOnWorkerService(
         storage=worker_setup["storage"],
-        pipeline=mock_pipeline,
+        registry=registry,
     )
 
     with patch("app.services.tryon_worker.SessionLocal", side_effect=TestingSessionLocal):
@@ -147,17 +93,18 @@ def test_tryon_worker_service_idempotency_on_failed_job(db_session: Session, wor
 
     assert success is False
     # Asserts that inference was NOT executed for already failed job
-    mock_pipeline.generate.assert_not_called()
+    mock_provider.generate.assert_not_called()
 
 
-def test_tryon_worker_service_oom_failure(db_session: Session, worker_setup):
+def test_tryon_worker_service_provider_failure(db_session: Session, worker_setup):
     from tests.conftest import TestingSessionLocal
-    mock_pipeline = MagicMock()
-    mock_pipeline.generate.side_effect = CatVTONOOMError("CUDA out of memory during backward pass.")
+    registry, mock_provider = _create_mock_registry(
+        generate_side_effect=ProviderPermanentError("Model synthesis failed permanently.", provider="catvton")
+    )
 
     worker = TryOnWorkerService(
         storage=worker_setup["storage"],
-        pipeline=mock_pipeline,
+        registry=registry,
     )
 
     with patch("app.services.tryon_worker.SessionLocal", side_effect=TestingSessionLocal):
@@ -168,7 +115,7 @@ def test_tryon_worker_service_oom_failure(db_session: Session, worker_setup):
         from app.repositories.tryon_repository import TryOnRepository
         refreshed_job = TryOnRepository(check_db).get_by_public_id(worker_setup["job"].public_id)
         assert refreshed_job.status == TryOnJobStatus.FAILED.value
-        assert refreshed_job.failure_code == FailureCode.GPU_OUT_OF_MEMORY.value
+        assert refreshed_job.failure_code == FailureCode.INFERENCE_FAILED.value
 
 
 def test_tryon_worker_service_missing_input_media(db_session: Session, worker_setup):
@@ -177,9 +124,10 @@ def test_tryon_worker_service_missing_input_media(db_session: Session, worker_se
     garment_path = worker_setup["tmp_path"] / "outfits" / "shirt.jpg"
     garment_path.unlink(missing_ok=True)
 
+    registry, mock_provider = _create_mock_registry()
     worker = TryOnWorkerService(
         storage=worker_setup["storage"],
-        pipeline=MagicMock(),
+        registry=registry,
     )
 
     with patch("app.services.tryon_worker.SessionLocal", side_effect=TestingSessionLocal):
@@ -195,12 +143,11 @@ def test_tryon_worker_service_missing_input_media(db_session: Session, worker_se
 
 def test_tryon_worker_service_storage_compensation_on_db_failure(db_session: Session, worker_setup):
     from tests.conftest import TestingSessionLocal
-    mock_pipeline = MagicMock()
-    mock_pipeline.generate.return_value = Image.new("RGB", (768, 1024), color=(255, 255, 255))
+    registry, mock_provider = _create_mock_registry()
 
     worker = TryOnWorkerService(
         storage=worker_setup["storage"],
-        pipeline=mock_pipeline,
+        registry=registry,
     )
 
     # Make Session B commit fail
@@ -223,3 +170,30 @@ def test_tryon_worker_service_storage_compensation_on_db_failure(db_session: Ses
     # Verify compensation deleted any saved result from storage
     expected_result_key = f"results/{worker_setup['user'].public_id}/{worker_setup['job'].public_id}/result.jpg"
     assert worker_setup["storage"].exists(expected_result_key) is False
+
+
+def test_tryon_worker_service_handles_stale_processing_delivery(db_session: Session, worker_setup):
+    from tests.conftest import TestingSessionLocal
+    # Simulate a job that was left in PROCESSING when a previous worker process died
+    worker_setup["job"].status = TryOnJobStatus.PROCESSING.value
+    db_session.commit()
+
+    registry, mock_provider = _create_mock_registry()
+    worker = TryOnWorkerService(
+        storage=worker_setup["storage"],
+        registry=registry,
+    )
+
+    with patch("app.services.tryon_worker.SessionLocal", side_effect=TestingSessionLocal):
+        # Delivery with retry_count=0 represents a worker restart redelivery
+        success = worker.process(worker_setup["job"].public_id, retry_count=0)
+
+    assert success is False
+    mock_provider.generate.assert_not_called()
+
+    # Verify that the orphaned job was cleanly transitioned to FAILED in the DB
+    with TestingSessionLocal() as check_db:
+        from app.repositories.tryon_repository import TryOnRepository
+        refreshed_job = TryOnRepository(check_db).get_by_public_id(worker_setup["job"].public_id)
+        assert refreshed_job.status == TryOnJobStatus.FAILED.value
+        assert refreshed_job.failure_code == FailureCode.WORKER_FAILURE.value

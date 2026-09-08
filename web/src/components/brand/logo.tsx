@@ -22,16 +22,16 @@ export function Logo({
 }: LogoProps) {
   const content = (
     <div className={cn("inline-flex items-center gap-2.5 select-none", className)}>
-      <div className="w-8 h-8 rounded-lg bg-zinc-950 border border-zinc-800/80 flex items-center justify-center text-white shadow-sm shrink-0">
-        <LogoMark size={size} className="text-zinc-100" decorative={true} />
+      <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground border border-border flex items-center justify-center shadow-xs shrink-0">
+        <LogoMark size={size} className="text-primary-foreground" decorative={true} />
       </div>
       {showWordmark && (
-        <div className="flex flex-col">
-          <span className="text-base font-medium tracking-tight text-white leading-none">
+        <div className="flex flex-col group-data-[collapsible=icon]:hidden">
+          <span className="text-base font-medium tracking-tight text-foreground leading-none">
             V Try-On
           </span>
           {showTagline && (
-            <span className="text-[10px] tracking-widest text-zinc-400 uppercase font-mono mt-1">
+            <span className="text-[10px] tracking-widest text-muted-foreground uppercase font-mono mt-1">
               Studio
             </span>
           )}
@@ -44,7 +44,7 @@ export function Logo({
     return (
       <Link
         to={ROUTES.home}
-        className="hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 rounded-md"
+        className="hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md"
         aria-label={`Return to ${title} home`}
       >
         {content}
@@ -58,19 +58,10 @@ export function Logo({
 // Re-export BrandMark for backward compatibility
 export function BrandMark({
   className,
-  size = 24,
+  size = 28,
 }: {
   className?: string
   size?: number | string
 }) {
-  return (
-    <div
-      className={cn(
-        "w-8 h-8 rounded-lg bg-zinc-950 border border-zinc-800/80 flex items-center justify-center text-white shadow-sm shrink-0",
-        className
-      )}
-    >
-      <LogoMark size={size} className="text-zinc-100" decorative={true} />
-    </div>
-  )
+  return <LogoMark className={className} size={size} />
 }

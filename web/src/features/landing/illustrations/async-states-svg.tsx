@@ -2,7 +2,7 @@ import { motion } from "motion/react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Clock01Icon,
-  SparklesIcon,
+  Loading03Icon,
   Tick01Icon,
   AlertCircleIcon,
 } from "@hugeicons/core-free-icons"
@@ -25,7 +25,7 @@ export function AsyncStatesSvg() {
       id: "creating",
       title: "Creating your look",
       desc: "Diffusion synthesis runs. Vector scanning occurs without fabricating artificial 47% percentages.",
-      icon: SparklesIcon,
+      icon: Loading03Icon,
       badge: "PROCESSING",
       activeBorder: "border-zinc-500",
       anim: "scan",

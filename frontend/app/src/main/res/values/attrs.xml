@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- AppLogoView attributes -->
+    <declare-styleable name="AppLogoView">
+        <attr name="logoColor" format="color" />
+        <attr name="logoSize" format="dimension" />
+        <attr name="logoDecorative" format="boolean" />
+        <attr name="logoTitle" format="string" />
+    </declare-styleable>
+
+    <!-- AppIconView attributes -->
+    <declare-styleable name="AppIconView">
+        <attr name="appIconSize" format="enum">
+            <enum name="xs" value="0" />
+            <enum name="sm" value="1" />
+            <enum name="md" value="2" />
+            <enum name="lg" value="3" />
+            <enum name="xl" value="4" />
+        </attr>
+        <attr name="appIconStyle" format="enum">
+            <enum name="primary" value="0" />
+            <enum name="secondary" value="1" />
+            <enum name="tertiary" value="2" />
+            <enum name="inverse" value="3" />
+            <enum name="error" value="4" />
+            <enum name="success" value="5" />
+            <enum name="none" value="6" />
+        </attr>
+        <attr name="appIconSrc" format="reference" />
+    </declare-styleable>
+
+    <!-- AppButton attributes -->
+    <declare-styleable name="AppButton">
+        <attr name="btnVariant" format="enum">
+            <enum name="primary" value="0" />
+            <enum name="secondary" value="1" />
+            <enum name="ghost" value="2" />
+            <enum name="danger" value="3" />
+            <enum name="icon" value="4" />
+        </attr>
+        <attr name="btnSize" format="enum">
+            <enum name="sm" value="0" />
+            <enum name="md" value="1" />
+            <enum name="lg" value="2" />
+        </attr>
+        <attr name="btnText" format="string" />
+        <attr name="btnLeadingIcon" format="reference" />
+        <attr name="btnTrailingIcon" format="reference" />
+        <attr name="btnLoading" format="boolean" />
+    </declare-styleable>
+
+    <!-- AppTextInput attributes -->
+    <declare-styleable name="AppTextInput">
+        <attr name="inputLabel" format="string" />
+        <attr name="inputHint" format="string" />
+        <attr name="inputError" format="string" />
+        <attr name="inputLeadingIcon" format="reference" />
+        <attr name="inputTrailingIcon" format="reference" />
+        <attr name="inputIsPassword" format="boolean" />
+    </declare-styleable>
+
+    <!-- AppToolbar attributes -->
+    <declare-styleable name="AppToolbar">
+        <attr name="toolbarTitle" format="string" />
+        <attr name="toolbarSubtitle" format="string" />
+        <attr name="toolbarShowBack" format="boolean" />
+        <attr name="toolbarShowLogo" format="boolean" />
+        <attr name="toolbarActionIcon" format="reference" />
+    </declare-styleable>
+
+    <!-- MediaSurfaceView attributes -->
+    <declare-styleable name="MediaSurfaceView">
+        <attr name="mediaAspectRatio" format="enum">
+            <enum name="square" value="0" />
+            <enum name="portrait" value="1" />
+            <enum name="cinematic" value="2" />
+        </attr>
+        <attr name="mediaCornerRadius" format="dimension" />
+    </declare-styleable>
+
+    <!-- AppEmptyStateView attributes -->
+    <declare-styleable name="AppEmptyStateView">
+        <attr name="emptyIcon" format="reference" />
+        <attr name="emptyTitle" format="string" />
+        <attr name="emptyDescription" format="string" />
+        <attr name="emptyActionText" format="string" />
+    </declare-styleable>
+
+    <!-- AppErrorView attributes -->
+    <declare-styleable name="AppErrorView">
+        <attr name="errorTitle" format="string" />
+        <attr name="errorMessage" format="string" />
+        <attr name="errorRetryText" format="string" />
+    </declare-styleable>
+
+    <!-- VtoIconView attributes -->
+    <declare-styleable name="VtoIconView">
+        <attr name="vtoIconSize" format="enum">
+            <enum name="xs" value="0" />
+            <enum name="sm" value="1" />
+            <enum name="md" value="2" />
+            <enum name="lg" value="3" />
+            <enum name="xl" value="4" />
+        </attr>
+        <attr name="vtoIconTone" format="enum">
+            <enum name="primary" value="0" />
+            <enum name="secondary" value="1" />
+            <enum name="tertiary" value="2" />
+            <enum name="inverse" value="3" />
+            <enum name="error" value="4" />
+            <enum name="success" value="5" />
+            <enum name="none" value="6" />
+        </attr>
+        <attr name="vtoIconSrc" format="reference" />
+    </declare-styleable>
+
+    <!-- VtoPrimaryButton attributes -->
+    <declare-styleable name="VtoPrimaryButton">
+        <attr name="vtoText" format="string" />
+        <attr name="vtoLeadingIcon" format="reference" />
+        <attr name="vtoTrailingIcon" format="reference" />
+        <attr name="vtoLoading" format="boolean" />
+        <attr name="vtoButtonSize" format="enum">
+            <enum name="sm" value="0" />
+            <enum name="md" value="1" />
+            <enum name="lg" value="2" />
+        </attr>
+    </declare-styleable>
+
+    <!-- VtoSecondaryButton attributes -->
+    <declare-styleable name="VtoSecondaryButton">
+        <attr name="vtoText" />
+        <attr name="vtoLeadingIcon" />
+        <attr name="vtoTrailingIcon" />
+        <attr name="vtoLoading" />
+        <attr name="vtoButtonSize" />
+    </declare-styleable>
+
+    <!-- VtoIconButton attributes -->
+    <declare-styleable name="VtoIconButton">
+        <attr name="vtoIcon" format="reference" />
+        <attr name="vtoIconTone" />
+        <attr name="vtoIconVariant" format="enum">
+            <enum name="standard" value="0" />
+            <enum name="quiet" value="1" />
+            <enum name="floating" value="2" />
+            <enum name="inverseOnMedia" value="3" />
+            <enum name="destructive" value="4" />
+        </attr>
+        <attr name="vtoContentDescription" format="string" />
+    </declare-styleable>
+
+    <!-- VtoTextField attributes -->
+    <declare-styleable name="VtoTextField">
+        <attr name="vtoLabel" format="string" />
+        <attr name="vtoHint" format="string" />
+        <attr name="vtoError" format="string" />
+        <attr name="vtoLeadingIcon" />
+        <attr name="vtoTrailingIcon" />
+        <attr name="vtoIsPassword" format="boolean" />
+        <attr name="vtoHelperText" format="string" />
+    </declare-styleable>
+
+    <!-- VtoSearchField attributes -->
+    <declare-styleable name="VtoSearchField">
+        <attr name="vtoSearchHint" format="string" />
+    </declare-styleable>
+
+    <!-- VtoTopBar attributes -->
+    <declare-styleable name="VtoTopBar">
+        <attr name="vtoTitle" format="string" />
+        <attr name="vtoSubtitle" format="string" />
+        <attr name="vtoShowBack" format="boolean" />
+        <attr name="vtoShowLogo" format="boolean" />
+        <attr name="vtoActionIcon" format="reference" />
+    </declare-styleable>
+
+    <!-- VtoCard attributes -->
+    <declare-styleable name="VtoCard">
+        <attr name="vtoCornerRadius" format="dimension" />
+        <attr name="vtoBorderWidth" format="dimension" />
+        <attr name="vtoBorderColor" format="color" />
+        <attr name="vtoSurfaceColor" format="color" />
+    </declare-styleable>
+
+    <!-- VtoImageCard attributes -->
+    <declare-styleable name="VtoImageCard">
+        <attr name="vtoAspectRatio" format="enum">
+            <enum name="square" value="0" />
+            <enum name="portrait" value="1" />
+            <enum name="cinematic" value="2" />
+        </attr>
+        <attr name="vtoCornerRadius" />
+        <attr name="vtoSelected" format="boolean" />
+    </declare-styleable>
+
+    <!-- VtoChip attributes -->
+    <declare-styleable name="VtoChip">
+        <attr name="vtoChipText" format="string" />
+        <attr name="vtoChipSelected" format="boolean" />
+    </declare-styleable>
+
+    <!-- VtoProgressRing attributes -->
+    <declare-styleable name="VtoProgressRing">
+        <attr name="vtoRingSize" format="dimension" />
+        <attr name="vtoRingColor" format="color" />
+        <attr name="vtoRingStrokeWidth" format="dimension" />
+    </declare-styleable>
+
+    <!-- VtoSkeleton attributes -->
+    <declare-styleable name="VtoSkeleton">
+        <attr name="vtoSkeletonCornerRadius" format="dimension" />
+    </declare-styleable>
+
+    <!-- VtoEmptyState attributes -->
+    <declare-styleable name="VtoEmptyState">
+        <attr name="vtoEmptyIcon" format="reference" />
+        <attr name="vtoEmptyTitle" format="string" />
+        <attr name="vtoEmptyDescription" format="string" />
+        <attr name="vtoEmptyActionText" format="string" />
+    </declare-styleable>
+
+    <!-- VtoImageCompare attributes -->
+    <declare-styleable name="VtoImageCompare">
+        <attr name="vtoDividerPosition" format="float" />
+    </declare-styleable>
+</resources>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tablet SW600dp Adaptations -->
+    <dimen name="vto_screen_padding_horizontal">32dp</dimen>
+    <dimen name="vto_screen_padding_vertical">24dp</dimen>
+    <dimen name="vto_card_padding">24dp</dimen>
+
+    <!-- Tablet toolbar & split pane tokens -->
+    <dimen name="vto_toolbar_height">64dp</dimen>
+    <dimen name="vto_split_pane_master_width">360dp</dimen>
+
+    <!-- Compatibility tokens -->
+    <dimen name="screen_padding_horizontal">@dimen/vto_screen_padding_horizontal</dimen>
+    <dimen name="screen_padding_vertical">@dimen/vto_screen_padding_vertical</dimen>
+    <dimen name="card_padding">@dimen/vto_card_padding</dimen>
+    <dimen name="toolbar_height">@dimen/vto_toolbar_height</dimen>
+    <dimen name="split_pane_master_width">@dimen/vto_split_pane_master_width</dimen>
+</resources>

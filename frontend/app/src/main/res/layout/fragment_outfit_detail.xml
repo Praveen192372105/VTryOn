@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/vto_surface_primary">
+
+    <com.example.vtryon.core.designsystem.component.toolbar.VtoTopBar
+        android:id="@+id/detailToolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:vtoShowBack="true"
+        app:vtoTitle="Outfit Details" />
+
+    <ScrollView
+        android:id="@+id/contentScroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@id/bottomActionContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/detailToolbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/vto_space_md"
+            android:paddingVertical="@dimen/vto_space_sm">
+
+            <com.example.vtryon.core.designsystem.component.MediaSurfaceView
+                android:id="@+id/ivOutfitImage"
+                android:layout_width="match_parent"
+                android:layout_height="320dp"
+                android:layout_marginBottom="@dimen/vto_space_md"
+                app:mediaCornerRadius="@dimen/vto_radius_lg" />
+
+            <TextView
+                android:id="@+id/tvOutfitName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.VTryOn.HeadlineMedium"
+                android:textColor="@color/vto_content_primary"
+                tools:text="Classic Denim Jacket" />
+
+            <TextView
+                android:id="@+id/tvOutfitCategory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vto_space_xs"
+                android:textAppearance="@style/TextAppearance.VTryOn.BodySmall"
+                android:textColor="@color/vto_content_secondary"
+                tools:text="Upper Body" />
+
+            <TextView
+                android:id="@+id/tvOutfitDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vto_space_sm"
+                android:lineSpacingExtra="4dp"
+                android:textAppearance="@style/TextAppearance.VTryOn.BodyMedium"
+                android:textColor="@color/vto_content_secondary"
+                tools:text="Premium quality casual garment crafted for virtual try-on with high-fidelity texture reproduction." />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <FrameLayout
+        android:id="@+id/bottomActionContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/vto_surface_secondary"
+        android:paddingHorizontal="@dimen/vto_space_md"
+        android:paddingVertical="@dimen/vto_space_sm"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.example.vtryon.core.designsystem.component.AppButton
+            android:id="@+id/btnTryThisOutfit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:btnText="Try this outfit"
+            app:btnVariant="primary" />
+    </FrameLayout>
+
+    <com.example.vtryon.core.designsystem.component.feedback.VtoProgressRing
+        android:id="@+id/loadingIndicator"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

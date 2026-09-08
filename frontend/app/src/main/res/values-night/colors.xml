@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- VTO Design System Tokens (Dark Theme: Monochrome Editorial) -->
+    <color name="vto_background">#FF09090B</color>
+    <color name="vto_surface_primary">#FF121214</color>
+    <color name="vto_surface_secondary">#FF18181B</color>
+    <color name="vto_surface_elevated">#FF27272A</color>
+    <color name="vto_surface_pressed">#FF27272A</color>
+    <color name="vto_surface_subtle">#FF18181B</color>
+
+    <color name="vto_content_primary">#FFFAFAFA</color>
+    <color name="vto_content_secondary">#FFA1A1AA</color>
+    <color name="vto_content_tertiary">#FF71717A</color>
+    <color name="vto_content_inverse">#FF09090B</color>
+    <color name="vto_content_disabled">#FF52525B</color>
+
+    <color name="vto_border_subtle">#FF18181B</color>
+    <color name="vto_border_default">#FF27272A</color>
+    <color name="vto_border_strong">#FF3F3F46</color>
+    <color name="vto_border_focus">#FFFAFAFA</color>
+
+    <color name="vto_control_primary">#FFFAFAFA</color>
+    <color name="vto_control_primary_content">#FF09090B</color>
+    <color name="vto_control_disabled">#FF27272A</color>
+
+    <color name="vto_overlay_scrim">#B3000000</color>
+    <color name="vto_skeleton">#FF27272A</color>
+
+    <color name="vto_error">#FFF43F5E</color>
+    <color name="vto_warning">#FFFBBF24</color>
+    <color name="vto_success">#FF34D399</color>
+
+    <!-- Legacy / Compatibility Tokens (Dark) -->
+    <color name="surface_primary">@color/vto_surface_primary</color>
+    <color name="surface_secondary">@color/vto_surface_secondary</color>
+    <color name="surface_elevated">@color/vto_surface_elevated</color>
+    <color name="surface_subtle">@color/vto_surface_subtle</color>
+
+    <!-- Content (Typography / Icons) -->
+    <color name="content_primary">@color/vto_content_primary</color>
+    <color name="content_secondary">@color/vto_content_secondary</color>
+    <color name="content_tertiary">@color/vto_content_tertiary</color>
+    <color name="content_inverse">@color/vto_content_inverse</color>
+    <color name="content_disabled">@color/vto_content_disabled</color>
+    <color name="text_primary">@color/content_primary</color>
+    <color name="text_secondary">@color/content_secondary</color>
+    <color name="text_tertiary">@color/content_tertiary</color>
+
+    <!-- Borders -->
+    <color name="border_subtle">#FF18181B</color>
+    <color name="border_default">#FF27272A</color>
+    <color name="border_strong">#FF3F3F46</color>
+
+    <!-- Controls / Interactive -->
+    <color name="control_primary">#FFFAFAFA</color>
+    <color name="control_primary_content">#FF09090B</color>
+    <color name="control_disabled">#FF27272A</color>
+
+    <!-- Button states (Dark) -->
+    <color name="btn_primary_bg">#FFFAFAFA</color>
+    <color name="btn_primary_pressed">#FFE4E4E7</color>
+    <color name="btn_primary_text">#FF09090B</color>
+
+    <color name="btn_secondary_bg">#FF18181B</color>
+    <color name="btn_secondary_pressed">#FF27272A</color>
+    <color name="btn_secondary_text">#FFFAFAFA</color>
+
+    <color name="btn_ghost_bg">#00000000</color>
+    <color name="btn_ghost_pressed">#1AFFFFFF</color>
+    <color name="btn_ghost_text">#FFFAFAFA</color>
+
+    <color name="btn_danger_bg">#FFE11D48</color>
+    <color name="btn_danger_pressed">#FF9F1239</color>
+    <color name="btn_danger_text">#FFFFFFFF</color>
+
+    <!-- Input states (Dark) -->
+    <color name="input_bg">#FF18181B</color>
+    <color name="input_border_default">#FF27272A</color>
+    <color name="input_border_focused">#FFFAFAFA</color>
+    <color name="input_border_error">#FFE11D48</color>
+    <color name="input_text">#FFFAFAFA</color>
+    <color name="input_placeholder">#FF71717A</color>
+
+    <!-- Overlays / Scrims -->
+    <color name="overlay_scrim">#B3000000</color>
+    <color name="skeleton_shimmer">#FF27272A</color>
+
+    <!-- Restrained Status Colors -->
+    <color name="state_success">#FF34D399</color>
+    <color name="state_warning">#FFFBBF24</color>
+    <color name="state_error">#FFF43F5E</color>
+    <color name="state_info">#FF60A5FA</color>
+
+    <!-- Brand Logo compatibility -->
+    <color name="brand_foreground">#FFFAFAFA</color>
+    <color name="brand_background">#FF09090B</color>
+    <color name="brand_surface">#FF18181B</color>
+    <color name="brand_surface_subtle">#FF121214</color>
+    <color name="brand_border">#FF27272A</color>
+    <color name="brand_muted">#FFA1A1AA</color>
+</resources>

@@ -4,7 +4,12 @@ import pytest
 from PIL import Image
 from sqlalchemy.orm import Session
 
-from app.ai.catvton.exceptions import CatVTONInvalidInputError, CatVTONOutOfMemoryError
+from app.ai.providers import ProviderRegistry
+from app.ai.providers.types import (
+    ProviderInvalidInputError,
+    ProviderRateLimitError,
+    ProviderTransientError,
+)
 from app.core.exceptions import InvalidImageError, StorageError
 from app.domain.enums import FailureCode, OutfitCategory, TryOnJobStatus, UploadStatus
 from app.models.outfit import Outfit
@@ -91,15 +96,15 @@ def test_failure_classification_retry_rules():
     assert c_person.max_retries == 0
     assert c_person.code == FailureCode.INVALID_PERSON_IMAGE
 
-    c_cat = classify_failure(ValueError("Unsupported garment category"))
-    assert c_cat.retryable is False
-    assert c_cat.code == FailureCode.UNSUPPORTED_OUTFIT_CATEGORY
+    c_input = classify_failure(ProviderInvalidInputError("Invalid input photo."))
+    assert c_input.retryable is False
+    assert c_input.code == FailureCode.INVALID_PERSON_IMAGE
 
-    # Conditionally Retryable: OOM
-    c_oom = classify_failure(CatVTONOutOfMemoryError("CUDA out of memory"))
-    assert c_oom.retryable is True
-    assert c_oom.max_retries == 1
-    assert c_oom.code == FailureCode.GPU_OUT_OF_MEMORY
+    # Conditionally Retryable: Transient API timeout
+    c_transient = classify_failure(ProviderTransientError("Mistral API network timeout."))
+    assert c_transient.retryable is True
+    assert c_transient.max_retries == 2
+    assert c_transient.code == FailureCode.INFERENCE_FAILED
 
     # Conditionally Retryable: Storage
     c_storage = classify_failure(StorageError("Disk write error"))
@@ -108,49 +113,52 @@ def test_failure_classification_retry_rules():
     assert c_storage.code == FailureCode.STORAGE_WRITE_FAILED
 
 
-def test_worker_service_raises_retryable_error_on_first_oom(retry_test_setup):
-    """When OOM occurs on attempt 0 (first run), worker raises RetryableTryOnWorkerError."""
+def test_worker_service_raises_retryable_error_on_transient_error(retry_test_setup):
+    """When transient error occurs on attempt 0 (first run), worker raises RetryableTryOnWorkerError."""
     from tests.conftest import TestingSessionLocal
-    mock_pipeline = MagicMock()
-    mock_pipeline.generate.side_effect = CatVTONOutOfMemoryError("CUDA OOM")
+    mock_provider = MagicMock()
+    mock_provider.name = "mistral"
+    mock_provider.generate.side_effect = ProviderTransientError("Mistral network timeout")
+
+    registry = ProviderRegistry(primary_name="mistral")
+    registry.register(mock_provider)
 
     worker = TryOnWorkerService(
         storage=retry_test_setup["storage"],
-        pipeline=mock_pipeline,
+        registry=registry,
     )
 
     with patch("app.services.tryon_worker.SessionLocal", side_effect=TestingSessionLocal):
         with pytest.raises(RetryableTryOnWorkerError) as exc_info:
             worker.process(
                 job_public_id=retry_test_setup["job"].public_id,
-                retry_count=0,  # First attempt
+                retry_count=0,
                 raise_on_retry=True,
             )
 
-    assert exc_info.value.code == FailureCode.GPU_OUT_OF_MEMORY
-    assert exc_info.value.max_retries == 1
+    assert exc_info.value.code == FailureCode.INFERENCE_FAILED
+    assert exc_info.value.max_retries == 2
 
 
-def test_worker_service_persists_failed_on_oom_exhaustion(retry_test_setup):
-    """When OOM occurs and retry_count >= max_retries, worker marks job FAILED."""
+def test_worker_service_persists_failed_on_retry_exhaustion(retry_test_setup):
+    """When error occurs and retry_count >= max_retries, worker marks job FAILED."""
     from tests.conftest import TestingSessionLocal
-    mock_pipeline = MagicMock()
-    mock_pipeline.generate.side_effect = CatVTONOutOfMemoryError("CUDA OOM")
+    mock_provider = MagicMock()
+    mock_provider.name = "mistral"
+    mock_provider.generate.side_effect = ProviderTransientError("Mistral network timeout")
+
+    registry = ProviderRegistry(primary_name="mistral")
+    registry.register(mock_provider)
 
     worker = TryOnWorkerService(
         storage=retry_test_setup["storage"],
-        pipeline=mock_pipeline,
+        registry=registry,
     )
-
-    # First claim the job to PROCESSING state
-    with TestingSessionLocal() as db:
-        from app.repositories.tryon_repository import TryOnRepository
-        TryOnRepository(db).claim_queued_job(retry_test_setup["job"].public_id)
 
     with patch("app.services.tryon_worker.SessionLocal", side_effect=TestingSessionLocal):
         success = worker.process(
             job_public_id=retry_test_setup["job"].public_id,
-            retry_count=1,  # Retried attempt (exhausted for OOM max_retries=1)
+            retry_count=2,  # Retried attempt (exhausted for max_retries=2)
         )
 
     assert success is False
@@ -158,4 +166,4 @@ def test_worker_service_persists_failed_on_oom_exhaustion(retry_test_setup):
         from app.repositories.tryon_repository import TryOnRepository
         refreshed = TryOnRepository(check_db).get_by_public_id(retry_test_setup["job"].public_id)
         assert refreshed.status == TryOnJobStatus.FAILED.value
-        assert refreshed.error_code == FailureCode.GPU_OUT_OF_MEMORY.value
+        assert refreshed.error_code == FailureCode.INFERENCE_FAILED.value

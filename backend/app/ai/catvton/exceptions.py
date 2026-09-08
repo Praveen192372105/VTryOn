@@ -1,61 +1,34 @@
-from app.core.exceptions import AppError
+"""
+Domain exception hierarchy for CatVTON runtime and inference.
+"""
+
+class CatVTONError(Exception):
+    """Base exception for all CatVTON errors."""
+    def __init__(self, message: str, provider: str = "catvton"):
+        super().__init__(message)
+        self.provider = provider
 
 
-class CatVTONError(AppError):
-    """Base exception for all CatVTON AI subsystem failures."""
-    message = "CatVTON subsystem encountered an error."
+class CatVTONLoadError(CatVTONError):
+    """Raised when CatVTON checkpoints or neural pipeline fail to load."""
+    pass
 
 
-class CatVTONModelLoadError(CatVTONError):
-    """Raised when CatVTON checkpoints or model weights fail to load."""
-    message = "Failed to load CatVTON model checkpoints."
+class CatVTONOOMError(CatVTONError):
+    """Raised when CUDA encounters an Out Of Memory condition during inference."""
+    pass
 
 
-class CatVTONModelUnavailableError(CatVTONError):
-    """Raised when CatVTON inference is requested before the runtime is ready."""
-    message = "CatVTON model runtime is not ready or unavailable."
-
-
-class CatVTONInvalidInputError(CatVTONError):
-    """Raised when input person or garment images fail validation or preprocessing."""
-    message = "Invalid input images provided for virtual try-on."
+class CatVTONInputError(CatVTONError):
+    """Raised when input media (person or garment) is invalid, corrupt, or missing."""
+    pass
 
 
 class CatVTONPreprocessingError(CatVTONError):
-    """Raised when segmentation or automatic mask synthesis fails."""
-    message = "Failed to preprocess images or generate agnostic mask for virtual try-on."
-
-
-class CatVTONOutOfMemoryError(CatVTONError):
-    """Raised when CUDA runs out of memory during diffusion model execution."""
-    message = "CUDA out of memory during CatVTON inference."
+    """Raised when human parsing (SCHP) or pose estimation (DensePose) fails."""
+    pass
 
 
 class CatVTONInferenceError(CatVTONError):
-    """Raised when diffusion pipeline execution encounters an unexpected runtime error."""
-    message = "CatVTON inference execution failed."
-
-
-class CatVTONOutputError(CatVTONError):
-    """Raised when generated output is empty, corrupt, or fails dimension validation."""
-    message = "CatVTON pipeline generated an invalid or corrupt output image."
-
-
-# Backward-compatible aliases
-CatVTONOOMError = CatVTONOutOfMemoryError
-CatVTONConfigurationError = CatVTONModelLoadError
-CatVTONRuntimeError = CatVTONInferenceError
-
-__all__ = [
-    "CatVTONError",
-    "CatVTONModelLoadError",
-    "CatVTONModelUnavailableError",
-    "CatVTONInvalidInputError",
-    "CatVTONPreprocessingError",
-    "CatVTONOutOfMemoryError",
-    "CatVTONInferenceError",
-    "CatVTONOutputError",
-    "CatVTONOOMError",
-    "CatVTONConfigurationError",
-    "CatVTONRuntimeError",
-]
+    """Raised when latent diffusion inference fails or produces invalid outputs."""
+    pass

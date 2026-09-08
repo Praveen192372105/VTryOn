@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_workspace"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.vtryon.feature.home.HomeFragment"
+        android:label="Home">
+        <action
+            android:id="@+id/action_home_to_outfits"
+            app:destination="@id/outfitsFragment" />
+        <action
+            android:id="@+id/action_home_to_tryon"
+            app:destination="@id/nav_tryon" />
+        <action
+            android:id="@+id/action_home_to_saved"
+            app:destination="@id/savedFragment" />
+        <action
+            android:id="@+id/action_home_to_settings"
+            app:destination="@id/settingsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/outfitsFragment"
+        android:name="com.example.vtryon.feature.outfits.OutfitsFragment"
+        android:label="Catalogue">
+        <action
+            android:id="@+id/action_outfits_to_outfitDetail"
+            app:destination="@id/outfitDetailFragment" />
+        <action
+            android:id="@+id/action_outfits_to_tryon"
+            app:destination="@id/nav_tryon" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/outfitDetailFragment"
+        android:name="com.example.vtryon.feature.outfits.detail.OutfitDetailFragment"
+        android:label="Outfit Details">
+        <argument
+            android:name="outfitId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_outfitDetail_to_tryon"
+            app:destination="@id/nav_tryon" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/savedFragment"
+        android:name="com.example.vtryon.feature.saved.SavedFragment"
+        android:label="Saved Looks">
+        <action
+            android:id="@+id/action_saved_to_result"
+            app:destination="@id/resultFragment" />
+        <action
+            android:id="@+id/action_saved_to_tryon"
+            app:destination="@id/nav_tryon" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.vtryon.feature.settings.SettingsFragment"
+        android:label="Settings">
+        <action
+            android:id="@+id/action_settings_to_auth"
+            app:destination="@id/nav_auth"
+            app:popUpTo="@id/nav_workspace"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <include app:graph="@navigation/nav_tryon" />
+
+</navigation>

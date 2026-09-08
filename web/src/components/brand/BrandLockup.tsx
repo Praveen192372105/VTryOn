@@ -19,15 +19,15 @@ export function BrandLockup({
   if (layout === "vertical") {
     return (
       <div className={cn("inline-flex flex-col items-center gap-3 select-none text-center", className)}>
-        <div className="w-12 h-12 rounded-xl bg-zinc-950 border border-zinc-800/80 flex items-center justify-center text-white shadow-sm">
-          <LogoMark size={size} className="text-zinc-100" decorative={true} />
+        <div className="w-12 h-12 rounded-xl bg-primary text-primary-foreground border border-border flex items-center justify-center shadow-xs">
+          <LogoMark size={size} className="text-primary-foreground" decorative={true} />
         </div>
         <div className="space-y-0.5">
-          <span className="text-lg font-medium tracking-tight text-white block leading-none">
+          <span className="text-lg font-medium tracking-tight text-foreground block leading-none">
             V Try-On
           </span>
           {showTagline && (
-            <span className="text-[10px] tracking-widest text-zinc-400 uppercase font-mono block">
+            <span className="text-[10px] tracking-widest text-muted-foreground uppercase font-mono block">
               {tagline}
             </span>
           )}
@@ -38,15 +38,15 @@ export function BrandLockup({
 
   return (
     <div className={cn("inline-flex items-center gap-3 select-none", className)}>
-      <div className="w-9 h-9 rounded-lg bg-zinc-950 border border-zinc-800/80 flex items-center justify-center text-white shadow-sm shrink-0">
-        <LogoMark size={size} className="text-zinc-100" decorative={true} />
+      <div className="w-9 h-9 rounded-lg bg-primary text-primary-foreground border border-border flex items-center justify-center shadow-xs shrink-0">
+        <LogoMark size={size} className="text-primary-foreground" decorative={true} />
       </div>
       <div className="flex flex-col">
-        <span className="text-base font-medium tracking-tight text-white leading-none">
+        <span className="text-base font-medium tracking-tight text-foreground leading-none">
           V Try-On
         </span>
         {showTagline && (
-          <span className="text-[10px] tracking-widest text-zinc-400 uppercase font-mono mt-1">
+          <span className="text-[10px] tracking-widest text-muted-foreground uppercase font-mono mt-1">
             {tagline}
           </span>
         )}

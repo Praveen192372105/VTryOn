@@ -1,0 +1,54 @@
+<resources>
+    <string name="app_name">VTryOn</string>
+    <string name="brand_title">V Try-On</string>
+    <string name="brand_category">AI VIRTUAL FITTING</string>
+    <string name="brand_tagline">AI-Powered Virtual Dressing Experience</string>
+    <string name="login_title">Sign In</string>
+    <string name="login_subtitle">Access your virtual try-on studio</string>
+    <string name="login_button">Sign In</string>
+    <string name="email_label">Email</string>
+    <string name="email_hint">you@example.com</string>
+    <string name="password_label">Password</string>
+    <string name="password_hint">Enter your password</string>
+    <string name="retry">Retry</string>
+    <string name="cancel">Cancel</string>
+    <string name="generate">Generate Try-On</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_outfits">Catalog</string>
+    <string name="nav_saved">Saved</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Semantic Hugeicons Accessibility Strings -->
+    <string name="a11y_go_back">Go back</string>
+    <string name="a11y_forward">Next</string>
+    <string name="a11y_close">Close</string>
+    <string name="a11y_home">Home</string>
+    <string name="a11y_try_on">Virtual Try-On</string>
+    <string name="a11y_saved_looks">Saved looks</string>
+    <string name="a11y_favorite">Save to favorites</string>
+    <string name="a11y_unfavorite">Remove from favorites</string>
+    <string name="a11y_settings">Settings</string>
+    <string name="a11y_profile">User profile</string>
+    <string name="a11y_show_password">Show password</string>
+    <string name="a11y_hide_password">Hide password</string>
+    <string name="a11y_logout">Sign out</string>
+    <string name="a11y_upload_photo">Upload photo</string>
+    <string name="a11y_open_gallery">Open photo gallery</string>
+    <string name="a11y_take_photo">Take photo</string>
+    <string name="a11y_delete_item">Delete item</string>
+    <string name="a11y_refresh">Refresh</string>
+    <string name="a11y_fullscreen">Toggle fullscreen</string>
+    <string name="a11y_search">Search</string>
+    <string name="a11y_clear_search">Clear search</string>
+    <string name="a11y_filter_outfits">Filter outfits</string>
+    <string name="a11y_grid_view">Grid view</string>
+    <string name="a11y_list_view">List view</string>
+    <string name="a11y_compare_before_after">Compare original and try-on</string>
+    <string name="a11y_download_result">Download result</string>
+    <string name="a11y_share_result">Share result</string>
+    <string name="a11y_status_success">Success</string>
+    <string name="a11y_status_warning">Warning</string>
+    <string name="a11y_status_error">Error</string>
+    <string name="a11y_status_offline">Offline</string>
+    <string name="a11y_status_info">Information</string>
+</resources>

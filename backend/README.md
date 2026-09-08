@@ -4,6 +4,126 @@ Production-grade backend for the **V Try-On** virtual try-on platform built with
 
 ---
 
+## 🚀 Quick Start
+
+Start the entire backend development runtime (FastAPI API server + Celery GPU CatVTON worker) with a single command:
+
+```powershell
+cd backend
+.\.venv\Scripts\Activate.ps1
+python start.py
+```
+
+*On Linux/macOS:*
+```bash
+cd backend
+source .venv/bin/activate
+python start.py
+```
+
+### What `python start.py` Does:
+1. **Preflight Validation**: Validates MySQL database connectivity, Redis broker availability, and port availability.
+2. **Auto LAN IPv4 Detection**: Discovers local network adapters and formats accessible URLs for mobile devices and emulators.
+3. **Starts FastAPI (`0.0.0.0:8000`)**: Binds to all interfaces so physical phones, emulators, and local browsers can connect.
+4. **Starts Celery GPU Worker**: Launches the dedicated CatVTON background inference worker (`-Q gpu -c 1`, using `-P solo` on Windows).
+5. **Process Supervision**: Monitors child processes; if either crashes, gracefully halts the other and exits.
+6. **Graceful Shutdown**: Intercepts `Ctrl+C` once and cleans up all processes without leaving zombie workers.
+
+---
+
+## 📱 Client Connectivity & Network Matrix
+
+```text
+Development Machine
+┌──────────────────────────────────────────────────────────┐
+│ FastAPI (0.0.0.0:8000)                                   │
+│                                                          │
+│ Local:    http://127.0.0.1:8000                          │
+│ Emulator: http://10.0.2.2:8000                           │
+│ LAN:      http://<detected-lan-ip>:8000                  │
+└──────────────────────────────────────────────────────────┘
+       ▲                              ▲
+       │ Host Loopback                │ Wi-Fi / LAN
+       │                              │
+Android Emulator               Physical Android Device
+```
+
+| Client Environment | Base API URL | Notes |
+| :--- | :--- | :--- |
+| **Web Frontend (Same Machine)** | `http://127.0.0.1:8000` | Set `VITE_API_BASE_URL=http://127.0.0.1:8000` in `web/.env` |
+| **Android Studio Emulator** | `http://10.0.2.2:8000` | Standard virtual device alias for host loopback interface |
+| **Physical Android Device** | `http://<LAN-IP>:8000` | Read the detected LAN IP printed by `python start.py` |
+| **Another Computer on LAN** | `http://<LAN-IP>:8000` | Accessible over trusted local network |
+| **Swagger UI (Interactive Docs)** | `http://127.0.0.1:8000/docs` | Also reachable over LAN at `http://<LAN-IP>:8000/docs` |
+| **Health Liveness Probe** | `http://127.0.0.1:8000/api/v1/health/live` | Bounded process liveness verification |
+| **Dependency Readiness Probe**| `http://127.0.0.1:8000/api/v1/health/ready`| Verifies MySQL, Redis, and storage health |
+
+> [!IMPORTANT]
+> **Connecting a Physical Android Device**:
+> 1. Ensure your computer and Android phone/tablet are on the **same Wi-Fi network**.
+> 2. Run `python start.py` and note the printed LAN API address (e.g. `http://192.168.31.46:8000`).
+> 3. Point your Android app's base URL to that address (do **not** use `localhost` or `127.0.0.1` on the phone).
+> 4. Ensure Windows Firewall permits incoming TCP connections on port 8000 for **Private Networks**.
+> 5. If using `http://` (unencrypted), ensure `android:usesCleartextTraffic="true"` is enabled in your Android development `AndroidManifest.xml` or network security config.
+
+---
+
+## ⚙️ Launcher Options & CLI Flags
+
+```bash
+# Standard startup (FastAPI + Celery GPU Worker)
+python start.py
+
+# API server only (for frontend development without AI inference)
+python start.py --api-only
+# or
+python start.py --no-worker
+
+# GPU Worker only (for standalone queue processing)
+python start.py --worker-only
+
+# Custom port or host override
+python start.py --port 8080 --host 0.0.0.0
+
+# Enable auto-reload on code changes
+python start.py --reload
+
+# Display network endpoints & configuration without starting services
+python start.py --info
+```
+
+---
+
+## 🛠️ First-Time Backend Setup
+
+```powershell
+# 1. Navigate to backend directory
+cd backend
+
+# 2. Create and activate virtual environment
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+
+# 3. Install core backend dependencies
+pip install -r requirements.txt
+
+# 4. Configure environment variables
+copy .env.example .env
+
+# 5. Start MySQL (e.g., via XAMPP) and Redis (e.g., redis-server on 6379)
+
+# 6. Apply database migrations
+alembic upgrade head
+
+# 7. Seed initial catalog garments (optional)
+python seed.py
+
+# 8. Start full backend runtime
+python start.py
+```
+
+---
+
 ## 🏛️ System Architecture & Layering
 
 ```text
@@ -586,20 +706,60 @@ python scripts/seed_outfits.py
 .\.venv\Scripts\pytest.exe -m "not gpu and not ai_smoke" --cov=app --cov-report=term
 ```
 
-### 3. Start FastAPI Server (Multi-Worker Production Mode)
+### 3. Advanced / Manual Startup (Debugging Only)
+For local development, prefer the unified orchestrator: `python start.py`.
+If you need to isolate or debug a single service manually:
+
 ```powershell
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+# Manual FastAPI Server (Terminal 1)
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+# Manual Dedicated Celery GPU Worker (Terminal 2)
+# Note: Windows requires -P solo
+celery -A app.workers.celery_app.celery_app worker --loglevel=info -Q gpu -c 1 -P solo
 ```
 
-### 4. Start Dedicated Celery GPU Worker
-```powershell
-celery -A app.workers.celery_app worker --loglevel=info -Q gpu -c 1
-```
+---
 
-### 5. Start Optional Default Lightweight Worker
-```powershell
-celery -A app.workers.celery_app worker --loglevel=info -Q default -c 2
-```
+## 🔧 Troubleshooting
+
+### 1. Redis Unavailable / Connection Refused
+- **Symptom**: `start.py` reports: `Redis broker is unreachable at redis://127.0.0.1:6379/0`.
+- **Solution**: Ensure Redis is running locally (`redis-server`) or in Docker (`docker run -d -p 6379:6379 redis:7-alpine`). Verify `REDIS_URL` in `.env`.
+
+### 2. MySQL / XAMPP Connection Failed
+- **Symptom**: `start.py` reports: `MySQL Database check failed`.
+- **Solution**: Open XAMPP Control Panel and start MySQL (port 3306), or start local MySQL. Ensure the database `vtryon` exists (`CREATE DATABASE vtryon;`).
+
+### 3. Android Emulator Cannot Reach API
+- **Symptom**: Requests from the emulator fail with network connection error.
+- **Solution**: Ensure your emulator app uses `http://10.0.2.2:8000` (or `http://10.0.2.2:<port>`). Do **not** use `localhost` or `127.0.0.1` inside the Android emulator.
+
+### 4. Physical Android Phone / Tablet Cannot Reach API
+- **Symptom**: Timeout or `ERR_CONNECTION_REFUSED` when phone opens `http://<LAN-IP>:8000`.
+- **Solution**:
+  1. Confirm phone and PC are connected to the **same Wi-Fi network**.
+  2. Verify your router does not have **AP Isolation / Client Isolation / Guest Wi-Fi Isolation** enabled.
+  3. Allow inbound connections in **Windows Defender Firewall** for Python on Private Networks:
+     `Windows Defender Firewall with Advanced Security -> Inbound Rules -> New Rule -> Port -> TCP 8000 -> Allow the connection (Private)`.
+  4. Test if phone's browser can load `http://<LAN-IP>:8000/api/v1/health/live`.
+
+### 5. Celery Starts but Inference Fails
+- **Symptom**: Celery worker is running, but try-on jobs fail with CUDA/model errors.
+- **Solution**:
+  1. Verify GPU status: `python -c "import torch; print(torch.cuda.is_available())"`.
+  2. Check CUDA device normalization: ensure `CUDA_VISIBLE_DEVICES="0"` (handled automatically by `start.py`).
+  3. Ensure CatVTON model checkpoints are downloaded to `CatVTON/` or Hugging Face cache.
+
+---
+
+## 🔒 Security & Production Notice
+
+> [!WARNING]
+> - `python start.py` is an orchestrator designed exclusively for **local and LAN development**.
+> - Binding FastAPI to `0.0.0.0` exposes the API to devices on your local network. Use this only on trusted private networks.
+> - Never expose development Uvicorn servers, Redis, or MySQL directly to the public internet without an API gateway, HTTPS reverse proxy, and proper authentication.
+> - In production environments, run containerized workloads using Docker, Kubernetes, or systemd services with a production ASGI server (e.g., Gunicorn + Uvicorn workers).
 
 ---
 
@@ -653,6 +813,83 @@ python scripts/reconcile_jobs.py --mark-failed
 # 3. Storage Consistency Auditor: Identifies missing and orphaned media files
 python scripts/audit_storage.py
 ```
+
+---
+
+## Phase 17 — AI Providers & Fallback (CatVTON Primary + Mistral Fallback)
+
+### 1. Provider Architecture & Guarantees
+The try-on system operates under a strict primary-provider architecture:
+- **CatVTON (Primary Engine)**: Purpose-built virtual try-on diffusion pipeline specialized in authentic garment transfer, exact identity preservation, body pose retention, and garment structural fidelity. Runs locally on project infrastructure.
+- **Mistral / BFL (Optional Fallback)**: General foundation model integration via Mistral AI SDK with Black Forest Labs image generation tool.
+
+```
+Try-On Job
+    ↓
+ CatVTON
+    │
+    ├── Success → Result
+    │
+    └── Eligible runtime failure
+            ↓
+      Mistral fallback*
+            │
+       ┌────┴────┐
+       │         │
+    Success   Failure
+       │         │
+    Result     Failed
+```
+*\* Only enabled when two-reference generation/edit capability has been verified and external processing is explicitly configured.*
+
+### 2. Verified Mistral Capabilities & Empirical Limitations
+An isolated capability probe was executed against Mistral's official API (`pixtral-12b-2409` & Black Forest Labs `generate_image` tool):
+- **Vision Understanding (SUPPORTED)**: `pixtral-12b-2409` successfully receives multiple image inputs (person photo + garment) and parses garment category, colors, and pose framing without inferring sensitive attributes.
+- **Image Generation Tool (SUPPORTED)**: The Black Forest Labs `generate_image` tool generates high-quality images via text prompts.
+- **Two-Reference Virtual Try-On (UNSUPPORTED at API Level)**: The Black Forest Labs tool takes only a text string argument `{"prompt": "<string>"}`. It does not accept direct image tensor references or reference-image inpainting masks.
+- **Production Policy**: Because Mistral/BFL cannot guarantee identity or garment preservation via pure text descriptions, **Mistral is NOT registered as an accurate virtual try-on fallback**. It is restricted strictly to an opt-in `generative_fallback` mode (`MISTRAL_TRYON_FALLBACK_ENABLED=false` by default).
+
+### 3. Privacy Boundary & External Processing Warning
+> [!WARNING]
+> **Data Privacy Notice:**
+> - **CatVTON**: Runs entirely locally on your machine / private infrastructure. User photos and garment assets never leave the server.
+> - **Mistral Fallback**: When enabled, base64-encoded person photos and garment references are transmitted over HTTPS to Mistral AI and Black Forest Labs cloud infrastructure. External processing is disabled by default.
+
+### 4. Configuration Variables (`backend/.env`)
+```env
+# Mistral AI Generative Fallback (Phase 17)
+MISTRAL_ENABLED=false
+MISTRAL_API_KEY=
+MISTRAL_MODEL=pixtral-12b-2409
+MISTRAL_TRYON_FALLBACK_ENABLED=false
+MISTRAL_REQUEST_TIMEOUT_SECONDS=60
+MISTRAL_MAX_RETRIES=2
+```
+
+### 5. Fallback Eligibility Rules
+- **Eligible for Fallback**: Infrastructure/hardware failures:
+  - CatVTON GPU Out of Memory (`CatVTONOutOfMemoryError`)
+  - CatVTON Checkpoints Missing / Model Unavailable (`CatVTONModelUnavailableError`)
+  - CatVTON Initialization / Pipeline Load Failure (`CatVTONModelLoadError`)
+  - Transient PyTorch CUDA runtime errors (`CatVTONInferenceError`)
+- **Ineligible for Fallback**: Permanent input/data corruption errors (fails immediately to prevent wasting external API calls):
+  - Invalid user photo or missing pose (`CatVTONInvalidInputError`)
+  - Corrupt or unreadable image file (`InvalidImageError`)
+  - Missing file on disk (`FileNotFoundError`)
+  - Storage I/O failure (`StorageError`)
+
+### 6. Test & Verification Commands
+```powershell
+# Run the isolated Mistral capability probe:
+python scripts/test_mistral_image_capabilities.py
+
+# Run the visual smoke test:
+python scripts/smoke_mistral_fallback.py
+
+# Run provider unit tests:
+pytest tests/unit/test_provider_registry.py tests/unit/test_fallback_policy.py tests/unit/test_mistral_provider.py
+```
+
 
 
 

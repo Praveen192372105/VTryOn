@@ -13,8 +13,8 @@ class ResourcePrefix(StrEnum):
     AUTH_SESSION = "ses"
 
 
-# Strict regex pattern for public IDs: <prefix>_<26-character-base32-ulid>
-PUBLIC_ID_REGEX = re.compile(r"^(usr|upl|out|job|res|ses)_[0-9a-hjkmnp-tv-z]{26}$", re.IGNORECASE)
+# Pattern for public IDs: <prefix>_<20-to-36-character-alphanumeric-identifier>
+PUBLIC_ID_REGEX = re.compile(r"^(usr|upl|out|job|res|ses)_[0-9a-zA-Z]{20,36}$", re.IGNORECASE)
 
 
 def generate_public_id(prefix: ResourcePrefix) -> str:

@@ -135,17 +135,89 @@ describe("Architecture Invariant Tests", () => {
     expect(violations).toEqual([])
   })
 
-  it("prohibits fake production data tokens in production features and pages", () => {
-    const bannedTokens = ["mockOutfits", "sampleJobs", "fakeFavorites", "demoUploads"]
-    const violations: { file: string; token: string }[] = []
+  it("prohibits components/ from importing features/ or pages/", () => {
+    const componentFiles = allFiles.filter((file) => {
+      const relative = path.relative(SRC_DIR, file).replace(/\\/g, "/")
+      return relative.startsWith("components/") && !relative.includes("__tests__")
+    })
+
+    const violations: string[] = []
+    for (const file of componentFiles) {
+      const content = fs.readFileSync(file, "utf-8")
+      if (content.includes("features/") || content.includes("pages/")) {
+        violations.push(path.relative(SRC_DIR, file))
+      }
+    }
+
+    expect(violations).toEqual([])
+  })
+
+  it("prohibits config/ from importing features/ or pages/", () => {
+    const configFiles = allFiles.filter((file) => {
+      const relative = path.relative(SRC_DIR, file).replace(/\\/g, "/")
+      return relative.startsWith("config/") && !relative.includes("__tests__")
+    })
+
+    const violations: string[] = []
+    for (const file of configFiles) {
+      const content = fs.readFileSync(file, "utf-8")
+      if (content.includes("features/") || content.includes("pages/")) {
+        violations.push(path.relative(SRC_DIR, file))
+      }
+    }
+
+    expect(violations).toEqual([])
+  })
+
+  it("prohibits arbitrary import.meta.env reading outside config/env.ts", () => {
+    const envConfigPath = path.resolve(SRC_DIR, "config/env.ts")
+    const violations: string[] = []
+
+    for (const file of allFiles) {
+      if (file === envConfigPath || file.includes("__tests__")) continue
+
+      const content = fs.readFileSync(file, "utf-8")
+      if (content.includes("import.meta.env")) {
+        violations.push(path.relative(SRC_DIR, file))
+      }
+    }
+
+    expect(violations).toEqual([])
+  })
+
+  it("prohibits direct /auth/refresh calls outside lib/api/refresh-coordinator.ts", () => {
+    const refreshCoordinatorPath = path.resolve(SRC_DIR, "lib/api/refresh-coordinator.ts")
+    const violations: string[] = []
+
+    for (const file of allFiles) {
+      if (file === refreshCoordinatorPath || file.includes("__tests__")) continue
+
+      const content = fs.readFileSync(file, "utf-8")
+      // Check for direct POST calls to the refresh endpoint
+      if (content.includes("post(\"/auth/refresh\"") || content.includes("post('/auth/refresh'")) {
+        violations.push(path.relative(SRC_DIR, file))
+      }
+    }
+
+    expect(violations).toEqual([])
+  })
+
+  it("prohibits console logging of passwords, tokens, or auth headers", () => {
+    const violations: string[] = []
+    const bannedLogging = [
+      /console\.(log|info|debug)\(.*password/i,
+      /console\.(log|info|debug)\(.*access_token/i,
+      /console\.(log|info|debug)\(.*refresh_token/i,
+      /console\.(log|info|debug)\(.*authorization/i,
+    ]
 
     for (const file of allFiles) {
       if (file.includes("__tests__")) continue
 
       const content = fs.readFileSync(file, "utf-8")
-      for (const token of bannedTokens) {
-        if (content.includes(token)) {
-          violations.push({ file: path.relative(SRC_DIR, file), token })
+      for (const pattern of bannedLogging) {
+        if (pattern.test(content)) {
+          violations.push(path.relative(SRC_DIR, file))
         }
       }
     }
@@ -153,3 +225,4 @@ describe("Architecture Invariant Tests", () => {
     expect(violations).toEqual([])
   })
 })
+

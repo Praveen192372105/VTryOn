@@ -90,7 +90,9 @@ densepose_/tmp/*
 *.onnx
 *.safetensors
 checkpoints/
-models/
+/models/
+!app/db/models/
+!app/models/
 
 # ==============================================================================
 # Database / Cache Files

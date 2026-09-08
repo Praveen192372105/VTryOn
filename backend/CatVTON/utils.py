@@ -241,6 +241,7 @@ def numpy_to_pil(images):
     """
     if images.ndim == 3:
         images = images[None, ...]
+    images = np.nan_to_num(images, nan=0.0)
     images = (images * 255).round().astype("uint8")
     if images.shape[-1] == 1:
         # special case for grayscale (single channel) images

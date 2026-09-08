@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- VTO Spacing Tokens (8dp rhythm with 4dp sub-spacing) -->
+    <dimen name="vto_space_2">2dp</dimen>
+    <dimen name="vto_space_4">4dp</dimen>
+    <dimen name="vto_space_6">6dp</dimen>
+    <dimen name="vto_space_8">8dp</dimen>
+    <dimen name="vto_space_10">10dp</dimen>
+    <dimen name="vto_space_12">12dp</dimen>
+    <dimen name="vto_space_16">16dp</dimen>
+    <dimen name="vto_space_20">20dp</dimen>
+    <dimen name="vto_space_24">24dp</dimen>
+    <dimen name="vto_space_32">32dp</dimen>
+    <dimen name="vto_space_40">40dp</dimen>
+    <dimen name="vto_space_48">48dp</dimen>
+    <dimen name="vto_space_64">64dp</dimen>
+
+    <!-- Semantic Spacing Aliases -->
+    <dimen name="vto_space_xs">@dimen/vto_space_4</dimen>
+    <dimen name="vto_space_sm">@dimen/vto_space_8</dimen>
+    <dimen name="vto_space_md">@dimen/vto_space_16</dimen>
+    <dimen name="vto_space_lg">@dimen/vto_space_24</dimen>
+    <dimen name="vto_space_xl">@dimen/vto_space_32</dimen>
+
+    <!-- VTO Radius Tokens -->
+    <dimen name="vto_radius_sm">8dp</dimen>
+    <dimen name="vto_radius_md">12dp</dimen>
+    <dimen name="vto_radius_lg">16dp</dimen>
+    <dimen name="vto_radius_xl">20dp</dimen>
+    <dimen name="vto_radius_pill">999dp</dimen>
+
+    <!-- VTO Touch Target & Control Heights -->
+    <dimen name="vto_touch_min">48dp</dimen>
+    <dimen name="vto_control_height_sm">38dp</dimen>
+    <dimen name="vto_control_height_md">48dp</dimen>
+    <dimen name="vto_control_height_lg">56dp</dimen>
+    <dimen name="vto_input_height">52dp</dimen>
+    <dimen name="vto_search_height">44dp</dimen>
+    <dimen name="vto_toolbar_height">56dp</dimen>
+    <dimen name="vto_bottom_bar_height">64dp</dimen>
+
+    <!-- VTO Hugeicon Sizes -->
+    <dimen name="vto_icon_xs">16dp</dimen>
+    <dimen name="vto_icon_sm">18dp</dimen>
+    <dimen name="vto_icon_md">20dp</dimen>
+    <dimen name="vto_icon_lg">24dp</dimen>
+    <dimen name="vto_icon_hero">28dp</dimen>
+
+    <!-- Screen Margins / Padding -->
+    <dimen name="vto_screen_padding_horizontal">20dp</dimen>
+    <dimen name="vto_screen_padding_vertical">16dp</dimen>
+    <dimen name="vto_card_padding">16dp</dimen>
+
+    <!-- Legacy / Compatibility Tokens -->
+    <dimen name="spacing_2">@dimen/vto_space_2</dimen>
+    <dimen name="spacing_4">@dimen/vto_space_4</dimen>
+    <dimen name="spacing_6">@dimen/vto_space_6</dimen>
+    <dimen name="spacing_8">@dimen/vto_space_8</dimen>
+    <dimen name="spacing_10">@dimen/vto_space_10</dimen>
+    <dimen name="spacing_12">@dimen/vto_space_12</dimen>
+    <dimen name="spacing_16">@dimen/vto_space_16</dimen>
+    <dimen name="spacing_20">@dimen/vto_space_20</dimen>
+    <dimen name="spacing_24">@dimen/vto_space_24</dimen>
+    <dimen name="spacing_32">@dimen/vto_space_32</dimen>
+    <dimen name="spacing_40">@dimen/vto_space_40</dimen>
+    <dimen name="spacing_48">@dimen/vto_space_48</dimen>
+    <dimen name="spacing_64">@dimen/vto_space_64</dimen>
+
+    <dimen name="radius_sm">@dimen/vto_radius_sm</dimen>
+    <dimen name="radius_md">@dimen/vto_radius_md</dimen>
+    <dimen name="radius_lg">@dimen/vto_radius_lg</dimen>
+    <dimen name="radius_xl">@dimen/vto_radius_xl</dimen>
+    <dimen name="radius_pill">@dimen/vto_radius_pill</dimen>
+
+    <dimen name="min_touch_target">@dimen/vto_touch_min</dimen>
+    <dimen name="button_height_default">@dimen/vto_control_height_md</dimen>
+    <dimen name="button_height_sm">@dimen/vto_control_height_sm</dimen>
+    <dimen name="button_height_lg">@dimen/vto_control_height_lg</dimen>
+    <dimen name="input_height">@dimen/vto_input_height</dimen>
+    <dimen name="toolbar_height">@dimen/vto_toolbar_height</dimen>
+
+    <dimen name="icon_size_xs">@dimen/vto_icon_xs</dimen>
+    <dimen name="icon_size_sm">@dimen/vto_icon_sm</dimen>
+    <dimen name="icon_size_md">@dimen/vto_icon_md</dimen>
+    <dimen name="icon_size_lg">@dimen/vto_icon_lg</dimen>
+    <dimen name="icon_size_xl">@dimen/vto_icon_hero</dimen>
+
+    <dimen name="screen_padding_horizontal">@dimen/vto_screen_padding_horizontal</dimen>
+    <dimen name="screen_padding_vertical">@dimen/vto_screen_padding_vertical</dimen>
+    <dimen name="card_padding">@dimen/vto_card_padding</dimen>
+</resources>

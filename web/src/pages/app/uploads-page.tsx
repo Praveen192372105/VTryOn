@@ -1,118 +1,260 @@
-import { useRef } from "react"
+import { useState, useEffect, useRef } from "react"
+import { useNavigate } from "react-router-dom"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Camera01Icon, PlusSignIcon, Delete02Icon } from "@hugeicons/core-free-icons"
+import { PlusSignIcon, Cancel01Icon, ShieldCheckIcon } from "@hugeicons/core-free-icons"
 import { useDocumentTitle } from "../../hooks/use-document-title"
-import { EmptyState } from "../../components/feedback/empty-state"
-import { ImageFrame } from "../../components/image/image-frame"
-import { useUploads, useUploadImage, useDeleteUpload } from "../../features/uploads"
+import { PageHeader, SectionShell } from "../../components/layout"
 import { Button } from "../../components/ui/button"
-import { Spinner } from "../../components/ui/spinner"
+import { ROUTES } from "../../app/route-paths"
+import {
+  usePersonUploads,
+  useCreatePersonUpload,
+  useDeleteUpload,
+  useCurrentPersonUpload,
+  validatePersonImagePreDecode,
+  validatePersonImagePostDecode,
+  decodeImageMetadata,
+  safeRevokeObjectUrl,
+  PersonUploadDropzone,
+  PersonUploadPreview,
+  UploadGrid,
+  UploadDeleteDialog,
+  type DecodedImageMetadata,
+  type ValidationResult,
+} from "../../features/uploads"
 
 export default function UploadsPage() {
-  useDocumentTitle("Portrait Uploads")
-  const { data, isLoading } = useUploads()
-  const uploadMutation = useUploadImage()
+  useDocumentTitle("Your Photos")
+  const navigate = useNavigate()
+
+  // Queries & Mutations
+  const { uploads, isLoading, isError, error, refetch } = usePersonUploads()
+  const uploadMutation = useCreatePersonUpload()
   const deleteMutation = useDeleteUpload()
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const { selectedId, setSelectedId } = useCurrentPersonUpload()
 
-  const uploads = data?.items || []
+  // Upload UI State
+  const [isAddMode, setIsAddMode] = useState(false)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [decodedMeta, setDecodedMeta] = useState<DecodedImageMetadata | null>(null)
+  const [validationResult, setValidationResult] = useState<ValidationResult | null>(null)
+  const [uploadErrorMessage, setUploadErrorMessage] = useState<string | null>(null)
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      uploadMutation.mutate(file)
+  // Deletion Dialog State
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null)
+
+  // Version counter to prevent async decode race conditions
+  const decodeVersionRef = useRef(0)
+
+  // Object URL lifecycle cleanup on unmount or file reset
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        safeRevokeObjectUrl(previewUrl)
+      }
+    }
+  }, [previewUrl])
+
+  const handleClearUploadFlow = () => {
+    if (previewUrl) {
+      safeRevokeObjectUrl(previewUrl)
+    }
+    setSelectedFile(null)
+    setPreviewUrl(null)
+    setDecodedMeta(null)
+    setValidationResult(null)
+    setUploadErrorMessage(null)
+    setIsAddMode(false)
+  }
+
+  const handleFileSelected = async (file: File) => {
+    setUploadErrorMessage(null)
+    const currentVersion = ++decodeVersionRef.current
+
+    // 1. Revoke previous preview URL if any
+    if (previewUrl) {
+      safeRevokeObjectUrl(previewUrl)
+      setPreviewUrl(null)
+    }
+
+    setSelectedFile(file)
+    setIsAddMode(true)
+
+    // 2. Early client validation
+    const preCheck = validatePersonImagePreDecode(file)
+    if (!preCheck.isValid) {
+      setValidationResult(preCheck)
+      setDecodedMeta(null)
+      return
+    }
+
+    // 3. Local object URL preview
+    const objectUrl = URL.createObjectURL(file)
+    setPreviewUrl(objectUrl)
+
+    // 4. Browser dimension decode
+    try {
+      const metadata = await decodeImageMetadata(file)
+      // Check if another file was selected while decoding
+      if (currentVersion !== decodeVersionRef.current) return
+
+      setDecodedMeta(metadata)
+      const postCheck = validatePersonImagePostDecode(metadata)
+      setValidationResult(postCheck)
+    } catch {
+      if (currentVersion !== decodeVersionRef.current) return
+      setDecodedMeta(null)
+      setValidationResult({
+        isValid: false,
+        errors: [
+          {
+            code: "decode-failed",
+            severity: "error",
+            message: "We couldn't read this image. Choose another JPEG, PNG or WebP file.",
+          },
+        ],
+        warnings: [],
+        issues: [],
+      })
     }
   }
 
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-900">
-        <div>
-          <h1 className="text-2xl font-light tracking-tight text-zinc-100">Your Portraits</h1>
-          <p className="text-xs sm:text-sm text-zinc-400">
-            Manage your personal portrait photos used for virtual fitting.
-          </p>
-        </div>
+  const handleUploadConfirm = async () => {
+    if (!selectedFile || !validationResult?.isValid) return
+    setUploadErrorMessage(null)
 
-        <div>
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            accept="image/jpeg,image/png,image/webp"
-            className="hidden"
-          />
+    try {
+      await uploadMutation.mutateAsync(selectedFile)
+      // Upload succeeded and was auto-selected as current person
+      handleClearUploadFlow()
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed to upload photo."
+      setUploadErrorMessage(msg)
+    }
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteTargetId) return
+    try {
+      await deleteMutation.mutateAsync(deleteTargetId)
+      setDeleteTargetId(null)
+    } catch {
+      // Error surfaced through hook toast; dialog remains open or user can retry
+    }
+  }
+
+  const handleUseInStudio = (uploadId: string) => {
+    setSelectedId(uploadId)
+    navigate(ROUTES.app.studioWithParams({ person: uploadId }))
+  }
+
+  return (
+    <div className="space-y-8">
+      <PageHeader
+        title="Your photos"
+        description="Photos available for virtual try-ons."
+        actions={
           <Button
             size="sm"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={uploadMutation.isPending}
-            className="bg-zinc-100 text-zinc-950 hover:bg-white font-medium gap-2 cursor-pointer"
+            variant={isAddMode ? "outline" : "default"}
+            onClick={() => {
+              if (isAddMode) {
+                handleClearUploadFlow()
+              } else {
+                setIsAddMode(true)
+              }
+            }}
+            leadingIcon={
+              <HugeiconsIcon
+                icon={isAddMode ? Cancel01Icon : PlusSignIcon}
+                className="size-4"
+              />
+            }
           >
-            {uploadMutation.isPending ? (
-              <>
-                <Spinner className="w-3.5 h-3.5 text-zinc-950" />
-                <span>Uploading...</span>
-              </>
-            ) : (
-              <>
-                <HugeiconsIcon icon={PlusSignIcon} className="w-4 h-4" />
-                <span>Upload portrait</span>
-              </>
-            )}
+            {isAddMode ? "Cancel" : "Add photo"}
           </Button>
-        </div>
+        }
+      />
+
+      {/* Inline Upload Workspace when Add Mode is active */}
+      {isAddMode && (
+        <SectionShell className="p-6 sm:p-8 bg-surface border border-border rounded-2xl shadow-xs">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-border/60">
+              <h2 className="text-sm font-semibold text-foreground tracking-tight">
+                {selectedFile ? "Preview & framing guidance" : "Select a portrait photo"}
+              </h2>
+              <button
+                type="button"
+                onClick={handleClearUploadFlow}
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+
+            {!selectedFile || !validationResult ? (
+              <PersonUploadDropzone
+                onFileSelected={handleFileSelected}
+                disabled={uploadMutation.isPending}
+              />
+            ) : (
+              <PersonUploadPreview
+                file={selectedFile}
+                previewUrl={previewUrl || ""}
+                metadata={decodedMeta}
+                validation={validationResult}
+                onConfirm={handleUploadConfirm}
+                onReselect={() => {
+                  if (previewUrl) safeRevokeObjectUrl(previewUrl)
+                  setSelectedFile(null)
+                  setPreviewUrl(null)
+                  setDecodedMeta(null)
+                  setValidationResult(null)
+                  setUploadErrorMessage(null)
+                }}
+                isUploading={uploadMutation.isPending}
+                uploadError={uploadErrorMessage}
+              />
+            )}
+          </div>
+        </SectionShell>
+      )}
+
+      {/* Library Grid */}
+      <section aria-label="Photo library" className="space-y-4">
+        <UploadGrid
+          uploads={uploads}
+          selectedId={selectedId}
+          isLoading={isLoading}
+          isError={isError}
+          error={error}
+          onSelect={setSelectedId}
+          onDelete={(id) => setDeleteTargetId(id)}
+          onUseInStudio={handleUseInStudio}
+          onUploadClick={() => setIsAddMode(true)}
+          onRetry={() => refetch()}
+        />
+      </section>
+
+      {/* Privacy Notice */}
+      <div className="pt-6 border-t border-border/60 flex items-center gap-2.5 text-xs text-muted-foreground">
+        <HugeiconsIcon icon={ShieldCheckIcon} className="size-4 text-muted-foreground shrink-0" />
+        <span>
+          Your uploaded photos are private to your account and are used exclusively for your try-on experience.
+        </span>
       </div>
 
-      {isLoading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="aspect-[3/4] rounded-lg bg-zinc-900/50 animate-pulse border border-zinc-800/40" />
-          ))}
-        </div>
-      ) : uploads.length === 0 ? (
-        <div className="py-12">
-          <EmptyState
-            icon={Camera01Icon}
-            title="No portrait photos yet"
-            description="Upload a full-body portrait or upper-body photo to begin realistic garment fitting."
-            action={
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => fileInputRef.current?.click()}
-                className="border-zinc-800 text-zinc-300 cursor-pointer"
-              >
-                Upload your first photo
-              </Button>
-            }
-          />
-        </div>
-      ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {uploads.map((upload) => (
-            <div
-              key={upload.id}
-              className="rounded-lg overflow-hidden border border-zinc-800 bg-zinc-950/60 relative group"
-            >
-              <ImageFrame
-                src={upload.public_url || upload.storage_path}
-                alt={upload.original_filename}
-                aspectRatio="3/4"
-                actions={
-                  <button
-                    type="button"
-                    onClick={() => deleteMutation.mutate(upload.id)}
-                    className="p-1.5 rounded-full bg-black/70 hover:bg-red-950/80 text-zinc-400 hover:text-red-400 border border-zinc-700/60 transition-colors cursor-pointer"
-                    title="Delete photo"
-                  >
-                    <HugeiconsIcon icon={Delete02Icon} className="w-3.5 h-3.5" />
-                  </button>
-                }
-              />
-            </div>
-          ))}
-        </div>
-      )}
+      {/* Safe Deletion Dialog */}
+      <UploadDeleteDialog
+        open={deleteTargetId !== null}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTargetId(null)
+        }}
+        isPending={deleteMutation.isPending}
+        onConfirm={handleDeleteConfirm}
+      />
     </div>
   )
 }

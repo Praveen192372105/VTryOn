@@ -16,7 +16,7 @@ export function AuthBackground({ children, className }: AuthBackgroundProps) {
   return (
     <div
       className={cn(
-        "relative min-h-[100svh] w-full flex flex-col justify-between overflow-x-hidden bg-black text-zinc-100 selection:bg-zinc-800 selection:text-white",
+        "relative min-h-[100svh] w-full flex flex-col justify-between overflow-x-hidden bg-background text-foreground selection:bg-surface-raised selection:text-foreground",
         className
       )}
     >
@@ -26,7 +26,7 @@ export function AuthBackground({ children, className }: AuthBackgroundProps) {
         className="fixed inset-0 pointer-events-none select-none overflow-hidden z-0"
       >
         {/* Layer 1 & 2: Full-Page Micro Grid */}
-        <GridPattern size={32} className="opacity-70" />
+        <GridPattern size={32} className="opacity-40 text-foreground" />
 
         {/* Layer 3: Top-Right Macro Boxed Grid with Radial Fade */}
         <div className="absolute top-0 right-0 -mr-12 -mt-12 w-64 h-64 sm:w-80 sm:h-80 md:w-[420px] md:h-[420px] [mask-image:radial-gradient(ellipse_at_top_right,black_30%,transparent_75%)] [-webkit-mask-image:radial-gradient(ellipse_at_top_right,black_30%,transparent_75%)]">
@@ -36,7 +36,7 @@ export function AuthBackground({ children, className }: AuthBackgroundProps) {
             animate={prefersReduced ? {} : { y: [0, 6, 0] }}
             transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
           >
-            <BoxedGridPattern />
+            <BoxedGridPattern className="text-foreground" />
           </motion.div>
         </div>
 
@@ -48,12 +48,12 @@ export function AuthBackground({ children, className }: AuthBackgroundProps) {
             animate={prefersReduced ? {} : { y: [0, -6, 0] }}
             transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
           >
-            <BoxedGridPattern />
+            <BoxedGridPattern className="text-foreground" />
           </motion.div>
         </div>
 
         {/* Layer 5: Soft Center Radial Highlight / Halo behind card */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.03),transparent_65%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(120,120,120,0.04),transparent_65%)]" />
       </div>
 
       {/* Layer 6: Content in document flow */}

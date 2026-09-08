@@ -17,8 +17,8 @@ logger = logging.getLogger("vtryon.workers.task")
     queue="gpu",
     acks_late=True,
     max_retries=2,
-    soft_time_limit=240,
-    time_limit=300,
+    soft_time_limit=settings.CELERY_GPU_SOFT_TIME_LIMIT_SECONDS,
+    time_limit=settings.CELERY_GPU_TIME_LIMIT_SECONDS,
 )
 def process_tryon_job(self, job_public_id: str) -> None:
     """

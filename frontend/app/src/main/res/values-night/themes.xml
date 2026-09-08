@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Custom Non-Material Fashion Editorial Theme (Dark) -->
+    <style name="Theme.VTryOn" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/control_primary</item>
+        <item name="colorPrimaryDark">@color/surface_secondary</item>
+        <item name="colorAccent">@color/control_primary</item>
+
+        <item name="android:windowBackground">@color/surface_primary</item>
+        <item name="android:textColorPrimary">@color/content_primary</item>
+        <item name="android:textColorSecondary">@color/content_secondary</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+</resources>

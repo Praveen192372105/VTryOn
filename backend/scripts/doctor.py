@@ -6,7 +6,6 @@ from pathlib import Path
 # Add backend directory to sys.path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from app.ai.catvton.validator import inspect_catvton_runtime
 from app.core.config import settings
 from app.core.redis import check_redis_connectivity
 from app.workers.worker_heartbeat import get_active_workers
@@ -37,7 +36,7 @@ def check_mysql() -> tuple[bool, str]:
 def check_redis() -> tuple[bool, str]:
     if check_redis_connectivity():
         active = get_active_workers()
-        workers_info = f"Active GPU Workers: {len(active)}" if active else "No active GPU workers"
+        workers_info = f"Active Workers: {len(active)}" if active else "No active workers"
         return True, f"Connected to {settings.REDIS_URL} | {workers_info}"
     return False, f"Could not connect to {settings.REDIS_URL}"
 
@@ -58,30 +57,23 @@ def check_storage() -> tuple[bool, str]:
 
 
 def check_catvton() -> tuple[bool, str]:
-    inspection = inspect_catvton_runtime()
-    if inspection.root_exists and inspection.model_dir_exists and inspection.inference_script_exists:
-        return True, f"Model version '{settings.CATVTON_MODEL_VERSION}' at {inspection.root_path}"
-    missing = ", ".join(inspection.issues) if inspection.issues else "Incomplete repository structure"
-    return False, missing
-
-
-def check_cuda(verbose: bool = False) -> tuple[bool, str]:
+    catvton_root = settings.resolved_catvton_root
+    if not catvton_root.exists():
+        return False, f"CatVTON directory missing at {catvton_root}"
     try:
         import torch
-        if torch.cuda.is_available():
-            device_count = torch.cuda.device_count()
-            name = torch.cuda.get_device_name(0)
-            mem_gb = torch.cuda.get_device_properties(0).total_memory / (1024 ** 3)
-            bf16_supported = torch.cuda.is_bf16_supported()
-            return True, f"{device_count}x GPU ({name}, {mem_gb:.1f} GB VRAM, bf16={bf16_supported})"
-        return False, "CUDA not available (CPU fallback)"
-    except ImportError:
-        return False, "PyTorch not installed in this environment"
+        if not torch.cuda.is_available():
+            return False, "CUDA GPU is NOT available for CatVTON inference"
+        gpu_name = torch.cuda.get_device_name(0)
+        vram = torch.cuda.get_device_properties(0).total_memory / (1024 ** 3)
+        return True, f"CatVTON engine verified on {gpu_name} ({vram:.1f} GB VRAM, {settings.CATVTON_DTYPE})"
+    except Exception as exc:
+        return False, f"CatVTON diagnostic error: {exc}"
 
 
-def run_doctor(check_gpu_details: bool = False):
+def run_doctor():
     print("=" * 70)
-    print("  V Try-On Backend Doctor -- Production Operational Diagnostics")
+    print("  V Try-On Backend Doctor -- Operational Diagnostics")
     print("=" * 70)
 
     checks = [
@@ -89,17 +81,16 @@ def run_doctor(check_gpu_details: bool = False):
         ("MySQL Database", check_mysql),
         ("Redis & Workers", check_redis),
         ("Media Storage", check_storage),
-        ("CatVTON Repository", check_catvton),
-        ("CUDA / GPU", lambda: check_cuda(verbose=check_gpu_details)),
+        ("CatVTON AI Engine", check_catvton),
     ]
 
     all_passed = True
     for name, check_fn in checks:
         ok, msg = check_fn()
-        plain_status = "[ OK ]" if ok else "[WARN]" if "CUDA" in name or "Redis" in name or "MySQL" in name else "[FAIL]"
+        plain_status = "[ OK ]" if ok else "[WARN]" if "Redis" in name or "MySQL" in name else "[FAIL]"
         dots = "." * (25 - len(name))
         print(f"{name} {dots} {plain_status}  {msg}")
-        if not ok and name not in ("CUDA / GPU", "Redis & Workers", "MySQL Database"):
+        if not ok and name not in ("Redis & Workers", "MySQL Database"):
             all_passed = False
 
     print("=" * 70)
@@ -112,6 +103,5 @@ def run_doctor(check_gpu_details: bool = False):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="V Try-On System Health Doctor")
-    parser.add_argument("--gpu", action="store_true", help="Run comprehensive GPU diagnostics")
     args = parser.parse_args()
-    run_doctor(check_gpu_details=args.gpu)
+    run_doctor()

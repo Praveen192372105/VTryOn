@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/appRootContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/vto_surface_primary">
+
+    <!-- Custom tablet side navigation rail (non-Material) -->
+    <LinearLayout
+        android:id="@+id/tabletSideNav"
+        android:layout_width="88dp"
+        android:layout_height="0dp"
+        android:background="@color/vto_surface_secondary"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingVertical="@dimen/vto_space_lg"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.example.vtryon.core.designsystem.icon.VtoIconView
+            android:id="@+id/tabletLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/vto_space_xl"
+            app:vtoIconSize="lg"
+            app:vtoIconTone="primary" />
+
+        <com.example.vtryon.core.designsystem.component.button.VtoIconButton
+            android:id="@+id/tabTabletHome"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginBottom="@dimen/vto_space_md"
+            android:contentDescription="Home" />
+
+        <com.example.vtryon.core.designsystem.component.button.VtoIconButton
+            android:id="@+id/tabTabletCatalogue"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginBottom="@dimen/vto_space_md"
+            android:contentDescription="Catalogue" />
+
+        <com.example.vtryon.core.designsystem.component.button.VtoIconButton
+            android:id="@+id/tabTabletTryOn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginBottom="@dimen/vto_space_md"
+            android:contentDescription="Try-On" />
+
+        <com.example.vtryon.core.designsystem.component.button.VtoIconButton
+            android:id="@+id/tabTabletSaved"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:contentDescription="Saved Looks" />
+
+    </LinearLayout>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/navHostFragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:defaultNavHost="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tabletSideNav"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navGraph="@navigation/nav_root" />
+
+    <!-- Bottom bar is kept hidden on tablets -->
+    <com.example.vtryon.core.designsystem.component.navigation.VtoBottomBar
+        android:id="@+id/bottomBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,176 +1,113 @@
+"""
+PyTorch / Diffusers inference wrapper for CatVTON diffusion pipeline.
+Optimized for low VRAM, mixed precision, and sub-60-second execution.
+"""
+
 import logging
+import sys
 import time
-from typing import Any, Optional
+from typing import Optional
 from PIL import Image
+import torch
 
-from app.ai.catvton.config import ai_settings
-from app.ai.catvton.exceptions import (
-    CatVTONInferenceError,
-    CatVTONInvalidInputError,
-    CatVTONModelUnavailableError,
-    CatVTONOutOfMemoryError,
-)
-from app.ai.catvton.postprocessing import validate_and_normalize_output
-from app.ai.catvton.preprocessing import (
-    generate_fallback_mask,
-    map_outfit_category,
-    prepare_images,
-)
-from app.ai.catvton.runtime import CatVTONRuntime
-from app.ai.catvton.types import TryOnInput, TryOnOutput
+from app.ai.catvton.exceptions import CatVTONInferenceError, CatVTONOOMError
+from app.ai.catvton.settings import CatVTONSettings
 
-logger = logging.getLogger("vtryon.ai.pipeline")
+logger = logging.getLogger("vtryon.catvton.pipeline")
 
 
-class CatVTONPipeline:
+class CatVTONInferencePipeline:
     """
-    Backend-facing AI inference pipeline coordinating input preparation,
-    diffusion model execution, CUDA OOM recovery, and raw output validation.
+    Manages the UNet, VAE, DDIM scheduler, and attention adapter.
+    Keeps weights resident on GPU to avoid per-job reloads.
     """
 
-    def __init__(self, runtime: Optional[CatVTONRuntime] = None, mock_mode: bool = False):
-        self.runtime = runtime or CatVTONRuntime.get_instance()
-        self.mock_mode = mock_mode
+    def __init__(self, settings: CatVTONSettings, repo_path: str):
+        self.settings = settings
+        self.repo_path = repo_path
+        self._pipeline = None
+        self._weight_dtype = torch.float16 if settings.mixed_precision == "fp16" else torch.bfloat16
 
-    def generate(self, tryon_input: TryOnInput) -> TryOnOutput:
-        """
-        Execute virtual try-on inference for the given TryOnInput contract.
-        Thread-safe: bounded by runtime semaphore to enforce concurrency limits.
-        """
-        start_time = time.perf_counter()
-        cloth_type = map_outfit_category(tryon_input.garment_category)
+    def load(self):
+        """Initializes and loads the diffusion pipeline once."""
+        if self._pipeline is not None:
+            return
+
+        catvton_path = str(self.settings.catvton_root)
+        if catvton_path not in sys.path:
+            sys.path.insert(0, catvton_path)
+
+        from model.pipeline import CatVTONPipeline
 
         logger.info(
-            f"Starting CatVTON inference [category={cloth_type}, steps={tryon_input.steps or ai_settings.inference_steps}]",
-            extra={
-                "event": "catvton.inference.started",
-                "category": cloth_type,
-                "person": str(tryon_input.person_path),
-                "garment": str(tryon_input.garment_path),
-            },
+            f"Loading CatVTON pipeline [device={self.settings.device}, dtype={self._weight_dtype}, tf32={self.settings.allow_tf32}]..."
         )
-
-        if self.mock_mode:
-            # Deterministic mock execution for testing / CPU environments
-            time.sleep(0.05)
-            person_img, _ = prepare_images(
-                tryon_input.person_path,
-                tryon_input.garment_path,
-                ai_settings.width,
-                ai_settings.height,
-            )
-            duration_ms = round((time.perf_counter() - start_time) * 1000, 2)
-            return TryOnOutput(
-                image=person_img,
-                width=person_img.width,
-                height=person_img.height,
-                duration_ms=duration_ms,
-            )
-
-        # Enforce concurrency guard (e.g. max 1 concurrent inference per worker process)
-        acquired = self.runtime.semaphore.acquire(timeout=60.0)
-        if not acquired:
-            raise CatVTONInferenceError("Timed out waiting for GPU inference semaphore slot.")
+        base_path = self.settings.base_model_path
+        try:
+            from huggingface_hub import snapshot_download
+            base_path = snapshot_download(self.settings.base_model_path, local_files_only=True)
+        except Exception:
+            pass
 
         try:
-            import torch
-
-            # 1. Retrieve persistent runtime components
-            pipeline, automasker, mask_processor = self.runtime.components
-
-            # 2. Preprocess person & garment
-            person_img, garment_img = prepare_images(
-                tryon_input.person_path,
-                tryon_input.garment_path,
-                ai_settings.width,
-                ai_settings.height,
+            self._pipeline = CatVTONPipeline(
+                base_ckpt=base_path,
+                attn_ckpt=self.repo_path,
+                attn_ckpt_version=self.settings.attn_ckpt_version,
+                weight_dtype=self._weight_dtype,
+                use_tf32=self.settings.allow_tf32,
+                device=self.settings.device,
+                skip_safety_check=True,
             )
+            logger.info("CatVTON diffusion pipeline loaded successfully into GPU memory.")
+        except torch.cuda.OutOfMemoryError as oom:
+            torch.cuda.empty_cache()
+            raise CatVTONOOMError(f"CUDA OOM while loading CatVTON pipeline: {oom}") from oom
+        except Exception as exc:
+            raise CatVTONInferenceError(f"Failed to initialize CatVTONPipeline: {exc}") from exc
 
-            # 3. Generate agnostic mask
-            try:
-                if hasattr(automasker, "__call__"):
-                    raw_mask = automasker(person_img, cloth_type)["mask"]
-                else:
-                    raw_mask = generate_fallback_mask(person_img, cloth_type)
-            except Exception as mask_exc:
-                logger.warning(f"AutoMasker failed ({str(mask_exc)}); using fallback mask.")
-                raw_mask = generate_fallback_mask(person_img, cloth_type)
+    def generate(
+        self,
+        person_image: Image.Image,
+        garment_image: Image.Image,
+        mask_image: Image.Image,
+        num_inference_steps: Optional[int] = None,
+        guidance_scale: Optional[float] = None,
+        seed: Optional[int] = None,
+        width: Optional[int] = None,
+        height: Optional[int] = None,
+    ) -> Image.Image:
+        """
+        Executes diffusion try-on generation under torch.inference_mode().
+        """
+        if self._pipeline is None:
+            self.load()
 
-            # 4. Blur mask
-            if hasattr(mask_processor, "blur"):
-                mask = mask_processor.blur(raw_mask, blur_factor=9)
-            else:
-                mask = raw_mask
+        steps = num_inference_steps or self.settings.inference_steps
+        guidance = guidance_scale or self.settings.guidance_scale
+        target_w = width or self.settings.width
+        target_h = height or self.settings.height
 
-            # 5. Generator seed
-            generator = None
-            if tryon_input.seed is not None and tryon_input.seed != -1:
-                generator = torch.Generator(device=pipeline.device).manual_seed(tryon_input.seed)
+        generator = None
+        if seed is not None and seed != -1:
+            generator = torch.Generator(device=self.settings.device).manual_seed(seed)
 
-            # 6. Run diffusion model under inference mode (no gradients)
-            steps = tryon_input.steps or ai_settings.inference_steps
-            guidance = tryon_input.guidance_scale or ai_settings.guidance_scale
-
+        try:
             with torch.inference_mode():
-                result_images = pipeline(
-                    image=person_img,
-                    condition_image=garment_img,
-                    mask=mask,
+                result = self._pipeline(
+                    image=person_image,
+                    condition_image=garment_image,
+                    mask=mask_image,
                     num_inference_steps=steps,
                     guidance_scale=guidance,
                     generator=generator,
-                )
-
-            raw_result = result_images[0]
-            norm_result = validate_and_normalize_output(raw_result)
-            duration_ms = round((time.perf_counter() - start_time) * 1000, 2)
-
-            logger.info(
-                f"CatVTON inference completed in {duration_ms}ms",
-                extra={"event": "catvton.inference.completed", "duration_ms": duration_ms},
-            )
-
-            return TryOnOutput(
-                image=norm_result,
-                width=norm_result.width,
-                height=norm_result.height,
-                duration_ms=duration_ms,
-            )
-
-        except CatVTONModelUnavailableError:
-            raise
+                    width=target_w,
+                    height=target_h,
+                )[0]
+                return result
+        except torch.cuda.OutOfMemoryError as oom_exc:
+            logger.error("CUDA Out of Memory during CatVTON inference! Clearing cache.")
+            torch.cuda.empty_cache()
+            raise CatVTONOOMError(f"CUDA OOM during diffusion inference: {oom_exc}") from oom_exc
         except Exception as exc:
-            duration_ms = round((time.perf_counter() - start_time) * 1000, 2)
-            exc_str = str(exc).lower()
-
-            # Detect CUDA Out of Memory
-            if "out of memory" in exc_str or "cuda oom" in exc_str or (hasattr(exc, "__class__") and "OutOfMemoryError" in exc.__class__.__name__):
-                logger.error(
-                    "CatVTON CUDA Out of Memory detected during inference!",
-                    extra={"event": "catvton.inference.oom", "duration_ms": duration_ms},
-                )
-                try:
-                    import torch
-                    if torch.cuda.is_available():
-                        torch.cuda.empty_cache()
-                except Exception:
-                    pass
-                raise CatVTONOutOfMemoryError("CUDA out of memory during CatVTON diffusion execution.") from exc
-
-            logger.error(
-                f"CatVTON inference failed: {str(exc)}",
-                exc_info=True,
-                extra={"event": "catvton.inference.failed", "duration_ms": duration_ms},
-            )
-            raise CatVTONInferenceError(f"CatVTON inference execution failed: {str(exc)}") from exc
-
-        finally:
-            self.runtime.semaphore.release()
-
-
-# Factory helpers
-def get_catvton_pipeline(mock: bool = False) -> CatVTONPipeline:
-    return CatVTONPipeline(mock_mode=mock)
-
-
-__all__ = ["CatVTONPipeline", "get_catvton_pipeline"]
+            raise CatVTONInferenceError(f"CatVTON diffusion inference failed: {exc}") from exc

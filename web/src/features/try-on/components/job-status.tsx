@@ -1,7 +1,7 @@
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Clock01Icon,
-  SparklesIcon,
+  Loading03Icon,
   CheckmarkCircle02Icon,
   AlertCircleIcon,
 } from "@hugeicons/core-free-icons"
@@ -27,7 +27,7 @@ export function JobStatus({ status, className, errorMessage }: JobStatusProps) {
     processing: {
       label: "Creating your look",
       description: "Our AI pipeline is synthesizing garment drape and fit.",
-      icon: SparklesIcon,
+      icon: Loading03Icon,
       color: "text-zinc-200 bg-zinc-900/80 border-zinc-700/60",
       iconColor: "text-zinc-100",
       animate: true,

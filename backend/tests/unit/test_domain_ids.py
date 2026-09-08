@@ -32,3 +32,13 @@ def test_extract_prefix():
     upload_id = generate_public_id(ResourcePrefix.UPLOAD)
     assert extract_prefix(upload_id) == ResourcePrefix.UPLOAD
     assert extract_prefix("corrupt_id_string") is None
+
+
+def test_validate_public_id_seed_and_alphanumeric_ids():
+    # Verify catalogue seed IDs (which contain 'o', 'u', 'i' from 'seedoutfit')
+    assert validate_public_id("out_01jseedoutfit000000000001", expected_prefix=ResourcePrefix.OUTFIT) is True
+    assert validate_public_id("out_01jseedoutfit000000000004", expected_prefix=ResourcePrefix.OUTFIT) is True
+    assert validate_public_id("out_01jseedoutfit000000000006", expected_prefix=ResourcePrefix.OUTFIT) is True
+    # Verify rejection on mismatched prefix
+    assert validate_public_id("out_01jseedoutfit000000000001", expected_prefix=ResourcePrefix.USER) is False
+

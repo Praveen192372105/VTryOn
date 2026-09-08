@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event"
 import fs from "fs"
 import path from "path"
 import LoginPage from "../../src/pages/auth/login-page"
-import { AuthLayout } from "../../src/layouts/auth-layout"
+import { AuthLayout } from "../../src/components/layout/auth-layout"
 import { createAllProvidersWrapper } from "../../src/test/render"
 import * as authHook from "../../src/features/auth/use-auth"
 import type { AuthContextType } from "../../src/features/auth/types"
@@ -180,7 +180,7 @@ describe("Login Flow — Phase 4 Tests", () => {
     const authFiles = getFilesRecursively(AUTH_FEATURE_DIR)
     authFiles.push(path.resolve(__dirname, "../../src/pages/auth/login-page.tsx"))
     authFiles.push(path.resolve(__dirname, "../../src/pages/auth/register-page.tsx"))
-    authFiles.push(path.resolve(__dirname, "../../src/layouts/auth-layout.tsx"))
+    authFiles.push(path.resolve(__dirname, "../../src/components/layout/auth-layout.tsx"))
 
     const violations: { file: string; match: string }[] = []
     const rasterPattern = /\.(jpg|jpeg|png|webp)|background-image:\s*url/i
@@ -200,7 +200,7 @@ describe("Login Flow — Phase 4 Tests", () => {
     const authFiles = getFilesRecursively(AUTH_FEATURE_DIR)
     authFiles.push(path.resolve(__dirname, "../../src/pages/auth/login-page.tsx"))
     authFiles.push(path.resolve(__dirname, "../../src/pages/auth/register-page.tsx"))
-    authFiles.push(path.resolve(__dirname, "../../src/layouts/auth-layout.tsx"))
+    authFiles.push(path.resolve(__dirname, "../../src/components/layout/auth-layout.tsx"))
 
     const bannedLibs = ["lucide-react", "react-icons", "@mui/icons-material", "@heroicons/react"]
     const violations: { file: string; library: string }[] = []

@@ -114,7 +114,7 @@ def get_tryon_result_content(
     return Response(
         content=image_bytes,
         media_type=mime_type,
-        headers={"Cache-Control": "private, no-cache"},
+        headers={"Cache-Control": "private, no-cache, no-store, must-revalidate"},
     )
 
 

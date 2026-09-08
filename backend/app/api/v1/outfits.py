@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import APIRouter, Depends, File, Form, Response, UploadFile, status
 
 from app.api.dependencies import (
     get_current_user,
@@ -7,14 +7,51 @@ from app.api.dependencies import (
     get_favorite_service,
     get_outfit_service,
 )
+from app.core.config import settings
+from app.core.rate_limit import RateLimiter, enforce_rate_limit, get_rate_limiter
 from app.core.responses import ApiResponse
 from app.domain.ownership import CurrentUser
 from app.schemas.outfit import OutfitListItem, OutfitQueryFilter, OutfitResponse
 from app.schemas.pagination import PaginatedData, PaginationParams
 from app.services.favorite_service import FavoriteService
 from app.services.outfit_service import OutfitService
+from app.utils.files import read_upload_limited
 
 router = APIRouter(tags=["Outfits"])
+
+
+@router.post(
+    "/custom",
+    response_model=ApiResponse[OutfitResponse],
+    status_code=status.HTTP_201_CREATED,
+    summary="Upload a custom garment to use for virtual try-on",
+    operation_id="upload_custom_outfit",
+)
+async def upload_custom_outfit(
+    file: UploadFile = File(...),
+    name: Optional[str] = Form(None),
+    category: str = Form("upper_body"),
+    current_user: CurrentUser = Depends(get_current_user),
+    service: OutfitService = Depends(get_outfit_service),
+    limiter: RateLimiter = Depends(get_rate_limiter),
+) -> ApiResponse[OutfitResponse]:
+    enforce_rate_limit(
+        limiter,
+        key=f"upload:outfit:user:{current_user.public_id}",
+        limit=settings.RATE_LIMIT_UPLOAD_PER_MINUTE,
+        window_seconds=60,
+        error_message="Too many upload requests. Please try again shortly.",
+    )
+    content = await read_upload_limited(file, max_bytes=settings.MAX_UPLOAD_BYTES)
+    outfit_dto = service.create_custom_outfit(
+        user=current_user,
+        filename=file.filename or "garment.jpg",
+        content=content,
+        mime_type=file.content_type or "image/jpeg",
+        name=name,
+        category=category,
+    )
+    return ApiResponse(data=outfit_dto)
 
 
 @router.get(
