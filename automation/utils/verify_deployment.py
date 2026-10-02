@@ -12,8 +12,14 @@ import sys
 import os
 import re
 import time
+from pathlib import Path
 from urllib.parse import urljoin
 import requests
+
+# Ensure workspace root is in sys.path
+WORKSPACE_ROOT = Path(__file__).resolve().parent.parent.parent
+if str(WORKSPACE_ROOT) not in sys.path:
+    sys.path.insert(0, str(WORKSPACE_ROOT))
 
 from automation.config.env_config import BASE_URL, DEFAULT_LIVE_URL
 from automation.utils.logger import log

@@ -90,6 +90,8 @@ jobs:
     needs: [build-and-deploy]
     if: success()
     runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: "."
     steps:
       # Stage 1: Repository Checkout for Test Framework
       - name: "Stage 1: Checkout Repository"
