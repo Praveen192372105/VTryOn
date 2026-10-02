@@ -43,7 +43,7 @@ function MarketingHeader({ isAuthenticated }: { isAuthenticated: boolean }) {
 }
 
 function MarketingFooter() {
-  return <footer className="marketing-footer"><div className="marketing-container marketing-footer-top"><div><Logo className="marketing-logo" /><p>Discover what feels like you, before you get dressed.</p></div><div className="marketing-footer-links"><a href="#how-it-works">How it works</a><a href="#experience">Experience</a><Link to={ROUTES.privacy}>Privacy</Link><Link to={ROUTES.terms}>Terms</Link></div></div><div className="marketing-container marketing-footer-bottom"><span>© {new Date().getFullYear()} V Try-On</span><span>Made for the way you see yourself.</span></div></footer>
+  return <footer className="marketing-footer"><div className="marketing-container marketing-footer-top"><div><Logo className="marketing-logo" /><p>Discover what feels like you, before you get dressed.</p></div><div className="marketing-footer-links"><a href="#how-it-works">How it works</a><a href="#experience">Experience</a><Link to={ROUTES.privacy}>Privacy</Link><Link to={ROUTES.terms}>Terms</Link><a href="reports/" target="_blank" rel="noreferrer" style={{ color: "#10b981", fontWeight: "600" }}>QA Reports & Dashboard ↗</a></div></div><div className="marketing-container marketing-footer-bottom"><span>© {new Date().getFullYear()} V Try-On</span><span>Made for the way you see yourself.</span></div></footer>
 }
 
 export default function LandingPage() {

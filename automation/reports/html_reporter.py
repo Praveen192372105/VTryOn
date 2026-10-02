@@ -21,16 +21,27 @@ class HtmlReporter:
     def generate_html_reports(self, test_results: List[Dict[str, Any]], metrics: Dict[str, Any], module_breakdown: Dict[str, Dict[str, int]]):
         """Generates both execution-report.html and dashboard.html"""
         html_content = self._render_template(test_results, metrics, module_breakdown, is_dashboard=False)
+        # Write execution-report.html and report.html (alias)
         report_path = self.output_dir / "execution-report.html"
+        alias_path = self.output_dir / "report.html"
         with open(report_path, "w", encoding="utf-8") as f:
             f.write(html_content)
-        log.info(f"Generated HTML Execution Report: {report_path}")
+        with open(alias_path, "w", encoding="utf-8") as f:
+            f.write(html_content)
+        log.info(f"Generated HTML Execution Report: {report_path} and {alias_path}")
 
         dashboard_content = self._render_template(test_results, metrics, module_breakdown, is_dashboard=True)
         dashboard_path = self.output_dir / "dashboard.html"
         with open(dashboard_path, "w", encoding="utf-8") as f:
             f.write(dashboard_content)
         log.info(f"Generated HTML Dashboard Report: {dashboard_path}")
+
+        # Also trigger standalone portal sync
+        try:
+            from scripts.generate_reports_portal import main as sync_portal
+            sync_portal()
+        except Exception as e:
+            log.warning(f"Could not sync standalone reports portal: {e}")
 
         return str(report_path), str(dashboard_path)
 

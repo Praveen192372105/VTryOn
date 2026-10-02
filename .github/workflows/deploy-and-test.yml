@@ -69,6 +69,12 @@ jobs:
           cp dist/index.html dist/404.html
           # Create .nojekyll to ensure Vite asset bundles starting with _ or special chars are served
           touch dist/.nojekyll
+          # Deploy Standalone Test Reports & Dashboard Portal alongside web client
+          mkdir -p dist/reports
+          cp -r ../reports/* dist/reports/ || true
+          cp ../reports/dashboard.html dist/dashboard.html || true
+          cp ../reports/report.html dist/report.html || true
+          cp ../reports/execution-report.html dist/execution-report.html || true
 
       # Stage 5: Deploy to GitHub Pages (Only on push to main or workflow_dispatch)
       - name: "Stage 5: Upload GitHub Pages Artifact"
@@ -144,6 +150,7 @@ jobs:
           ALLOW_LOCAL_SELENIUM: "false"
         run: |
           python automation/run_all_tests.py
+          python scripts/generate_reports_portal.py || true
 
       # Stage 9 & 10: Reports Generated Automatically by Engine
 
@@ -153,7 +160,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: live-e2e-automation-reports
-          path: "Test Results/"
+          path: |
+            Test Results/
+            reports/
           retention-days: 30
           if-no-files-found: error
 
