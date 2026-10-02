@@ -1,65 +1,89 @@
 import { useState } from "react"
-import { useAuth } from "@/features/auth"
-import { Button } from "../../../components/ui/button"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
-  UserIcon,
-  Logout01Icon,
-  SecurityCheckIcon,
-  Moon02Icon,
-  Sun01Icon,
-  ComputerIcon,
   CheckmarkCircle01Icon,
-  SparklesIcon,
+  ComputerIcon,
+  Logout01Icon,
+  Moon02Icon,
+  SecurityCheckIcon,
+  Sun01Icon,
+  UserIcon,
 } from "@hugeicons/core-free-icons"
-import { useTheme, type Theme } from "../../../lib/theme/theme-provider"
-import { cn } from "../../../lib/utils"
+import { useAuth } from "@/features/auth"
+import { Button } from "@/components/ui/button"
+import { useTheme, type Theme } from "@/lib/theme/theme-provider"
+import { cn } from "@/lib/utils"
 
-function CopyButton({ text, label = "Copy" }: { text: string; label?: string }) {
+const themeOptions: {
+  value: Theme
+  title: string
+  description: string
+  icon: typeof Moon02Icon
+}[] = [
+  { value: "light", title: "Light", description: "Warm and bright", icon: Sun01Icon },
+  { value: "dark", title: "Dark", description: "Soft and focused", icon: Moon02Icon },
+  { value: "system", title: "System", description: "Match your device", icon: ComputerIcon },
+]
+
+function getInitials(name?: string) {
+  if (!name?.trim()) return "U"
+  const parts = name.trim().split(/\s+/)
+  return parts.length === 1
+    ? parts[0].slice(0, 2).toUpperCase()
+    : `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase()
+}
+
+function CopyButton({ text, label }: { text: string; label: string }) {
   const [copied, setCopied] = useState(false)
 
-  const handleCopy = async (e: React.MouseEvent) => {
-    e.stopPropagation()
-    if (!text) return
+  const copy = async () => {
     try {
       await navigator.clipboard.writeText(text)
       setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      window.setTimeout(() => setCopied(false), 2000)
     } catch {
-      // Fallback if clipboard fails
+      // Clipboard access can be unavailable outside a secure browser context.
     }
   }
 
   return (
     <button
       type="button"
-      onClick={handleCopy}
-      title={copied ? "Copied to clipboard!" : label}
-      aria-label={copied ? "Copied to clipboard!" : label}
-      className={cn(
-        "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-mono transition-all duration-150 cursor-pointer select-none",
-        copied
-          ? "bg-emerald-500/15 text-emerald-500 border border-emerald-500/30"
-          : "text-muted-foreground hover:text-foreground bg-surface-subtle hover:bg-surface-raised border border-border/80"
-      )}
+      onClick={copy}
+      aria-label={copied ? `${label} copied` : label}
+      className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-border bg-surface px-2.5 py-1 text-[11px] font-medium text-muted-foreground transition-colors hover:border-brand/40 hover:text-brand"
     >
       {copied ? (
-        <>
-          <svg className="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
-          <span>Copied</span>
-        </>
+        <HugeiconsIcon icon={CheckmarkCircle01Icon} className="size-3.5" aria-hidden="true" />
       ) : (
-        <>
-          <svg className="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-          </svg>
-          <span>Copy</span>
-        </>
+        <svg className="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <rect x="9" y="9" width="12" height="12" rx="2" />
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+        </svg>
       )}
+      {copied ? "Copied" : "Copy"}
     </button>
+  )
+}
+
+function ThemePreview({ value }: { value: Theme }) {
+  const light = (
+    <div className="flex h-full flex-1 flex-col justify-between bg-[#f7f5ef] p-2.5">
+      <div className="flex items-center gap-1.5"><span className="size-2 rounded-sm bg-[#a77a57]" /><span className="h-1.5 w-11 rounded-sm bg-[#ddd5c9]" /></div>
+      <div className="space-y-1"><div className="h-1.5 w-18 rounded-sm bg-[#b8a898]" /><div className="h-1 w-12 rounded-sm bg-[#ddd5c9]" /></div>
+    </div>
+  )
+  const dark = (
+    <div className="flex h-full flex-1 flex-col justify-between bg-[#211e1b] p-2.5">
+      <div className="flex items-center gap-1.5"><span className="size-2 rounded-sm bg-[#d3a77f]" /><span className="h-1.5 w-11 rounded-sm bg-[#4d4239]" /></div>
+      <div className="space-y-1"><div className="h-1.5 w-18 rounded-sm bg-[#786457]" /><div className="h-1 w-12 rounded-sm bg-[#4d4239]" /></div>
+    </div>
+  )
+
+  return (
+    <div className="flex h-20 overflow-hidden rounded-md border border-border/80 shadow-xs" aria-hidden="true">
+      {value === "system" ? <>{light}{dark}</> : value === "dark" ? dark : light}
+    </div>
   )
 }
 
@@ -67,267 +91,103 @@ export function AccountProfile() {
   const { user, logout } = useAuth()
   const { theme, setTheme } = useTheme()
 
-  const getInitials = (name?: string) => {
-    if (!name) return "U"
-    const parts = name.trim().split(/\s+/)
-    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
-  }
-
-  const themeOptions: {
-    value: Theme
-    title: string
-    description: string
-    icon: typeof Moon02Icon
-  }[] = [
-    {
-      value: "dark",
-      title: "Dark",
-      description: "High contrast, gentle on eyes",
-      icon: Moon02Icon,
-    },
-    {
-      value: "light",
-      title: "Light",
-      description: "Clean, high-clarity daylight theme",
-      icon: Sun01Icon,
-    },
-    {
-      value: "system",
-      title: "System",
-      description: "Synchronizes with device OS",
-      icon: ComputerIcon,
-    },
-  ]
-
   return (
-    <div className="w-full space-y-6">
-      {/* 1. Account Profile Identity Hero Card */}
-      <div className="relative overflow-hidden rounded-2xl border border-border/80 bg-surface/80 backdrop-blur-md shadow-xs transition-all">
-        {/* Subtle Ambient Header Banner */}
-        <div className="relative h-24 sm:h-28 w-full bg-gradient-to-r from-primary/10 via-accent/15 to-primary/5 border-b border-border/40 overflow-hidden">
-          <div className="absolute -top-12 -right-12 size-40 rounded-full bg-primary/10 blur-2xl pointer-events-none" />
-          <div className="absolute top-4 right-4 sm:top-5 sm:right-6 flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium bg-surface/90 backdrop-blur-md border border-border/70 text-foreground shadow-2xs">
-            <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>Active Account</span>
-          </div>
+    <div className="space-y-5 sm:space-y-6">
+      <section className="overflow-hidden rounded-2xl border border-border bg-card shadow-xs" aria-labelledby="profile-heading">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-brand-soft/45 px-5 py-4 sm:px-8">
+          <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-brand">Your profile</span>
+          <span className="inline-flex items-center gap-2 rounded-md border border-success/25 bg-surface px-2.5 py-1 text-[11px] font-medium text-foreground">
+            <span className="size-1.5 rounded-full bg-success" /> Active Account
+          </span>
         </div>
 
-        {/* Profile Content with overlapping avatar */}
-        <div className="px-6 sm:px-8 pb-6">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 -mt-10 sm:-mt-12 mb-5">
-            <div className="flex items-end gap-4">
-              <div className="relative size-20 sm:size-22 rounded-2xl ring-4 ring-surface bg-surface-raised border border-border/80 flex items-center justify-center font-heading font-semibold text-xl sm:text-2xl text-foreground shadow-sm shrink-0 select-none">
-                {user?.name ? (
-                  <span>{getInitials(user.name)}</span>
-                ) : (
-                  <HugeiconsIcon icon={UserIcon} className="size-8 text-muted-foreground" />
-                )}
-                <span
-                  className="absolute -bottom-1 -right-1 size-4 rounded-full bg-emerald-500 ring-2 ring-surface flex items-center justify-center shadow-xs"
-                  title="Online & Active"
-                />
-              </div>
-
-              <div className="min-w-0 pb-1">
-                <div className="flex items-center gap-2">
-                  <h2 className="text-xl sm:text-2xl font-semibold text-foreground tracking-tight truncate">
-                    {user?.name || "User"}
-                  </h2>
-                </div>
-                <div className="flex items-center gap-2 mt-0.5">
-                  <p className="text-xs sm:text-sm text-muted-foreground font-mono truncate">
-                    {user?.email || "No email available"}
-                  </p>
-                  {user?.email && <CopyButton text={user.email} label="Copy email" />}
-                </div>
-              </div>
+        <div className="px-5 py-6 sm:px-8 sm:py-8">
+          <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center sm:gap-5">
+            <div className="flex size-17 shrink-0 items-center justify-center rounded-lg border border-brand/20 bg-brand-soft text-xl font-semibold text-brand sm:size-20 sm:text-2xl" aria-hidden="true">
+              {user?.name ? getInitials(user.name) : <HugeiconsIcon icon={UserIcon} className="size-7" />}
+            </div>
+            <div className="min-w-0">
+              <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">Personal fitting room</p>
+              <h2 id="profile-heading" className="break-words font-editorial text-[clamp(1.9rem,3vw,2.6rem)] leading-tight tracking-[-0.045em] text-foreground">
+                {user?.name || "Your account"}
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground">Manage your details and your workspace preferences.</p>
             </div>
           </div>
 
-          {/* Account Metrics & Security Attributes */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-5 border-t border-border/70">
-            {/* Metric 1: Member Status */}
-            <div className="p-3.5 rounded-xl bg-surface-subtle/70 border border-border/60 flex flex-col justify-between space-y-2">
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span>Account Status</span>
-                <HugeiconsIcon icon={CheckmarkCircle01Icon} className="size-3.5 text-primary" />
-              </div>
-              <div>
-                <div className="flex items-center gap-1.5 font-medium text-xs text-foreground">
-                  <span className="size-1.5 rounded-full bg-emerald-500" />
-                  <span>Active & Verified</span>
-                </div>
-                <p className="text-[11px] text-muted-foreground mt-0.5">Standard Studio Access</p>
+          <div className="mt-8 grid gap-5 border-t border-border pt-6 sm:grid-cols-2 sm:gap-7">
+            <div className="min-w-0">
+              <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">Email address</span>
+              <div className="mt-2 flex min-w-0 items-center gap-2">
+                <span className="min-w-0 break-all text-sm text-foreground">{user?.email || "No email available"}</span>
+                {user?.email && <CopyButton text={user.email} label="Copy email" />}
               </div>
             </div>
-
-            {/* Metric 2: Privacy Protection */}
-            <div className="p-3.5 rounded-xl bg-surface-subtle/70 border border-border/60 flex flex-col justify-between space-y-2">
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span>Data Isolation</span>
-                <HugeiconsIcon icon={SecurityCheckIcon} className="size-3.5 text-emerald-500" />
-              </div>
-              <div>
-                <div className="flex items-center gap-1.5 font-medium text-xs text-emerald-500 dark:text-emerald-400">
-                  <span>Isolated & Private</span>
-                </div>
-                <p className="text-[11px] text-muted-foreground mt-0.5">Photos strictly user-scoped</p>
-              </div>
-            </div>
-
-            {/* Metric 3: Account Identifier */}
-            <div className="p-3.5 rounded-xl bg-surface-subtle/70 border border-border/60 flex flex-col justify-between space-y-2 sm:col-span-1">
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span>User Identifier</span>
-                <HugeiconsIcon icon={SparklesIcon} className="size-3.5 text-muted-foreground" />
-              </div>
-              <div>
-                <div className="flex items-center justify-between gap-1">
-                  <span className="font-mono text-xs text-foreground truncate max-w-[120px]" title={user?.id || "Session User"}>
-                    {user?.id ? `${user.id.slice(0, 10)}...` : "Active User"}
-                  </span>
-                  {user?.id && <CopyButton text={user.id} label="Copy user ID" />}
-                </div>
-                <p className="text-[11px] text-muted-foreground mt-0.5">Authenticated Session</p>
+            <div className="min-w-0">
+              <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">Account ID</span>
+              <div className="mt-2 flex min-w-0 items-center gap-2">
+                <span className="min-w-0 truncate font-mono text-xs text-foreground" title={user?.id || undefined}>{user?.id || "Unavailable"}</span>
+                {user?.id && <CopyButton text={user.id} label="Copy user ID" />}
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* 2. Appearance & Theme Preferences Card */}
-      <div className="rounded-2xl border border-border/80 bg-surface/80 backdrop-blur-md p-6 space-y-5 shadow-xs transition-all">
-        <div>
-          <h3 className="text-base font-semibold text-foreground tracking-tight">Appearance Theme</h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Select your interface color scheme preference or synchronize automatically with your operating system.
-          </p>
+        <div className="flex items-start gap-3 border-t border-border bg-surface-subtle/60 px-5 py-4 sm:px-8">
+          <HugeiconsIcon icon={SecurityCheckIcon} className="mt-0.5 size-4 shrink-0 text-brand" aria-hidden="true" />
+          <div>
+            <p className="text-xs font-semibold text-foreground">Isolated &amp; Private</p>
+            <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">Your photos and saved looks are associated with your account.</p>
+          </div>
         </div>
+      </section>
 
-        {/* Visual Theme Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5" role="radiogroup" aria-label="Color scheme preference">
-          {themeOptions.map((opt) => {
-            const isSelected = theme === opt.value
+      <section className="rounded-2xl border border-border bg-card p-5 shadow-xs sm:p-8" aria-labelledby="appearance-heading">
+        <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-brand">Appearance</span>
+        <h3 id="appearance-heading" className="mt-2 font-editorial text-2xl tracking-[-0.035em] text-foreground sm:text-[1.8rem]">Choose your setting</h3>
+        <p className="mt-1 max-w-xl text-sm leading-relaxed text-muted-foreground">Choose a warm light or dark workspace, or follow your device setting.</p>
+
+        <div className="mt-6 grid gap-3 sm:grid-cols-3" role="radiogroup" aria-label="Color scheme preference">
+          {themeOptions.map((option) => {
+            const selected = theme === option.value
             return (
               <button
-                key={opt.value}
+                key={option.value}
                 type="button"
                 role="radio"
-                aria-checked={isSelected}
-                onClick={() => setTheme(opt.value)}
+                aria-checked={selected}
+                onClick={() => setTheme(option.value)}
                 className={cn(
-                  "relative flex flex-col justify-between p-3.5 rounded-xl border text-left transition-all duration-200 cursor-pointer group",
-                  isSelected
-                    ? "border-primary bg-surface-raised shadow-xs ring-2 ring-primary/20"
-                    : "border-border/70 bg-surface-subtle/40 hover:bg-surface-subtle hover:border-border text-muted-foreground hover:text-foreground"
+                  "min-w-0 rounded-lg border p-3 text-left transition-colors focus-visible:outline-2 focus-visible:outline-brand",
+                  selected ? "border-brand bg-brand-soft/35" : "border-border bg-surface hover:border-brand/45 hover:bg-surface-raised"
                 )}
               >
-                {/* Visual Preview Graphic */}
-                <div className="w-full mb-3">
-                  {opt.value === "dark" && (
-                    <div className="w-full h-16 rounded-lg bg-zinc-950 border border-zinc-800 p-2.5 flex flex-col justify-between overflow-hidden shadow-inner">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1.5">
-                          <div className="size-2 rounded-full bg-zinc-700" />
-                          <div className="h-1.5 w-10 rounded bg-zinc-800" />
-                        </div>
-                        <HugeiconsIcon icon={Moon02Icon} className="size-3 text-zinc-400" />
-                      </div>
-                      <div className="space-y-1">
-                        <div className="h-1.5 w-16 rounded bg-zinc-700" />
-                        <div className="h-1 w-12 rounded bg-zinc-800" />
-                      </div>
-                    </div>
-                  )}
-
-                  {opt.value === "light" && (
-                    <div className="w-full h-16 rounded-lg bg-white border border-zinc-200 p-2.5 flex flex-col justify-between overflow-hidden shadow-inner">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1.5">
-                          <div className="size-2 rounded-full bg-zinc-300" />
-                          <div className="h-1.5 w-10 rounded bg-zinc-200" />
-                        </div>
-                        <HugeiconsIcon icon={Sun01Icon} className="size-3 text-amber-500" />
-                      </div>
-                      <div className="space-y-1">
-                        <div className="h-1.5 w-16 rounded bg-zinc-300" />
-                        <div className="h-1 w-12 rounded bg-zinc-200" />
-                      </div>
-                    </div>
-                  )}
-
-                  {opt.value === "system" && (
-                    <div className="w-full h-16 rounded-lg border border-border/80 flex overflow-hidden shadow-inner">
-                      <div className="w-1/2 h-full bg-white p-2 flex flex-col justify-between border-r border-zinc-200">
-                        <div className="size-2 rounded-full bg-zinc-300" />
-                        <HugeiconsIcon icon={Sun01Icon} className="size-3 text-amber-500" />
-                      </div>
-                      <div className="w-1/2 h-full bg-zinc-950 p-2 flex flex-col justify-between items-end">
-                        <div className="size-2 rounded-full bg-zinc-700" />
-                        <HugeiconsIcon icon={Moon02Icon} className="size-3 text-zinc-400" />
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Option Details */}
-                <div className="flex items-center justify-between w-full">
-                  <div className="min-w-0 pr-2">
-                    <div className="flex items-center gap-1.5">
-                      <HugeiconsIcon
-                        icon={opt.icon}
-                        className={cn(
-                          "size-3.5 shrink-0",
-                          isSelected ? "text-primary" : "text-muted-foreground"
-                        )}
-                      />
-                      <span className="text-xs font-semibold text-foreground">{opt.title}</span>
-                    </div>
-                    <p className="text-[11px] text-muted-foreground mt-0.5 truncate">{opt.description}</p>
+                <ThemePreview value={option.value} />
+                <div className="mt-3 flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <span className="flex items-center gap-1.5 text-sm font-semibold text-foreground"><HugeiconsIcon icon={option.icon} className="size-4 text-brand" aria-hidden="true" />{option.title}</span>
+                    <span className="mt-0.5 block text-xs text-muted-foreground">{option.description}</span>
                   </div>
-
-                  {/* Radio Indicator */}
-                  <div
-                    className={cn(
-                      "size-4 rounded-full border flex items-center justify-center shrink-0 transition-colors",
-                      isSelected
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : "border-border bg-surface"
-                    )}
-                  >
-                    {isSelected && (
-                      <div className="size-1.5 rounded-full bg-primary-foreground" />
-                    )}
-                  </div>
+                  <span className={cn("mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full border", selected ? "border-brand bg-brand text-brand-foreground" : "border-border bg-surface")} aria-hidden="true">
+                    {selected && <span className="size-1.5 rounded-full bg-current" />}
+                  </span>
                 </div>
               </button>
             )
           })}
         </div>
-      </div>
+      </section>
 
-      {/* 3. Session Security & Sign Out Card */}
-      <div className="rounded-2xl border border-border/80 bg-surface/80 backdrop-blur-md p-6 shadow-xs transition-all">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <h3 className="text-base font-semibold text-foreground tracking-tight">Active Session & Security</h3>
-            <p className="text-xs text-muted-foreground max-w-md leading-relaxed">
-              You are securely signed in on this device. Signing out terminates your session tokens and purges cached try-on queries from local storage.
-            </p>
-          </div>
-
-          <Button
-            variant="destructive"
-            size="default"
-            onClick={() => logout()}
-            leadingIcon={<HugeiconsIcon icon={Logout01Icon} className="size-4" />}
-            className="cursor-pointer shrink-0 font-medium"
-          >
-            Sign Out
-          </Button>
+      <section className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-5 shadow-xs sm:flex-row sm:items-center sm:justify-between sm:p-8" aria-labelledby="session-heading">
+        <div className="max-w-xl">
+          <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-brand">Account access</span>
+          <h3 id="session-heading" className="mt-2 font-editorial text-2xl tracking-[-0.035em] text-foreground">Your current session</h3>
+          <p className="mt-1 text-sm leading-relaxed text-muted-foreground">You are signed in on this device. Sign out when you are finished using this workspace.</p>
         </div>
-      </div>
+        <Button variant="destructive" onClick={() => logout()} leadingIcon={<HugeiconsIcon icon={Logout01Icon} className="size-4" />} className="self-start sm:self-auto">
+          Sign Out
+        </Button>
+      </section>
     </div>
   )
 }

@@ -49,7 +49,7 @@
             android:layout_marginTop="@dimen/vto_space_sm"
             android:gravity="center"
             android:lineSpacingExtra="4dp"
-            android:text="CatVTON AI diffusion model is generating your look. You may navigate away; generation continues on the server."
+            android:text="Crafting your personalized virtual fitting. You may browse other styles while your look finishes."
             android:textAppearance="@style/TextAppearance.VTryOn.BodyMedium"
             android:textColor="@color/vto_content_secondary" />
 
@@ -60,7 +60,7 @@
             android:layout_marginTop="@dimen/vto_space_md"
             android:textAppearance="@style/TextAppearance.VTryOn.Caption"
             android:textColor="@color/vto_content_tertiary"
-            tools:text="Job ID: 01jseedtryon000000000001" />
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/failureContainer"
@@ -78,7 +78,7 @@
                 android:gravity="center"
                 android:textAppearance="@style/TextAppearance.VTryOn.BodyMedium"
                 android:textColor="@color/vto_error"
-                tools:text="Generation encountered an unexpected issue on the server." />
+                tools:text="Virtual fitting could not be completed." />
 
             <com.example.vtryon.core.designsystem.component.AppButton
                 android:id="@+id/btnRetry"

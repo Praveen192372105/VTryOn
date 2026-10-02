@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
+import kotlinx.coroutines.launch
 import androidx.navigation.fragment.NavHostFragment
 import com.example.vtryon.R
 import com.example.vtryon.app.navigation.SessionCoordinator
@@ -29,7 +31,8 @@ class AppActivity : AppCompatActivity() {
     private val topLevelDestinations = setOf(
         R.id.homeFragment,
         R.id.outfitsFragment,
-        R.id.savedFragment
+        R.id.savedFragment,
+        R.id.settingsFragment
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,6 +52,26 @@ class AppActivity : AppCompatActivity() {
         setupBottomNavigation()
         setupTabletNavigation()
         setupDestinationListener()
+        setupThemeObserver()
+    }
+
+    private fun setupThemeObserver() {
+        lifecycleScope.launch {
+            val app = application as TryOnApplication
+            app.settingsStore.themeMode.collect { mode ->
+                val nightMode = when (mode) {
+                    com.example.vtryon.core.datastore.AppSettingsStore.ThemeMode.DARK -> androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
+                    com.example.vtryon.core.datastore.AppSettingsStore.ThemeMode.LIGHT -> androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+                    com.example.vtryon.core.datastore.AppSettingsStore.ThemeMode.SYSTEM -> androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+                }
+                if (androidx.appcompat.app.AppCompatDelegate.getDefaultNightMode() != nightMode) {
+                    androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(nightMode)
+                }
+                if (delegate.localNightMode != nightMode) {
+                    delegate.localNightMode = nightMode
+                }
+            }
+        }
     }
 
     private fun setupSessionCoordinator() {
@@ -71,7 +94,8 @@ class AppActivity : AppCompatActivity() {
                 VtoBottomBar.Item(R.id.homeFragment, VtoIcon.Home, "Home"),
                 VtoBottomBar.Item(R.id.outfitsFragment, VtoIcon.Garment, "Catalogue"),
                 VtoBottomBar.Item(R.id.nav_tryon, VtoIcon.TryOn, "Try-On"),
-                VtoBottomBar.Item(R.id.savedFragment, VtoIcon.Saved, "Saved")
+                VtoBottomBar.Item(R.id.savedFragment, VtoIcon.Saved, "Saved"),
+                VtoBottomBar.Item(R.id.settingsFragment, VtoIcon.Settings, "Settings")
             )
         )
 
@@ -88,6 +112,7 @@ class AppActivity : AppCompatActivity() {
         binding.tabTabletCatalogue?.setIcon(VtoIcon.Garment)
         binding.tabTabletTryOn?.setIcon(VtoIcon.TryOn)
         binding.tabTabletSaved?.setIcon(VtoIcon.Saved)
+        binding.tabTabletSettings?.setIcon(VtoIcon.Settings)
 
         binding.tabTabletHome?.setOnClickListener {
             navController.navigateToTopLevelDestination(R.id.homeFragment)
@@ -100,6 +125,9 @@ class AppActivity : AppCompatActivity() {
         }
         binding.tabTabletSaved?.setOnClickListener {
             navController.navigateToTopLevelDestination(R.id.savedFragment)
+        }
+        binding.tabTabletSettings?.setOnClickListener {
+            navController.navigateToTopLevelDestination(R.id.settingsFragment)
         }
     }
 

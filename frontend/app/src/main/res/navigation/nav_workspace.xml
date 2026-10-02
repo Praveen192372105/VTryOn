@@ -67,6 +67,24 @@
             app:destination="@id/nav_auth"
             app:popUpTo="@id/nav_workspace"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_settings_to_result"
+            app:destination="@id/resultFragment" />
+        <action
+            android:id="@+id/action_settings_to_tryon"
+            app:destination="@id/nav_tryon" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/resultFragment"
+        android:name="com.example.vtryon.feature.result.ResultFragment"
+        android:label="Try-On Result">
+        <argument
+            android:name="jobId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_result_to_tryon"
+            app:destination="@id/nav_tryon" />
     </fragment>
 
     <include app:graph="@navigation/nav_tryon" />

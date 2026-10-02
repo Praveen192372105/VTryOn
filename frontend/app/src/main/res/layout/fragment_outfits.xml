@@ -1,43 +1,499 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/surface_primary">
+    android:background="@color/vto_background">
 
+    <!-- Top Editorial Toolbar -->
     <com.example.vtryon.core.designsystem.component.AppToolbar
         android:id="@+id/outfitsToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:toolbarTitle="Catalogue"
-        app:toolbarSubtitle="Garments" />
+        app:toolbarSubtitle="Curated Garments"
+        app:toolbarTitle="Catalogue" />
 
+    <!-- Search & Filter Controls -->
+    <LinearLayout
+        android:id="@+id/searchFilterRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/spacing_16"
+        android:paddingTop="@dimen/spacing_8"
+        android:paddingBottom="@dimen/spacing_8"
+        app:layout_constraintTop_toBottomOf="@id/outfitsToolbar">
+
+        <!-- Search Input Box -->
+        <LinearLayout
+            android:id="@+id/searchBox"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_weight="1"
+            android:background="@drawable/vto_bg_input"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/spacing_12">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:contentDescription="Search"
+                android:src="@drawable/vto_huge_search_01"
+                app:tint="@color/vto_content_tertiary" />
+
+            <EditText
+                android:id="@+id/etSearch"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/spacing_8"
+                android:layout_weight="1"
+                android:background="@null"
+                android:hint="Search garments, tops, denim..."
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:maxLines="1"
+                android:textColor="@color/vto_content_primary"
+                android:textColorHint="@color/vto_content_tertiary"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/btnClearSearch"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Clear"
+                android:padding="2dp"
+                android:src="@drawable/vto_huge_cancel_01"
+                android:visibility="gone"
+                app:tint="@color/vto_content_tertiary" />
+
+        </LinearLayout>
+
+        <!-- Filter Trigger Button -->
+        <FrameLayout
+            android:id="@+id/btnFilterDrawer"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="@dimen/spacing_10"
+            android:background="@drawable/vto_bg_icon_button"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:contentDescription="Filters"
+                android:src="@drawable/vto_huge_filter"
+                app:tint="@color/vto_content_primary" />
+
+            <!-- Active filter badge dot -->
+            <View
+                android:id="@+id/viewFilterBadge"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_gravity="top|end"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_badge_pill"
+                android:backgroundTint="@color/vto_brand"
+                android:visibility="gone" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <!-- Quick Category Horizontal Filter Carousel -->
+    <HorizontalScrollView
+        android:id="@+id/horizontalCategoryScroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:paddingHorizontal="@dimen/spacing_16"
+        android:paddingBottom="@dimen/spacing_8"
+        android:scrollbars="none"
+        app:layout_constraintTop_toBottomOf="@id/searchFilterRow">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/chipCatAll"
+                style="@style/TextAppearance.VTryOn.LabelSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:layout_marginEnd="@dimen/spacing_8"
+                android:background="@drawable/vto_bg_chip"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/spacing_12"
+                android:text="All"
+                android:textColor="@color/vto_chip_text_selector" />
+
+            <TextView
+                android:id="@+id/chipCatUpper"
+                style="@style/TextAppearance.VTryOn.LabelSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:layout_marginEnd="@dimen/spacing_8"
+                android:background="@drawable/vto_bg_chip"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/spacing_12"
+                android:text="Tops &amp; Jackets"
+                android:textColor="@color/vto_chip_text_selector" />
+
+            <TextView
+                android:id="@+id/chipCatLower"
+                style="@style/TextAppearance.VTryOn.LabelSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:layout_marginEnd="@dimen/spacing_8"
+                android:background="@drawable/vto_bg_chip"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/spacing_12"
+                android:text="Pants &amp; Skirts"
+                android:textColor="@color/vto_chip_text_selector" />
+
+            <TextView
+                android:id="@+id/chipCatDresses"
+                style="@style/TextAppearance.VTryOn.LabelSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:background="@drawable/vto_bg_chip"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/spacing_12"
+                android:text="Dresses"
+                android:textColor="@color/vto_chip_text_selector" />
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+    <!-- Results Subheader / Active Filters Banner -->
+    <LinearLayout
+        android:id="@+id/headerResultsInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/spacing_16"
+        android:paddingVertical="@dimen/spacing_6"
+        app:layout_constraintTop_toBottomOf="@id/horizontalCategoryScroll">
+
+        <TextView
+            android:id="@+id/tvResultsCount"
+            style="@style/TextAppearance.VTryOn.Caption"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/vto_content_secondary"
+            tools:text="Showing 12 pieces" />
+
+        <TextView
+            android:id="@+id/tvResetFilters"
+            style="@style/TextAppearance.VTryOn.Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="@dimen/spacing_4"
+            android:text="Clear filters"
+            android:textColor="@color/vto_brand"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+    <!-- Main Grid Content -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/outfitsToolbar">
+        app:layout_constraintTop_toBottomOf="@id/headerResultsInfo">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvOutfits"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:paddingHorizontal="@dimen/spacing_6"
-            android:paddingVertical="@dimen/spacing_8" />
+            android:paddingHorizontal="@dimen/spacing_10"
+            android:paddingBottom="@dimen/spacing_24" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <!-- Empty State View -->
     <com.example.vtryon.core.designsystem.component.AppEmptyStateView
         android:id="@+id/emptyView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="@dimen/spacing_24"
         android:visibility="gone"
-        app:emptyDescription="No outfits available in this category."
-        app:emptyTitle="No Outfits Found"
+        app:emptyActionText="Clear Filters"
+        app:emptyDescription="No garments match your search or filter criteria. Try a different keyword or reset filters."
+        app:emptyTitle="No Garments Found"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/outfitsToolbar" />
+        app:layout_constraintTop_toBottomOf="@id/headerResultsInfo" />
+
+    <!-- FILTER DRAWER OVERLAY -->
+    <!-- Dimmed Scrim Backdrop -->
+    <View
+        android:id="@+id/scrimFilterBackdrop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/vto_overlay_scrim"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone" />
+
+    <!-- Sliding Filter Drawer Card -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cardFilterDrawer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/vto_bg_sheet"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="@dimen/spacing_20"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <!-- Top Pill Drag Indicator -->
+        <View
+            android:id="@+id/dragIndicator"
+            android:layout_width="36dp"
+            android:layout_height="4dp"
+            android:background="@drawable/bg_badge_pill"
+            android:backgroundTint="@color/vto_border_strong"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Drawer Header -->
+        <TextView
+            android:id="@+id/tvDrawerTitle"
+            style="@style/TextAppearance.VTryOn.HeadlineSmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_12"
+            android:text="Refine Catalogue"
+            android:textColor="@color/vto_content_primary"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/btnCloseDrawer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dragIndicator" />
+
+        <TextView
+            android:id="@+id/tvDrawerSubtitle"
+            style="@style/TextAppearance.VTryOn.BodySmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Filter by style category and sort order"
+            android:textColor="@color/vto_content_secondary"
+            app:layout_constraintEnd_toStartOf="@id/btnCloseDrawer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvDrawerTitle" />
+
+        <ImageView
+            android:id="@+id/btnCloseDrawer"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Close"
+            android:padding="6dp"
+            android:src="@drawable/vto_huge_cancel_01"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvDrawerTitle"
+            app:tint="@color/vto_content_secondary" />
+
+        <!-- Section 1: Garment Category -->
+        <TextView
+            android:id="@+id/tvSecCategory"
+            style="@style/TextAppearance.VTryOn.TitleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_20"
+            android:text="Garment Category"
+            android:textColor="@color/vto_content_primary"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvDrawerSubtitle" />
+
+        <LinearLayout
+            android:id="@+id/rowDrawerCategories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_10"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/tvSecCategory">
+
+            <TextView
+                android:id="@+id/drawerChipAll"
+                style="@style/TextAppearance.VTryOn.LabelSmall"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="@dimen/spacing_6"
+                android:layout_weight="1"
+                android:background="@drawable/vto_bg_chip"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:text="All"
+                android:textColor="@color/vto_chip_text_selector" />
+
+            <TextView
+                android:id="@+id/drawerChipUpper"
+                style="@style/TextAppearance.VTryOn.LabelSmall"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="@dimen/spacing_6"
+                android:layout_weight="1"
+                android:background="@drawable/vto_bg_chip"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:text="Tops"
+                android:textColor="@color/vto_chip_text_selector" />
+
+            <TextView
+                android:id="@+id/drawerChipLower"
+                style="@style/TextAppearance.VTryOn.LabelSmall"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="@dimen/spacing_6"
+                android:layout_weight="1"
+                android:background="@drawable/vto_bg_chip"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:text="Bottoms"
+                android:textColor="@color/vto_chip_text_selector" />
+
+            <TextView
+                android:id="@+id/drawerChipDresses"
+                style="@style/TextAppearance.VTryOn.LabelSmall"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:background="@drawable/vto_bg_chip"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:text="Dresses"
+                android:textColor="@color/vto_chip_text_selector" />
+
+        </LinearLayout>
+
+        <!-- Section 2: Sort By -->
+        <TextView
+            android:id="@+id/tvSecSort"
+            style="@style/TextAppearance.VTryOn.TitleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_20"
+            android:text="Sort Garments"
+            android:textColor="@color/vto_content_primary"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rowDrawerCategories" />
+
+        <LinearLayout
+            android:id="@+id/rowDrawerSort"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_10"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/tvSecSort">
+
+            <TextView
+                android:id="@+id/drawerSortFeatured"
+                style="@style/TextAppearance.VTryOn.LabelSmall"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="@dimen/spacing_6"
+                android:layout_weight="1"
+                android:background="@drawable/vto_bg_chip"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:text="Featured"
+                android:textColor="@color/vto_chip_text_selector" />
+
+            <TextView
+                android:id="@+id/drawerSortNameAsc"
+                style="@style/TextAppearance.VTryOn.LabelSmall"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="@dimen/spacing_6"
+                android:layout_weight="1"
+                android:background="@drawable/vto_bg_chip"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:text="A to Z"
+                android:textColor="@color/vto_chip_text_selector" />
+
+            <TextView
+                android:id="@+id/drawerSortNameDesc"
+                style="@style/TextAppearance.VTryOn.LabelSmall"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:background="@drawable/vto_bg_chip"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:text="Z to A"
+                android:textColor="@color/vto_chip_text_selector" />
+
+        </LinearLayout>
+
+        <!-- Drawer Action Footer (Equal Width & Equal Height) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_24"
+            android:layout_marginBottom="@dimen/spacing_8"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rowDrawerSort">
+
+            <com.example.vtryon.core.designsystem.component.AppButton
+                android:id="@+id/btnDrawerReset"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/spacing_8"
+                android:layout_weight="1"
+                app:btnText="Reset"
+                app:btnVariant="secondary" />
+
+            <com.example.vtryon.core.designsystem.component.AppButton
+                android:id="@+id/btnDrawerApply"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_8"
+                android:layout_weight="1"
+                app:btnText="Apply Filters"
+                app:btnVariant="primary" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

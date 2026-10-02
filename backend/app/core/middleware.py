@@ -169,15 +169,21 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
 def setup_cors(app: FastAPI) -> None:
     """
     Configure strict CORS origins, methods, and headers based on typed environment settings.
+    In development environments, also allows dynamic local ports and LAN origins via origin regex.
     """
     cors_origins = (
         list(settings.CORS_ORIGINS)
         if isinstance(settings.CORS_ORIGINS, (list, tuple))
         else [settings.CORS_ORIGINS]
     )
+    origin_regex = None
+    if settings.APP_ENV != AppEnvironment.PRODUCTION:
+        origin_regex = r"^https?://(localhost|127\.0\.0\.1|10\.0\.2\.2|192\.168\.\d+\.\d+)(:\d+)?$"
+
     app.add_middleware(
         CORSMiddleware,
         allow_origins=cors_origins,
+        allow_origin_regex=origin_regex,
         allow_credentials=settings.CORS_ALLOW_CREDENTIALS,
         allow_methods=settings.CORS_ALLOWED_METHODS,
         allow_headers=settings.CORS_ALLOWED_HEADERS,

@@ -85,15 +85,15 @@ export function LoginForm() {
       initial={prefersReduced ? false : { opacity: 0, y: 12, scale: 0.99 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.35, ease: "easeOut" }}
-      className="w-full max-w-[440px] mx-auto p-6 sm:p-8 rounded-2xl sm:rounded-3xl border border-border bg-card/80 backdrop-blur-md shadow-2xl space-y-6 auth-card-compact text-card-foreground"
+      className="w-full max-w-[440px] mx-auto p-6 sm:p-8 rounded-2xl sm:rounded-3xl border border-border bg-card/80 backdrop-blur-md shadow-2xl space-y-6 auth-card-compact premium-auth-card text-card-foreground"
     >
       {/* Brand & Editorial Heading */}
-      <div className="space-y-3 text-center">
+      <div className="space-y-3 text-center auth-card-intro">
         <AuthBrand />
 
         <div className="space-y-1">
           <span className="text-[11px] font-mono tracking-widest text-muted-foreground uppercase block">
-            Fitting Room Access
+            WELCOME TO YOUR STUDIO
           </span>
           <h1 className="text-2xl sm:text-3xl font-light tracking-tight text-foreground">
             Welcome back
@@ -174,7 +174,7 @@ export function LoginForm() {
       </form>
 
       {/* Secondary Navigation */}
-      <div className="text-center text-xs text-muted-foreground pt-2 border-t border-border/80">
+      <div className="text-center text-xs text-muted-foreground pt-2 border-t border-border/80 auth-switch">
         New to V Try-On?{" "}
         <Link
           to={registerLink}

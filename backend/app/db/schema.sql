@@ -138,6 +138,7 @@ CREATE TABLE `try_on_jobs` (
   `celery_task_id` VARCHAR(100) DEFAULT NULL,
   `error_code` VARCHAR(80) DEFAULT NULL,
   `error_message` VARCHAR(500) DEFAULT NULL,
+  `idempotency_key` VARCHAR(128) DEFAULT NULL,
   `queued_at` DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
   `started_at` DATETIME(6) DEFAULT NULL,
   `finished_at` DATETIME(6) DEFAULT NULL,
@@ -145,6 +146,7 @@ CREATE TABLE `try_on_jobs` (
   `updated_at` DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_try_on_jobs_public_id` (`public_id`),
+  UNIQUE KEY `uq_tryons_user_idempotency` (`user_id`, `idempotency_key`),
   KEY `ix_try_on_jobs_public_id` (`public_id`),
   KEY `ix_try_on_jobs_user_id` (`user_id`),
   KEY `ix_try_on_jobs_person_upload_id` (`person_upload_id`),
@@ -171,6 +173,8 @@ CREATE TABLE `try_on_results` (
   `size_bytes` BIGINT UNSIGNED DEFAULT NULL,
   `sha256` VARCHAR(64) DEFAULT NULL,
   `execution_time_seconds` FLOAT DEFAULT NULL,
+  `model_version` VARCHAR(64) DEFAULT NULL,
+  `inference_config_version` VARCHAR(64) DEFAULT NULL,
   `created_at` DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_try_on_results_public_id` (`public_id`),
@@ -180,5 +184,16 @@ CREATE TABLE `try_on_results` (
   KEY `ix_try_on_results_job_id` (`job_id`),
   CONSTRAINT `fk_try_on_results_job_id_try_on_jobs` FOREIGN KEY (`job_id`) REFERENCES `try_on_jobs` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- -----------------------------------------------------------------------------
+-- 8. Table structure for alembic_version
+-- -----------------------------------------------------------------------------
+DROP TABLE IF EXISTS `alembic_version`;
+CREATE TABLE `alembic_version` (
+  `version_num` VARCHAR(64) NOT NULL,
+  PRIMARY KEY (`version_num`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `alembic_version` (`version_num`) VALUES ('002_add_idempotency_and_model_version');
 
 SET FOREIGN_KEY_CHECKS = 1;

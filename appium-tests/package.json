@@ -1,0 +1,28 @@
+{
+  "name": "vtryon-appium-tests",
+  "version": "1.0.0",
+  "description": "Comprehensive Appium Mobile Automation Test Suite for V Try-On Android App Frontend",
+  "main": "tests/app-frontend-e2e-tests.js",
+  "scripts": {
+    "test": "node tests/app-frontend-e2e-tests.js",
+    "test:login": "node tests/login-tests.js",
+    "report:excel": "python scripts/generate-appium-excel-report.py",
+    "test:full": "node tests/app-frontend-e2e-tests.js && python scripts/generate-appium-excel-report.py"
+  },
+  "keywords": [
+    "appium",
+    "uiautomator2",
+    "android",
+    "e2e-testing",
+    "mobile-automation",
+    "vtryon"
+  ],
+  "author": "V Try-On Mobile QA Automation Team",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "webdriverio": "^8.36.0"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
+  }
+}

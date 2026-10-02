@@ -89,10 +89,10 @@ export function TryOnProcessing({
     : "Composing the garment with your photo using deep AI diffusion. On local hardware this may take several minutes—please keep this tab open."
 
   const getStageMessage = () => {
-    if (isQueued) return "Waiting for GPU worker..."
+    if (isQueued) return "Preparing your fitting..."
     if (progress < 25) return "Analyzing pose & garment geometry..."
     if (progress < 50) return "Aligning fabric drape & contours..."
-    if (progress < 75) return "Synthesizing AI diffusion textures..."
+    if (progress < 75) return "Synthesizing fabric drape & textures..."
     if (progress < 90) return "Refining natural shadows & lighting..."
     if (progress < 96) return "Finalizing high-resolution render..."
     if (progress < 100) return "Polishing photorealistic details..."
@@ -199,7 +199,7 @@ export function TryOnProcessing({
             <div className="pt-2 pb-1 space-y-2">
               <div className="flex items-center justify-between text-xs max-w-xs sm:max-w-sm mx-auto px-0.5">
                 <span className="text-[11px] font-mono text-muted-foreground truncate max-w-[210px] flex items-center gap-1.5">
-                  <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                  <span className="size-1.5 rounded-full bg-brand animate-pulse shrink-0" />
                   <span>{getStageMessage()}</span>
                 </span>
                 <span className="font-mono text-xs font-semibold text-foreground shrink-0 tabular-nums">
@@ -218,7 +218,7 @@ export function TryOnProcessing({
               >
                 {/* Active progress fill with gradient & leading glow */}
                 <div
-                  className="h-full rounded-full transition-all duration-500 ease-out relative overflow-hidden bg-gradient-to-r from-zinc-700 via-zinc-400 to-zinc-200 dark:from-zinc-600 dark:via-zinc-300 dark:to-white shadow-xs"
+                  className="h-full rounded-full transition-all duration-500 ease-out relative overflow-hidden bg-gradient-to-r from-brand via-[#c8a483] to-brand-soft shadow-xs"
                   style={{ width: `${progress}%` }}
                 >
                   {/* Continuous traveling light flare beam */}
@@ -232,13 +232,13 @@ export function TryOnProcessing({
                         duration: isQueued ? 2.4 : 1.3,
                         ease: "easeInOut",
                       }}
-                      className="absolute inset-0 w-3/4 bg-gradient-to-r from-transparent via-white to-transparent opacity-95 blur-[0.5px]"
+                      className="absolute inset-0 w-3/4 bg-gradient-to-r from-transparent via-brand-foreground to-transparent opacity-75 blur-[0.5px]"
                     />
                   )}
 
                   {/* Leading edge glowing beacon */}
                   {!shouldReduceMotion && (
-                    <span className="absolute right-0 top-0 bottom-0 w-2.5 bg-white shadow-[0_0_10px_2px_rgba(255,255,255,0.9)] rounded-full animate-pulse" />
+                    <span className="absolute right-0 top-0 bottom-0 w-2.5 bg-brand-foreground/80 shadow-sm rounded-full animate-pulse" />
                   )}
                 </div>
               </div>

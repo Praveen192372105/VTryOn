@@ -20,7 +20,7 @@ export function AppIcon({
   return (
     <div
       className={cn(
-        "inline-flex items-center justify-center bg-primary text-primary-foreground border border-border shadow-sm select-none shrink-0",
+        "inline-flex items-center justify-center bg-[#a77a57] text-[#fffaf2] border border-[#a77a57] shadow-sm select-none shrink-0",
         className
       )}
       style={{
@@ -32,7 +32,7 @@ export function AppIcon({
       aria-label={decorative ? undefined : title}
       aria-hidden={decorative ? "true" : undefined}
     >
-      <LogoMark size={markSize} className="text-primary-foreground" decorative={true} />
+      <LogoMark size={markSize} className="text-[#fffaf2]" decorative={true} />
     </div>
   )
 }

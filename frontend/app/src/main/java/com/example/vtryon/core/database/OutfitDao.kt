@@ -22,10 +22,10 @@ interface OutfitDao {
     fun getFavoriteOutfits(): Flow<List<OutfitEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertOutfits(outfits: List<OutfitEntity>)
+    suspend fun insertOutfits(outfits: List<OutfitEntity>): List<Long>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(outfit: OutfitEntity)
+    suspend fun insert(outfit: OutfitEntity): Long
 
     @Query("SELECT * FROM outfits WHERE publicId = :publicId LIMIT 1")
     suspend fun getByPublicId(publicId: String): OutfitEntity?
@@ -35,14 +35,14 @@ interface OutfitDao {
     fun observeByCategory(category: String): Flow<List<OutfitEntity>> = getOutfitsByCategory(category)
 
     @androidx.room.Transaction
-    suspend fun replaceAll(outfits: List<OutfitEntity>) {
+    suspend fun replaceAll(outfits: List<OutfitEntity>): List<Long> {
         clearAll()
-        insertOutfits(outfits)
+        return insertOutfits(outfits)
     }
 
     @Query("UPDATE outfits SET isFavorited = :isFavorited WHERE publicId = :publicId")
-    suspend fun updateFavoriteStatus(publicId: String, isFavorited: Boolean)
+    suspend fun updateFavoriteStatus(publicId: String, isFavorited: Boolean): Int
 
     @Query("DELETE FROM outfits")
-    suspend fun clearAll()
+    suspend fun clearAll(): Int
 }

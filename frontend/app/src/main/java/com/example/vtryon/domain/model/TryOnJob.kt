@@ -12,5 +12,6 @@ data class TryOnJob(
     val resultImageUrl: String? = null,
     val createdAt: Long = System.currentTimeMillis(),
     val completedAt: Long? = null,
-    val failureReason: String? = null
+    val failureReason: String? = null,
+    val isSaved: Boolean = false
 )

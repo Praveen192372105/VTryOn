@@ -3,6 +3,11 @@
 @theme inline {
     --font-heading: var(--font-sans);
     --font-sans: 'Inter Variable', sans-serif;
+    --font-editorial: Georgia, 'Times New Roman', serif;
+    --color-brand: var(--brand);
+    --color-brand-soft: var(--brand-soft);
+    --color-brand-foreground: var(--brand-foreground);
+    --color-brand-action: var(--brand-action);
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -50,14 +55,14 @@
     --color-background: var(--background);
 
     /* Consistent Radius Hierarchy */
-    --radius-xs: 0.375rem;
-    --radius-sm: 0.5rem;
-    --radius-md: 0.75rem;
-    --radius-lg: 1rem;
-    --radius-xl: 1.25rem;
-    --radius-2xl: 1.5rem;
-    --radius-3xl: 2rem;
-    --radius-4xl: 2.5rem;
+    --radius-xs: 0.125rem;
+    --radius-sm: 0.1875rem;
+    --radius-md: 0.25rem;
+    --radius-lg: 0.3125rem;
+    --radius-xl: 0.375rem;
+    --radius-2xl: 0.5rem;
+    --radius-3xl: 0.625rem;
+    --radius-4xl: 0.75rem;
 
     /* Controlled Elevation Shadows */
     --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
@@ -66,6 +71,10 @@
 }
 
 :root {
+    --brand: #a77a57;
+    --brand-soft: #e9dfd0;
+    --brand-foreground: #fffaf2;
+    --brand-action: #855d40;
     /* Page & Surfaces (Light Theme - White / Light Zinc Hierarchy) */
     --background: oklch(0.99 0 0);
     --foreground: oklch(0.145 0 0);
@@ -118,7 +127,7 @@
     --chart-4: oklch(0.371 0 0);
     --chart-5: oklch(0.269 0 0);
 
-    --radius: 0.625rem;
+    --radius: 0.25rem;
 
     --sidebar: oklch(0.985 0 0);
     --sidebar-foreground: oklch(0.145 0 0);
@@ -143,6 +152,10 @@
 }
 
 .dark {
+    --brand: #d3a77f;
+    --brand-soft: #48382c;
+    --brand-foreground: #241e19;
+    --brand-action: #d3a77f;
     /* Page & Surfaces (Dark Theme - Near-Black / Lifted Zinc Precision) */
     --background: oklch(0.12 0 0);
     --foreground: oklch(0.985 0 0);
@@ -215,4 +228,78 @@
     --scrollbar-thumb: oklch(0.985 0 0 / 0.20);
     --scrollbar-thumb-hover: oklch(0.985 0 0 / 0.35);
     --scrollbar-thumb-active: oklch(0.985 0 0 / 0.50);
+}
+
+/* Editorial palette shared by the public site and signed-in workspace. */
+:root {
+    --background: #f7f5ef;
+    --foreground: #29251f;
+    --surface: #fffdf9;
+    --surface-raised: #f2ede5;
+    --surface-subtle: #eee9e0;
+    --card: #fffdf9;
+    --card-foreground: #29251f;
+    --popover: #fffdf9;
+    --popover-foreground: #29251f;
+    --primary: #855d40;
+    --primary-foreground: #fffaf2;
+    --secondary: #e9e1d5;
+    --secondary-foreground: #29251f;
+    --muted: #eee9e0;
+    --muted-foreground: #756e65;
+    --accent: #e9dfd0;
+    --accent-foreground: #392b21;
+    --border: #ddd5c9;
+    --border-strong: #b8a898;
+    --input: #d9d0c5;
+    --ring: #9f7354;
+    --focus-ring: #9f7354;
+    --sidebar: #f1ede5;
+    --sidebar-foreground: #29251f;
+    --sidebar-primary: #855d40;
+    --sidebar-primary-foreground: #fffaf2;
+    --sidebar-accent: #e5dacb;
+    --sidebar-accent-foreground: #29251f;
+    --sidebar-border: #dcd2c5;
+    --sidebar-ring: #9f7354;
+    --scrollbar-track: #f7f5ef;
+    --scrollbar-thumb: #c9bbab;
+    --scrollbar-thumb-hover: #a9927c;
+    --scrollbar-thumb-active: #8f735c;
+}
+.dark {
+    --background: #211e1b;
+    --foreground: #f6f0e7;
+    --surface: #2b2622;
+    --surface-raised: #332d28;
+    --surface-subtle: #302a25;
+    --card: #2b2622;
+    --card-foreground: #f6f0e7;
+    --popover: #2b2622;
+    --popover-foreground: #f6f0e7;
+    --primary: #e8d3ba;
+    --primary-foreground: #241e19;
+    --secondary: #3a312b;
+    --secondary-foreground: #f6f0e7;
+    --muted: #38312c;
+    --muted-foreground: #b7aa9d;
+    --accent: #48382c;
+    --accent-foreground: #f8eee1;
+    --border: #4d4239;
+    --border-strong: #786457;
+    --input: #635346;
+    --ring: #d3a77f;
+    --focus-ring: #d3a77f;
+    --sidebar: #26211d;
+    --sidebar-foreground: #f6f0e7;
+    --sidebar-primary: #e8d3ba;
+    --sidebar-primary-foreground: #241e19;
+    --sidebar-accent: #3e342d;
+    --sidebar-accent-foreground: #f6f0e7;
+    --sidebar-border: #4b4037;
+    --sidebar-ring: #d3a77f;
+    --scrollbar-track: #211e1b;
+    --scrollbar-thumb: #695a4d;
+    --scrollbar-thumb-hover: #8a705c;
+    --scrollbar-thumb-active: #ae8868;
 }

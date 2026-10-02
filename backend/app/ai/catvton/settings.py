@@ -41,7 +41,7 @@ class CatVTONSettings:
         if chosen_preset == "fast":
             width = 384
             height = 512
-            steps = 15
+            steps = min(int(getattr(settings, "CATVTON_INFERENCE_STEPS", 8)), 10)
         elif chosen_preset == "balanced":
             width = 576
             height = 768
@@ -51,9 +51,9 @@ class CatVTONSettings:
             height = 1024
             steps = 30
 
-        dtype = getattr(settings, "CATVTON_DTYPE", "bf16").lower()
-        if dtype not in ("fp16", "bf16", "no"):
-            dtype = "bf16"
+        dtype = getattr(settings, "CATVTON_DTYPE", "fp32" if getattr(settings, "CATVTON_DEVICE", "cuda") == "cpu" else "bf16").lower()
+        if dtype not in ("fp16", "bf16", "fp32", "no"):
+            dtype = "fp32" if getattr(settings, "CATVTON_DEVICE", "cuda") == "cpu" else "bf16"
 
         attn_version = getattr(settings, "CATVTON_ATTN_CKPT_VERSION", None)
         if not attn_version:

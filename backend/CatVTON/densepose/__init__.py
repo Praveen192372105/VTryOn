@@ -1,7 +1,10 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 
 # pyre-unsafe
-from .data.datasets import builtin  # just to register data
+try:
+    from .data.datasets import builtin  # just to register data
+except (ImportError, ModuleNotFoundError):
+    pass
 from .converters import builtin as builtin_converters  # register converters
 from .config import (
     add_densepose_config,
@@ -12,7 +15,10 @@ from .config import (
     load_bootstrap_config,
 )
 from .structures import DensePoseDataRelative, DensePoseList, DensePoseTransformData
-from .evaluation import DensePoseCOCOEvaluator
+try:
+    from .evaluation import DensePoseCOCOEvaluator
+except (ImportError, ModuleNotFoundError):
+    pass
 from .modeling.roi_heads import DensePoseROIHeads
 from .modeling.test_time_augmentation import (
     DensePoseGeneralizedRCNNWithTTA,

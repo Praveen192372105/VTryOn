@@ -18,13 +18,18 @@ data class RegisterRequestDto(
 
 @Serializable
 data class UserDto(
+    @SerialName("id")
+    val id: String? = null,
     @SerialName("public_id")
-    val publicId: String,
-    val email: String,
-    val name: String,
+    val rawPublicId: String? = null,
+    val email: String = "",
+    val name: String = "",
     @SerialName("avatar_url")
     val avatarUrl: String? = null
-)
+) {
+    val publicId: String
+        get() = rawPublicId ?: id ?: ""
+}
 
 @Serializable
 data class TokenResponseDto(

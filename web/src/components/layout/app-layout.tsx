@@ -22,6 +22,7 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import { ROUTES } from "@/app/route-paths"
 import { useTheme } from "@/lib/theme/theme-provider"
 import { PageTransition } from "./page-transition"
+import "./app-theme.css"
 
 export interface AppLayoutProps {
   user?: { name?: string; email?: string } | null
@@ -67,9 +68,9 @@ export function AppLayout({ user, onLogout }: AppLayoutProps = {}) {
 
         <AppSidebar user={user} onLogout={onLogout} />
 
-        <SidebarInset className="bg-background text-foreground flex flex-col min-h-screen">
+        <SidebarInset className="premium-app bg-background text-foreground flex flex-col min-h-screen">
           {/* Top Bar with Sidebar Trigger, Breadcrumbs, and Quick Theme Switcher */}
-          <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between gap-2 border-b border-border/80 bg-background/80 px-4 backdrop-blur-md">
+          <header className="app-topbar sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between gap-2 border-b border-border/80 bg-background/80 px-4 backdrop-blur-md">
             <div className="flex items-center gap-2 min-w-0">
               <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-foreground" />
               <Separator orientation="vertical" className="mr-2 h-4 bg-border" />
@@ -111,7 +112,7 @@ export function AppLayout({ user, onLogout }: AppLayoutProps = {}) {
           <main
             id="main-content"
             tabIndex={-1}
-            className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-8 focus:outline-none"
+            className="app-main flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-8 focus:outline-none"
           >
             <PageTransition>
               <Outlet />

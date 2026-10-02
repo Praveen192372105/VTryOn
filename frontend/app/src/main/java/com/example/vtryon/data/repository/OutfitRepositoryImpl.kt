@@ -35,7 +35,7 @@ class OutfitRepositoryImpl(
         try {
             val response = outfitApi.getOutfits()
             if (response.isSuccessful) {
-                val dtos = response.body()?.data ?: emptyList()
+                val dtos = response.body()?.data?.items ?: emptyList()
                 val entities = dtos.map { it.toDomain().toEntity() }
                 outfitDao.replaceAll(entities)
                 AppResult.Success(Unit)

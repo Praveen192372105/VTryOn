@@ -42,11 +42,12 @@ class DensePose:
         self.predictor.model.to(self.device)
 
     def setup_config(self):
-        opts = ["MODEL.ROI_HEADS.SCORE_THRESH_TEST", str(self.min_score)]
+        opts = ["MODEL.ROI_HEADS.SCORE_THRESH_TEST", str(self.min_score), "MODEL.DEVICE", self.device]
         cfg = get_cfg()
         add_densepose_config(cfg)
         cfg.merge_from_file(self.config_path)
         cfg.merge_from_list(opts)
+        cfg.MODEL.DEVICE = self.device
         cfg.MODEL.WEIGHTS = self.model_path
         cfg.freeze()
         return cfg

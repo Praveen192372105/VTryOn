@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/spacing_6"
+    android:background="@drawable/bg_surface_card"
+    android:foreground="?attr/selectableItemBackground"
+    android:orientation="horizontal"
+    android:padding="@dimen/spacing_6">
+
+    <com.example.vtryon.core.designsystem.component.MediaSurfaceView
+        android:id="@+id/ivSavedResult"
+        android:layout_width="100dp"
+        android:layout_height="130dp"
+        app:mediaCornerRadius="@dimen/radius_md" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/spacing_12"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvSavedCategory"
+            style="@style/TextAppearance.VTryOn.Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:letterSpacing="0.08"
+            android:textColor="@color/vto_brand"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:text="UPPER BODY" />
+
+        <TextView
+            android:id="@+id/tvSavedTitle"
+            style="@style/TextAppearance.VTryOn.TitleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_4"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/vto_content_primary"
+            android:textStyle="bold"
+            android:text="Custom Fitting Look" />
+
+        <TextView
+            android:id="@+id/tvSavedSubtitle"
+            style="@style/TextAppearance.VTryOn.Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_4"
+            android:text="Fitted Look"
+            android:textColor="@color/text_secondary" />
+
+        <TextView
+            android:id="@+id/tvSavedJobId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tvSavedStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</LinearLayout>

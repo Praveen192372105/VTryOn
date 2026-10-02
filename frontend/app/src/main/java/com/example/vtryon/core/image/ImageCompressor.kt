@@ -11,55 +11,85 @@ import com.example.vtryon.core.common.result.AppResult
 import com.example.vtryon.core.logging.AppLogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
-import java.io.InputStream
 import kotlin.math.max
 
 /**
  * Background image preprocessing and compression service.
- * Normalizes EXIF rotation, sub-samples large camera photos to avoid OOM,
- * and outputs an optimized temporary JPEG file ready for multipart upload.
+ * Resolves URIs (file://, content://) into local files, normalizes EXIF rotation,
+ * sub-samples large camera photos to avoid OOM, and outputs an optimized temporary JPEG.
  */
 class ImageCompressor(private val context: Context) {
+
+    private fun resolveLocalFile(uri: Uri): Pair<File, Boolean>? {
+        return try {
+            if (uri.scheme == "file") {
+                val path = uri.path ?: return null
+                val file = File(path)
+                if (file.exists() && file.length() > 0) Pair(file, false) else null
+            } else {
+                val tempFile = File.createTempFile("vto_source_", ".jpg", context.cacheDir)
+                context.contentResolver.openInputStream(uri)?.use { input ->
+                    FileOutputStream(tempFile).use { output ->
+                        input.copyTo(output)
+                    }
+                }
+                if (tempFile.exists() && tempFile.length() > 0) Pair(tempFile, true) else null
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "ImageCompressor: failed to resolve file for $uri")
+            null
+        }
+    }
 
     suspend fun compressForUpload(
         imageUri: Uri,
         maxDimensionPx: Int = 1920,
         qualityPercent: Int = 85
     ): AppResult<File> = withContext(Dispatchers.IO) {
+        val resolved = resolveLocalFile(imageUri)
+        if (resolved == null) {
+            Timber.e("ImageCompressor: could not resolve file for $imageUri")
+            return@withContext AppResult.Error(AppError.InvalidImage)
+        }
+        val (localFile, isTemporarySource) = resolved
+
         try {
-            // 1. Read bounds and EXIF orientation without loading full pixels into RAM
+            // 1. Read bounds natively without loading pixels into RAM
             val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-            context.contentResolver.openInputStream(imageUri)?.use { input ->
-                BitmapFactory.decodeStream(input, null, options)
-            } ?: return@withContext AppResult.Error(AppError.InvalidImage)
+            BitmapFactory.decodeFile(localFile.absolutePath, options)
 
             val rawWidth = options.outWidth
             val rawHeight = options.outHeight
+            Timber.d("ImageCompressor: decoded bounds ${rawWidth}x${rawHeight} for ${localFile.name}")
             if (rawWidth <= 0 || rawHeight <= 0) {
+                Timber.e("ImageCompressor: invalid image dimensions ${rawWidth}x${rawHeight}")
                 return@withContext AppResult.Error(AppError.InvalidImage)
             }
 
-            // 2. Compute sample size to avoid allocating 40MB+ bitmap buffers
+            // 2. Compute sample size to avoid allocating excessive RAM
             var inSampleSize = 1
             val maxSide = max(rawWidth, rawHeight)
             while ((maxSide / inSampleSize) > maxDimensionPx * 1.5) {
                 inSampleSize *= 2
             }
 
-            // 3. Decode sub-sampled bitmap
+            // 3. Decode sub-sampled bitmap natively
             val decodeOptions = BitmapFactory.Options().apply {
                 this.inSampleSize = inSampleSize
                 inPreferredConfig = Bitmap.Config.ARGB_8888
             }
 
-            val decodedBitmap = context.contentResolver.openInputStream(imageUri)?.use { input ->
-                BitmapFactory.decodeStream(input, null, decodeOptions)
-            } ?: return@withContext AppResult.Error(AppError.InvalidImage)
+            val decodedBitmap = BitmapFactory.decodeFile(localFile.absolutePath, decodeOptions)
+            if (decodedBitmap == null) {
+                Timber.e("ImageCompressor: failed to decode bitmap from ${localFile.absolutePath}")
+                return@withContext AppResult.Error(AppError.InvalidImage)
+            }
 
             // 4. Correct EXIF orientation
-            val orientation = getExifOrientation(imageUri)
+            val orientation = getExifOrientation(localFile.absolutePath)
             val matrix = Matrix()
             when (orientation) {
                 ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
@@ -113,19 +143,24 @@ class ImageCompressor(private val context: Context) {
         } catch (exc: Exception) {
             AppLogger.e("ImageCompressor", "Failed to compress image", exc)
             AppResult.Error(AppError.InvalidImage)
+        } finally {
+            if (isTemporarySource) {
+                try {
+                    localFile.delete()
+                } catch (_: Exception) {}
+            }
         }
     }
 
-    private fun getExifOrientation(uri: Uri): Int {
+    private fun getExifOrientation(filePath: String): Int {
         return try {
-            context.contentResolver.openInputStream(uri)?.use { input ->
-                ExifInterface(input).getAttributeInt(
-                    ExifInterface.TAG_ORIENTATION,
-                    ExifInterface.ORIENTATION_NORMAL
-                )
-            } ?: ExifInterface.ORIENTATION_NORMAL
+            ExifInterface(filePath).getAttributeInt(
+                ExifInterface.TAG_ORIENTATION,
+                ExifInterface.ORIENTATION_NORMAL
+            )
         } catch (_: Exception) {
             ExifInterface.ORIENTATION_NORMAL
         }
     }
 }
+

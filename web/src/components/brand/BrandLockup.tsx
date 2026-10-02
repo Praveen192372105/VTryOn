@@ -19,8 +19,8 @@ export function BrandLockup({
   if (layout === "vertical") {
     return (
       <div className={cn("inline-flex flex-col items-center gap-3 select-none text-center", className)}>
-        <div className="w-12 h-12 rounded-xl bg-primary text-primary-foreground border border-border flex items-center justify-center shadow-xs">
-          <LogoMark size={size} className="text-primary-foreground" decorative={true} />
+        <div className="w-12 h-12 rounded-xl bg-[#a77a57] text-[#fffaf2] border border-[#a77a57] flex items-center justify-center shadow-xs">
+          <LogoMark size={size} className="text-[#fffaf2]" decorative={true} />
         </div>
         <div className="space-y-0.5">
           <span className="text-lg font-medium tracking-tight text-foreground block leading-none">
@@ -38,8 +38,8 @@ export function BrandLockup({
 
   return (
     <div className={cn("inline-flex items-center gap-3 select-none", className)}>
-      <div className="w-9 h-9 rounded-lg bg-primary text-primary-foreground border border-border flex items-center justify-center shadow-xs shrink-0">
-        <LogoMark size={size} className="text-primary-foreground" decorative={true} />
+      <div className="w-9 h-9 rounded-lg bg-[#a77a57] text-[#fffaf2] border border-[#a77a57] flex items-center justify-center shadow-xs shrink-0">
+        <LogoMark size={size} className="text-[#fffaf2]" decorative={true} />
       </div>
       <div className="flex flex-col">
         <span className="text-base font-medium tracking-tight text-foreground leading-none">

@@ -217,6 +217,16 @@ class AppButton @JvmOverloads constructor(
         super.onMeasure(widthMeasureSpec, heightSpec)
     }
 
+    override fun setOnClickListener(l: OnClickListener?) {
+        super.setOnClickListener(l)
+        contentLayout.setOnClickListener(l)
+    }
+
+    override fun performClick(): Boolean {
+        super.performClick()
+        return true
+    }
+
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (!isEnabled || isLoading) return super.onTouchEvent(event)
 

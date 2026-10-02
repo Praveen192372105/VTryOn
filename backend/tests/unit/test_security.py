@@ -98,7 +98,7 @@ def test_jwt_access_token_creation_and_claims():
 def test_jwt_access_token_expired():
     """Verify expired token raises AccessTokenExpiredError."""
     user_public_id = "usr_01m1h000000000000000000001"
-    past_time = utc_now() - timedelta(hours=2)
+    past_time = utc_now() - timedelta(minutes=settings.ACCESS_TOKEN_MINUTES + 120)
     token, _ = create_access_token(user_public_id=user_public_id, now=past_time)
 
     with pytest.raises(AccessTokenExpiredError):

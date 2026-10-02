@@ -172,7 +172,7 @@ export function TryOnHistoryCard({
               onClick={handleDelete}
               aria-label={`Delete try-on for ${outfitName}`}
               title="Delete try-on"
-              className="size-7 -mr-1 rounded-md flex items-center justify-center text-muted-foreground hover:text-danger hover:bg-danger-subtle/20 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              className="size-7 -mr-1 rounded-md flex items-center justify-center text-danger hover:bg-danger-subtle border border-danger/20 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-danger"
             >
               <HugeiconsIcon icon={Delete02Icon} className="size-3.5" />
             </button>

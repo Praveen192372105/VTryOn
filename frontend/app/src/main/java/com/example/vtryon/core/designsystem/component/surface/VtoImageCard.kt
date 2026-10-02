@@ -111,7 +111,8 @@ class VtoImageCard @JvmOverloads constructor(
     }
 
     fun loadImage(url: String?) {
-        if (url.isNullOrEmpty()) {
+        val resolved = com.example.vtryon.core.network.UrlResolver.resolveMediaUrl(url)
+        if (resolved.isNullOrEmpty()) {
             showError()
             return
         }
@@ -119,7 +120,7 @@ class VtoImageCard @JvmOverloads constructor(
         loadingIndicator.visibility = VISIBLE
         errorIndicator.visibility = GONE
 
-        imageView.load(url) {
+        imageView.load(resolved) {
             crossfade(180)
             listener(
                 onSuccess = { _, _ ->

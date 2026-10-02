@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, computed_field
 
 from app.domain.enums import FailureCode, TryOnJobStatus
 from app.domain.ids import ResourcePrefix, validate_public_id
@@ -69,23 +69,23 @@ class TryOnResponse(BaseSchema):
     finished_at: Optional[datetime] = Field(default=None, description="Job completion timestamp")
 
     # Backward compatibility properties
-    @property
+    @computed_field
     def job_id(self) -> str:
         return self.id
 
-    @property
+    @computed_field
     def processing_started_at(self) -> Optional[datetime]:
         return self.started_at
 
-    @property
+    @computed_field
     def completed_at(self) -> Optional[datetime]:
         return self.finished_at
 
-    @property
+    @computed_field
     def failure_code(self) -> Optional[str]:
         return self.error.code if self.error else None
 
-    @property
+    @computed_field
     def failure_reason(self) -> Optional[str]:
         return self.error.message if self.error else None
 
@@ -127,19 +127,19 @@ class TryOnListItem(BaseSchema):
     finished_at: Optional[datetime] = None
 
     # Backward compatibility properties
-    @property
+    @computed_field
     def job_id(self) -> str:
         return self.id
 
-    @property
+    @computed_field
     def outfit_id(self) -> str:
         return self.outfit.id if self.outfit else ""
 
-    @property
+    @computed_field
     def completed_at(self) -> Optional[datetime]:
         return self.finished_at
 
-    @property
+    @computed_field
     def result_image_url(self) -> Optional[str]:
         return self.result.image_url if self.result else None
 

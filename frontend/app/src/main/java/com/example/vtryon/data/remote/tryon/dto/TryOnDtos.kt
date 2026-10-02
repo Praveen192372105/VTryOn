@@ -49,13 +49,23 @@ data class TryOnJobResponseDto(
 )
 
 @Serializable
+data class TryOnOutfitSummaryDto(
+    val id: String,
+    val name: String? = null,
+    val category: String? = null,
+    @SerialName("thumbnail_url")
+    val thumbnailUrl: String? = null
+)
+
+@Serializable
 data class TryOnListItemDto(
     val id: String,
     val status: String,
     @SerialName("person_upload_id")
     val personUploadId: String,
     @SerialName("outfit_id")
-    val outfitId: String,
+    val outfitId: String = "",
+    val outfit: TryOnOutfitSummaryDto? = null,
     val result: TryOnResultDto? = null,
     @SerialName("created_at")
     val createdAt: String? = null

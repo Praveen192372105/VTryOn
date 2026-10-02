@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.serialization)
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -80,11 +81,7 @@ dependencies {
     // Persistence (Room)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
-    annotationProcessor(libs.androidx.room.compiler)
-
-    // Dependency Injection (Hilt)
-    implementation(libs.hilt.android)
-    annotationProcessor(libs.hilt.compiler)
+    add("ksp", libs.androidx.room.compiler)
 
     // Logging
     implementation(libs.timber)

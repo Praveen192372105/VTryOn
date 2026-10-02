@@ -22,20 +22,43 @@ desktop.ini
 !.env.example
 
 # ==============================================================================
-# Node & Frontend
+# Node & Web
 # ==============================================================================
+node_modules/
 web/node_modules/
+selenium-tests/node_modules/
+appium-tests/node_modules/
+load-tests/node_modules/
 web/dist/
 web/.vite/
 web/coverage/
 
 # ==============================================================================
-# Python & Backend
+# Android & Gradle
+# ==============================================================================
+.gradle/
+build/
+frontend/build/
+frontend/app/build/
+*.apk
+*.aab
+local.properties
+.cxx/
+
+# ==============================================================================
+# Python, Backend & AI Caches
 # ==============================================================================
 backend/.venv/
-backend/__pycache__/
+.venv/
+__pycache__/
+*/__pycache__/
+*/*/__pycache__/
+*.py[cod]
+*$py.class
 backend/.pytest_cache/
 backend/.coverage
+backend/cache/
+cache/
 backend/storage/*
 !backend/storage/.gitkeep
 backend/media/*
@@ -44,3 +67,4 @@ backend/densepose_/tmp/*
 !backend/densepose_/tmp/.gitkeep
 backend/*.sqlite
 backend/*.db
+

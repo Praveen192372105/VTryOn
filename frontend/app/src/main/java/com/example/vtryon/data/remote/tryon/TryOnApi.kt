@@ -1,6 +1,7 @@
 package com.example.vtryon.data.remote.tryon
 
 import com.example.vtryon.data.remote.dto.ApiResponseDto
+import com.example.vtryon.data.remote.dto.PaginatedDataDto
 import com.example.vtryon.data.remote.tryon.dto.CreateTryOnRequestDto
 import com.example.vtryon.data.remote.tryon.dto.TryOnJobResponseDto
 import com.example.vtryon.data.remote.tryon.dto.TryOnListItemDto
@@ -30,7 +31,7 @@ interface TryOnApi {
     suspend fun getTryOnHistory(
         @Query("limit") limit: Int = 50,
         @Query("offset") offset: Int = 0
-    ): Response<ApiResponseDto<List<TryOnListItemDto>>>
+    ): Response<ApiResponseDto<PaginatedDataDto<TryOnListItemDto>>>
 
     @DELETE("api/v1/try-ons/{id}")
     suspend fun deleteTryOn(

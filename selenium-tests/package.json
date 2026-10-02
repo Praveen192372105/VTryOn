@@ -1,0 +1,29 @@
+{
+  "name": "vtryon-selenium-tests",
+  "version": "1.0.0",
+  "description": "Comprehensive Selenium WebDriver E2E Automation Suite for V Try-On Web Frontend Authentication",
+  "main": "tests/login-tests.js",
+  "scripts": {
+    "test": "node tests/login-tests.js",
+    "test:headed": "cross-env HEADLESS=false node tests/login-tests.js",
+    "report:excel": "python scripts/generate-excel-report.py",
+    "test:full": "node tests/login-tests.js && python scripts/generate-excel-report.py"
+  },
+  "keywords": [
+    "selenium",
+    "webdriver",
+    "e2e",
+    "testing",
+    "automation",
+    "vtryon",
+    "login"
+  ],
+  "author": "Antigravity QA Automation Team",
+  "license": "ISC",
+  "dependencies": {
+    "selenium-webdriver": "^4.29.0"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
+  }
+}

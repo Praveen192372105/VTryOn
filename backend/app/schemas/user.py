@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional
-from pydantic import EmailStr, Field
+from pydantic import EmailStr, Field, computed_field
 
 from app.schemas.common import BaseSchema
 
@@ -15,3 +15,7 @@ class UserProfileResponse(BaseSchema):
     email: EmailStr = Field(..., description="Normalized user email address")
     created_at: datetime
     updated_at: Optional[datetime] = None
+
+    @computed_field
+    def public_id(self) -> str:
+        return self.id

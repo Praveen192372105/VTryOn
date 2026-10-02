@@ -5,6 +5,20 @@
     <color name="white">#FFFFFFFF</color>
     <color name="transparent">#00000000</color>
 
+    <!-- Editorial Brand Tokens (Matching Web Theme: Camel / Warm Sand) -->
+    <color name="vto_brand">#FFA77A57</color>
+    <color name="vto_brand_soft">#FFE9DFD0</color>
+    <color name="vto_brand_dark">#FF855D40</color>
+    <color name="vto_brand_muted">#FFB89574</color>
+    <color name="vto_brand_surface">#14A77A57</color>
+    <color name="vto_brand_border">#33A77A57</color>
+
+    <!-- Dashboard Hero Card Theme Tokens (Light: Warm Ivory/Linen Editorial) -->
+    <color name="vto_hero_bg_start">#FFFDF9</color>
+    <color name="vto_hero_bg_center">#F8F3ED</color>
+    <color name="vto_hero_bg_end">#F0E5D8</color>
+    <color name="vto_hero_border">#4DA77A57</color>
+
     <!-- Legacy / compatibility bridge -->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF18181B</color>

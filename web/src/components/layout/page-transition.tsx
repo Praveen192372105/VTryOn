@@ -11,7 +11,7 @@ export interface PageTransitionProps {
 
 /**
  * Scoped page content transition for route changes.
- * Applies a restrained opacity/translate animation to page content only (never whole shell).
+ * A single short fade keeps content steady while the surrounding shell stays static.
  * If prefers-reduced-motion is active, animation is bypassed for immediate rendering.
  */
 export function PageTransition({ children, className }: PageTransitionProps) {
@@ -26,9 +26,9 @@ export function PageTransition({ children, className }: PageTransitionProps) {
     <AnimatePresence mode="wait" initial={false}>
       <motion.div
         key={location.pathname}
-        initial={{ opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -6 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
         transition={{ duration: 0.18, ease: "easeOut" }}
         className={cn("w-full", className)}
       >

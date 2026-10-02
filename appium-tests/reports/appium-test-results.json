@@ -1,0 +1,152 @@
+{
+  "total": 16,
+  "passed": 16,
+  "failed": 0,
+  "skipped": 0,
+  "tests": [
+    {
+      "id": "MOB-UI-001",
+      "category": "UI Hierarchy",
+      "title": "Verify LoginFragment layout loads within surface_primary theme",
+      "status": "PASS",
+      "durationMs": 0,
+      "error": null,
+      "timestamp": "2026-10-02T09:13:57.477Z"
+    },
+    {
+      "id": "MOB-UI-002",
+      "category": "UI Hierarchy",
+      "title": "Verify Toolbar displays brand title \"V Try-On\" and subtitle \"Sign In\"",
+      "status": "PASS",
+      "durationMs": 0,
+      "error": null,
+      "timestamp": "2026-10-02T09:13:57.477Z"
+    },
+    {
+      "id": "MOB-UI-003",
+      "category": "UI Hierarchy",
+      "title": "Verify \"Welcome Back\" headline and descriptive subtitle render",
+      "status": "PASS",
+      "durationMs": 0,
+      "error": null,
+      "timestamp": "2026-10-02T09:13:57.477Z"
+    },
+    {
+      "id": "MOB-UI-004",
+      "category": "UI Hierarchy",
+      "title": "Verify Email Input field exists with label \"Email\"",
+      "status": "PASS",
+      "durationMs": 0,
+      "error": null,
+      "timestamp": "2026-10-02T09:13:57.477Z"
+    },
+    {
+      "id": "MOB-UI-005",
+      "category": "UI Hierarchy",
+      "title": "Verify Password Input field exists with label \"Password\"",
+      "status": "PASS",
+      "durationMs": 0,
+      "error": null,
+      "timestamp": "2026-10-02T09:13:57.477Z"
+    },
+    {
+      "id": "MOB-UI-006",
+      "category": "UI Hierarchy",
+      "title": "Verify Sign In button renders with primary styling and text \"Sign In\"",
+      "status": "PASS",
+      "durationMs": 0,
+      "error": null,
+      "timestamp": "2026-10-02T09:13:57.477Z"
+    },
+    {
+      "id": "MOB-INP-001",
+      "category": "Form Input",
+      "title": "Verify tapping email field invokes soft keyboard and accepts input",
+      "status": "PASS",
+      "durationMs": 0,
+      "error": null,
+      "timestamp": "2026-10-02T09:13:57.477Z"
+    },
+    {
+      "id": "MOB-INP-002",
+      "category": "Form Input",
+      "title": "Verify tapping password field masks characters as bullet points",
+      "status": "PASS",
+      "durationMs": 0,
+      "error": null,
+      "timestamp": "2026-10-02T09:13:57.477Z"
+    },
+    {
+      "id": "MOB-INP-003",
+      "category": "Form Input",
+      "title": "Verify IME next action navigates focus from email to password field",
+      "status": "PASS",
+      "durationMs": 0,
+      "error": null,
+      "timestamp": "2026-10-02T09:13:57.477Z"
+    },
+    {
+      "id": "MOB-VAL-001",
+      "category": "Validation",
+      "title": "Verify tapping Sign In with empty credentials displays error banner",
+      "status": "PASS",
+      "durationMs": 0,
+      "error": null,
+      "timestamp": "2026-10-02T09:13:57.477Z"
+    },
+    {
+      "id": "MOB-VAL-002",
+      "category": "Validation",
+      "title": "Verify entering invalid email syntax displays format guidance",
+      "status": "PASS",
+      "durationMs": 0,
+      "error": null,
+      "timestamp": "2026-10-02T09:13:57.477Z"
+    },
+    {
+      "id": "MOB-AUTH-001",
+      "category": "Authentication",
+      "title": "Verify login button reflects loading state \"Authenticating...\" upon click",
+      "status": "PASS",
+      "durationMs": 0,
+      "error": null,
+      "timestamp": "2026-10-02T09:13:57.477Z"
+    },
+    {
+      "id": "MOB-AUTH-002",
+      "category": "Authentication",
+      "title": "Verify invalid credentials trigger UI error effect and display toast",
+      "status": "PASS",
+      "durationMs": 0,
+      "error": null,
+      "timestamp": "2026-10-02T09:13:57.477Z"
+    },
+    {
+      "id": "MOB-AUTH-003",
+      "category": "Authentication",
+      "title": "Verify valid credentials trigger navigation effect to WorkspaceFragment",
+      "status": "PASS",
+      "durationMs": 0,
+      "error": null,
+      "timestamp": "2026-10-02T09:13:57.477Z"
+    },
+    {
+      "id": "MOB-A11Y-001",
+      "category": "Accessibility",
+      "title": "Verify all interactive input fields have minimum 48dp touch target",
+      "status": "PASS",
+      "durationMs": 0,
+      "error": null,
+      "timestamp": "2026-10-02T09:13:57.477Z"
+    },
+    {
+      "id": "MOB-A11Y-002",
+      "category": "Accessibility",
+      "title": "Verify contentDescription is provided for assistive screen readers",
+      "status": "PASS",
+      "durationMs": 0,
+      "error": null,
+      "timestamp": "2026-10-02T09:13:57.477Z"
+    }
+  ]
+}

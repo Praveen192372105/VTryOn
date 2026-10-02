@@ -121,9 +121,16 @@ class TryOnRepositoryImpl(
         try {
             val response = tryOnApi.getTryOnHistory()
             if (response.isSuccessful) {
-                val list = response.body()?.data ?: emptyList()
-                val entities = list.map { it.toDomain().toEntity() }
-                entities.forEach { tryOnDao.insert(it) }
+                val list = response.body()?.data?.items ?: emptyList()
+                list.forEach { item ->
+                    val domain = item.toDomain()
+                    val existing = tryOnDao.getTryOnById(domain.id)
+                    val entity = domain.toEntity().copy(
+                        id = existing?.id ?: 0,
+                        isSavedLocally = existing?.isSavedLocally ?: false
+                    )
+                    tryOnDao.insert(entity)
+                }
                 AppResult.Success(Unit)
             } else {
                 AppResult.Error(NetworkErrorMapper.mapHttpCode(response.code(), null, null))
@@ -142,6 +149,15 @@ class TryOnRepositoryImpl(
             } else {
                 AppResult.Error(NetworkErrorMapper.mapHttpCode(response.code(), null, null))
             }
+        } catch (t: Throwable) {
+            AppResult.Error(NetworkErrorMapper.map(t))
+        }
+    }
+
+    override suspend fun toggleSaveTryOn(id: String, isSaved: Boolean): AppResult<Unit> = withContext(ioDispatcher) {
+        try {
+            tryOnDao.updateSavedLocally(id, isSaved)
+            AppResult.Success(Unit)
         } catch (t: Throwable) {
             AppResult.Error(NetworkErrorMapper.map(t))
         }

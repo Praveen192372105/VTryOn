@@ -23,6 +23,7 @@ export function UploadDeleteDialog({
       cancelLabel="Cancel"
       isPending={isPending}
       onConfirm={onConfirm}
+      destructive
     />
   )
 }

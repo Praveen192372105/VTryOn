@@ -53,6 +53,7 @@ class AppSettingsStore(private val context: Context) {
     }
 
     val themeMode: Flow<ThemeMode> = settingsFlow.map { it.themeMode }
+    val localBookmarks: Flow<Set<String>> = settingsFlow.map { it.localBookmarks }
 
     suspend fun setThemeMode(mode: ThemeMode) {
         context.dataStore.edit { preferences ->

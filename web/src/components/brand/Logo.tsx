@@ -22,8 +22,8 @@ export function Logo({
 }: LogoProps) {
   const content = (
     <div className={cn("inline-flex items-center gap-2.5 select-none", className)}>
-      <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground border border-border flex items-center justify-center shadow-xs shrink-0">
-        <LogoMark size={size} className="text-primary-foreground" decorative={true} />
+      <div className="w-8 h-8 rounded-lg bg-[#a77a57] text-[#fffaf2] border border-[#a77a57] flex items-center justify-center shadow-xs shrink-0">
+        <LogoMark size={size} className="text-[#fffaf2]" decorative={true} />
       </div>
       {showWordmark && (
         <div className="flex flex-col group-data-[collapsible=icon]:hidden">

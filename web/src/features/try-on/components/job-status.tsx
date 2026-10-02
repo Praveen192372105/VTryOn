@@ -20,32 +20,32 @@ export function JobStatus({ status, className, errorMessage }: JobStatusProps) {
       label: "Waiting to start",
       description: "Your try-on request is in queue and will begin shortly.",
       icon: Clock01Icon,
-      color: "text-zinc-400 bg-zinc-900/60 border-zinc-800",
-      iconColor: "text-zinc-400",
+      color: "text-muted-foreground bg-surface-subtle border-border",
+      iconColor: "text-muted-foreground",
       animate: false,
     },
     processing: {
       label: "Creating your look",
       description: "Our AI pipeline is synthesizing garment drape and fit.",
       icon: Loading03Icon,
-      color: "text-zinc-200 bg-zinc-900/80 border-zinc-700/60",
-      iconColor: "text-zinc-100",
+      color: "text-foreground bg-brand-soft border-brand/35",
+      iconColor: "text-brand",
       animate: true,
     },
     succeeded: {
       label: "Your look is ready",
       description: "Generation complete. High-resolution render ready.",
       icon: CheckmarkCircle02Icon,
-      color: "text-emerald-300 bg-emerald-950/30 border-emerald-800/40",
-      iconColor: "text-emerald-400",
+      color: "text-success bg-success-subtle border-success/30",
+      iconColor: "text-success",
       animate: false,
     },
     failed: {
       label: "We couldn't create this look",
       description: errorMessage || "The generation failed. Please try a different pose or garment.",
       icon: AlertCircleIcon,
-      color: "text-red-300 bg-red-950/30 border-red-800/40",
-      iconColor: "text-red-400",
+      color: "text-danger bg-danger-subtle border-danger/30",
+      iconColor: "text-danger",
       animate: false,
     },
   }[status]
@@ -60,7 +60,7 @@ export function JobStatus({ status, className, errorMessage }: JobStatusProps) {
     >
       <div
         className={cn(
-          "flex items-center justify-center w-8 h-8 rounded-full bg-black/40 shrink-0",
+          "flex items-center justify-center w-8 h-8 rounded-full bg-surface/75 shrink-0",
           config.iconColor,
           config.animate && "animate-spin"
         )}
@@ -68,10 +68,10 @@ export function JobStatus({ status, className, errorMessage }: JobStatusProps) {
         <HugeiconsIcon icon={config.icon} className="w-4 h-4" />
       </div>
       <div className="flex flex-col min-w-0">
-        <span className="font-medium tracking-tight text-white leading-tight">
+        <span className="font-medium tracking-tight text-foreground leading-tight">
           {config.label}
         </span>
-        <span className="text-xs text-zinc-400 truncate mt-0.5">
+        <span className="text-xs text-muted-foreground truncate mt-0.5">
           {config.description}
         </span>
       </div>

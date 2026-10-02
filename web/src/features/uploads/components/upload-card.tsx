@@ -76,7 +76,7 @@ export function UploadCard({
                   e.stopPropagation()
                   onDelete(upload.id)
                 }}
-                className="size-7 rounded-full bg-background/80 hover:bg-danger/20 text-muted-foreground hover:text-danger border border-border/60 backdrop-blur-xs flex items-center justify-center transition-colors cursor-pointer"
+                className="size-7 rounded-full bg-danger-subtle/90 hover:bg-danger/20 text-danger border border-danger/25 backdrop-blur-xs flex items-center justify-center transition-colors cursor-pointer"
                 title="Delete photo"
                 aria-label="Delete photo"
               >

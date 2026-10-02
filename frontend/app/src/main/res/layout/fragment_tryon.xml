@@ -11,8 +11,8 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:toolbarShowBack="true"
-        app:toolbarTitle="Try-On Studio"
-        app:toolbarSubtitle="Inference" />
+        app:toolbarSubtitle="Fitting"
+        app:toolbarTitle="Try-On Studio" />
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollView"
@@ -27,44 +27,315 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingHorizontal="@dimen/screen_padding_horizontal"
-            android:paddingVertical="@dimen/spacing_16">
+            android:paddingTop="@dimen/spacing_12"
+            android:paddingBottom="@dimen/spacing_24">
 
+            <!-- SECTION 1: PERSON PHOTO SELECTION -->
             <TextView
                 style="@style/TextAppearance.VTryOn.TitleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1. Select Person Photo" />
+                android:text="1. Select Person Photo"
+                android:textColor="@color/content_primary" />
 
-            <com.example.vtryon.core.designsystem.component.MediaSurfaceView
-                android:id="@+id/ivPersonPhoto"
+            <TextView
+                style="@style/TextAppearance.VTryOn.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_2"
+                android:text="Upload a clear portrait or choose a sample model"
+                android:textColor="@color/text_tertiary" />
+
+            <FrameLayout
+                android:id="@+id/cardPersonPhoto"
                 android:layout_width="match_parent"
-                android:layout_height="220dp"
+                android:layout_height="280dp"
                 android:layout_marginTop="@dimen/spacing_8"
-                app:mediaCornerRadius="@dimen/radius_lg" />
+                android:background="@drawable/bg_surface_card"
+                android:clipChildren="true"
+                android:clipToPadding="true"
+                android:clickable="true"
+                android:focusable="true">
 
-            <com.example.vtryon.core.designsystem.component.AppButton
-                android:id="@+id/btnPickPhoto"
+                <com.example.vtryon.core.designsystem.component.MediaSurfaceView
+                    android:id="@+id/ivPersonPhoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:mediaAspectRatio="free"
+                    app:mediaScaleType="fitCenter"
+                    app:mediaCornerRadius="@dimen/radius_lg" />
+
+                <LinearLayout
+                    android:id="@+id/personPlaceholderContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/vto_huge_user"
+                        app:tint="@color/text_tertiary" />
+
+                    <TextView
+                        style="@style/TextAppearance.VTryOn.BodySmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_6"
+                        android:text="Tap to choose photo from gallery"
+                        android:textColor="@color/text_secondary" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/badgePhotoSelected"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|end"
+                    android:layout_margin="@dimen/spacing_8"
+                    android:background="@drawable/bg_badge_pill"
+                    android:backgroundTint="@color/vto_surface_elevated"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="@dimen/spacing_8"
+                    android:paddingVertical="@dimen/spacing_4"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/vto_huge_checkmark_circle_02"
+                        app:tint="@color/vto_success" />
+
+                    <TextView
+                        style="@style/TextAppearance.VTryOn.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_4"
+                        android:text="Selected"
+                        android:textColor="@color/vto_success"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </FrameLayout>
+
+            <!-- Quick Photo Actions -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_8"
-                app:btnVariant="secondary"
-                app:btnText="Choose Photo" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
+                <com.example.vtryon.core.designsystem.component.AppButton
+                    android:id="@+id/btnPickPhoto"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:btnSize="md"
+                    app:btnText="Gallery"
+                    app:btnVariant="secondary" />
+
+                <Space
+                    android:layout_width="@dimen/spacing_8"
+                    android:layout_height="1dp" />
+
+                <com.example.vtryon.core.designsystem.component.AppButton
+                    android:id="@+id/btnQuickModel1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:btnSize="md"
+                    app:btnText="Model 1"
+                    app:btnVariant="secondary" />
+
+                <Space
+                    android:layout_width="@dimen/spacing_8"
+                    android:layout_height="1dp" />
+
+                <com.example.vtryon.core.designsystem.component.AppButton
+                    android:id="@+id/btnQuickModel2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:btnSize="md"
+                    app:btnText="Model 2"
+                    app:btnVariant="secondary" />
+
+            </LinearLayout>
+
+            <!-- SECTION 2: GARMENT SELECTION -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_20">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/TextAppearance.VTryOn.TitleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2. Select Garment"
+                        android:textColor="@color/content_primary" />
+
+                    <TextView
+                        style="@style/TextAppearance.VTryOn.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_2"
+                        android:text="Tap any outfit below to try it on"
+                        android:textColor="@color/text_tertiary" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/btnBrowseCatalogue"
+                    style="@style/TextAppearance.VTryOn.BodySmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:padding="@dimen/spacing_4"
+                    android:text="Browse All"
+                    android:textColor="@color/vto_content_primary"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
+
+            <!-- Selected Garment Highlight Card -->
+            <LinearLayout
+                android:id="@+id/cardSelectedGarment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_8"
+                android:background="@drawable/bg_surface_card"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/spacing_8">
+
+                <com.example.vtryon.core.designsystem.component.MediaSurfaceView
+                    android:id="@+id/ivSelectedGarment"
+                    android:layout_width="56dp"
+                    android:layout_height="68dp"
+                    app:mediaCornerRadius="@dimen/radius_md" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_12"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvOutfitName"
+                        style="@style/TextAppearance.VTryOn.TitleSmall"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="Navy Blue Oxford Shirt"
+                        android:textColor="@color/content_primary" />
+
+                    <TextView
+                        android:id="@+id/tvOutfitCategoryBadge"
+                        style="@style/TextAppearance.VTryOn.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_2"
+                        android:background="@drawable/bg_badge_pill"
+                        android:paddingHorizontal="@dimen/spacing_8"
+                        android:paddingVertical="@dimen/spacing_2"
+                        android:text="Upper Body"
+                        android:textColor="@color/text_secondary" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_marginEnd="@dimen/spacing_4"
+                    android:src="@drawable/vto_huge_checkmark_circle_02"
+                    app:tint="@color/vto_success" />
+
+            </LinearLayout>
+
+            <!-- Horizontal Garment Carousel -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvGarments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_8"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+            <!-- SECTION 3: CATEGORY CHIPS -->
             <TextView
                 style="@style/TextAppearance.VTryOn.TitleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_24"
-                android:text="2. Selected Garment" />
+                android:layout_marginTop="@dimen/spacing_20"
+                android:text="3. Try-On Mode"
+                android:textColor="@color/content_primary" />
 
-            <TextView
-                android:id="@+id/tvOutfitName"
-                style="@style/TextAppearance.VTryOn.BodyMedium"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/containerCategoryChips"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_4"
-                android:text="Navy Blue Oxford Shirt"
-                android:textColor="@color/text_secondary" />
+                android:layout_marginTop="@dimen/spacing_8"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/chipUpperBody"
+                    style="@style/TextAppearance.VTryOn.BodySmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/spacing_8"
+                    android:background="@drawable/vto_bg_chip"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:paddingHorizontal="@dimen/spacing_12"
+                    android:paddingVertical="@dimen/spacing_6"
+                    android:text="Upper Body"
+                    android:textColor="@color/vto_chip_text_selector" />
+
+                <TextView
+                    android:id="@+id/chipLowerBody"
+                    style="@style/TextAppearance.VTryOn.BodySmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/spacing_8"
+                    android:background="@drawable/vto_bg_chip"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:paddingHorizontal="@dimen/spacing_12"
+                    android:paddingVertical="@dimen/spacing_6"
+                    android:text="Lower Body"
+                    android:textColor="@color/vto_chip_text_selector" />
+
+                <TextView
+                    android:id="@+id/chipDresses"
+                    style="@style/TextAppearance.VTryOn.BodySmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/vto_bg_chip"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:paddingHorizontal="@dimen/spacing_12"
+                    android:paddingVertical="@dimen/spacing_6"
+                    android:text="Dresses"
+                    android:textColor="@color/vto_chip_text_selector" />
+
+            </LinearLayout>
 
             <!-- Progress State Indicator -->
             <com.example.vtryon.core.designsystem.component.AppLoadingView
@@ -74,13 +345,17 @@
                 android:layout_marginTop="@dimen/spacing_16"
                 android:visibility="gone" />
 
+            <!-- Error Message -->
             <TextView
                 android:id="@+id/tvErrorMessage"
                 style="@style/TextAppearance.VTryOn.BodySmall"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_8"
-                android:textColor="@color/text_primary"
+                android:layout_marginTop="@dimen/spacing_12"
+                android:background="@drawable/bg_badge_pill"
+                android:backgroundTint="@color/vto_surface_secondary"
+                android:padding="@dimen/spacing_8"
+                android:textColor="@color/vto_error"
                 android:visibility="gone" />
 
         </LinearLayout>
@@ -89,18 +364,22 @@
 
     <LinearLayout
         android:id="@+id/bottomActionContainer"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_surface_card"
-        android:padding="@dimen/spacing_16"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:paddingHorizontal="@dimen/spacing_16"
+        android:paddingTop="@dimen/spacing_12"
+        android:paddingBottom="@dimen/spacing_32"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <com.example.vtryon.core.designsystem.component.AppButton
             android:id="@+id/btnGenerate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:btnVariant="primary"
-            app:btnText="Generate Try-On" />
+            app:btnText="Generate Try-On"
+            app:btnVariant="primary" />
 
     </LinearLayout>
 

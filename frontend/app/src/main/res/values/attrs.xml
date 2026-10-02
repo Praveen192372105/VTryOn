@@ -74,8 +74,14 @@
             <enum name="square" value="0" />
             <enum name="portrait" value="1" />
             <enum name="cinematic" value="2" />
+            <enum name="free" value="3" />
         </attr>
         <attr name="mediaCornerRadius" format="dimension" />
+        <attr name="mediaScaleType" format="enum">
+            <enum name="centerCrop" value="0" />
+            <enum name="fitCenter" value="1" />
+            <enum name="centerInside" value="2" />
+        </attr>
     </declare-styleable>
 
     <!-- AppEmptyStateView attributes -->

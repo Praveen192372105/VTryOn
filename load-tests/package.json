@@ -1,0 +1,27 @@
+{
+  "name": "vtryon-load-tests",
+  "version": "1.0.0",
+  "description": "Baseline and Concurrency Load Testing Engine for V Try-On Platform",
+  "main": "tests/baseline-load-test.js",
+  "scripts": {
+    "test": "node tests/baseline-load-test.js",
+    "test:quick": "cross-env DURATION_SEC=10 node tests/baseline-load-test.js",
+    "test:full": "cross-env DURATION_SEC=60 CONCURRENT_USERS=100 node tests/baseline-load-test.js && python scripts/generate-load-excel-report.py",
+    "report:excel": "python scripts/generate-load-excel-report.py"
+  },
+  "keywords": [
+    "load-testing",
+    "performance-testing",
+    "baseline",
+    "stress-testing",
+    "rps",
+    "concurrency",
+    "vtryon"
+  ],
+  "author": "V Try-On Performance & SRE Team",
+  "license": "UNLICENSED",
+  "dependencies": {},
+  "devDependencies": {
+    "cross-env": "^7.0.3"
+  }
+}

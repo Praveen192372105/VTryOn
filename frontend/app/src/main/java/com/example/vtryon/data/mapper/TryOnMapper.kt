@@ -1,6 +1,7 @@
 package com.example.vtryon.data.mapper
 
 import com.example.vtryon.core.database.TryOnEntity
+import com.example.vtryon.core.network.UrlResolver
 import com.example.vtryon.data.remote.tryon.dto.TryOnJobResponseDto
 import com.example.vtryon.data.remote.tryon.dto.TryOnListItemDto
 import com.example.vtryon.domain.model.OutfitCategory
@@ -22,7 +23,7 @@ fun TryOnJobResponseDto.toDomain(): TryOnJob {
         garmentImageUrl = outfitId,
         category = OutfitCategory.UPPER_BODY,
         status = domainStatus,
-        resultImageUrl = result?.imageUrl,
+        resultImageUrl = UrlResolver.resolveMediaUrl(result?.imageUrl),
         failureReason = error?.message
     )
 }
@@ -36,13 +37,22 @@ fun TryOnListItemDto.toDomain(): TryOnJob {
         else -> TryOnStatus.QUEUED
     }
 
+    val cat = when (outfit?.category?.lowercase()) {
+        "upper_body", "tops" -> OutfitCategory.UPPER_BODY
+        "lower_body", "bottoms" -> OutfitCategory.LOWER_BODY
+        "dresses", "one_piece" -> OutfitCategory.DRESSES
+        else -> OutfitCategory.UPPER_BODY
+    }
+
+    val garmentUrl = outfit?.thumbnailUrl?.takeIf { it.isNotBlank() } ?: outfitId
+
     return TryOnJob(
         id = id,
         personImageUrl = personUploadId,
-        garmentImageUrl = outfitId,
-        category = OutfitCategory.UPPER_BODY,
+        garmentImageUrl = garmentUrl,
+        category = cat,
         status = domainStatus,
-        resultImageUrl = result?.imageUrl
+        resultImageUrl = UrlResolver.resolveMediaUrl(result?.imageUrl)
     )
 }
 
@@ -62,7 +72,8 @@ fun TryOnEntity.toDomain(): TryOnJob {
         category = OutfitCategory.UPPER_BODY,
         status = domainStatus,
         resultImageUrl = resultImageUrl ?: resultImageStorageKey,
-        failureReason = errorMessage
+        failureReason = errorMessage,
+        isSaved = isSavedLocally
     )
 }
 
@@ -74,6 +85,7 @@ fun TryOnJob.toEntity(): TryOnEntity {
         outfitPublicId = garmentImageUrl,
         resultImageUrl = resultImageUrl,
         errorMessage = failureReason,
+        isSavedLocally = isSaved,
         createdAt = createdAt.toString(),
         updatedAt = System.currentTimeMillis()
     )

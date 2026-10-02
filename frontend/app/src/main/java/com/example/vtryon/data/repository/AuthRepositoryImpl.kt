@@ -19,6 +19,7 @@ import kotlinx.coroutines.withContext
 
 class AuthRepositoryImpl(
     private val authApi: AuthApi,
+    private val userApi: com.example.vtryon.data.remote.user.UserApi? = null,
     private val tokenStorage: TokenStorage,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : AuthRepository {
@@ -97,5 +98,42 @@ class AuthRepositoryImpl(
             _sessionUser.value = null
         }
         AppResult.Success(Unit)
+    }
+
+    override suspend fun getCurrentUser(): AppResult<User> = withContext(ioDispatcher) {
+        if (userApi == null) {
+            val user = _sessionUser.value
+            return@withContext if (user != null) AppResult.Success(user) else AppResult.Error(AppError.Unauthorized)
+        }
+        try {
+            val response = userApi.getCurrentUser()
+            if (response.isSuccessful) {
+                val profileDto = response.body()?.data
+                    ?: return@withContext AppResult.Error(AppError.ServerUnavailable)
+                val user = User(
+                    id = profileDto.id,
+                    email = profileDto.email,
+                    name = profileDto.name
+                )
+                tokenStorage.saveTokens(
+                    accessToken = tokenStorage.getAccessToken() ?: "",
+                    refreshToken = tokenStorage.getRefreshToken(),
+                    userPublicId = user.id,
+                    userEmail = user.email,
+                    userName = user.name
+                )
+                _sessionUser.value = user
+                AppResult.Success(user)
+            } else {
+                AppResult.Error(NetworkErrorMapper.mapHttpCode(response.code(), null, null))
+            }
+        } catch (t: Throwable) {
+            val user = _sessionUser.value
+            if (user != null) {
+                AppResult.Success(user)
+            } else {
+                AppResult.Error(NetworkErrorMapper.map(t))
+            }
+        }
     }
 }

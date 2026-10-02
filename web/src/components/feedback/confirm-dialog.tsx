@@ -1,4 +1,6 @@
 import React from "react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Delete02Icon } from "@hugeicons/core-free-icons"
 import {
   AlertDialog,
   AlertDialogContent,
@@ -32,7 +34,7 @@ export function ConfirmDialog({
   cancelLabel = "Cancel",
   onConfirm,
   isPending = false,
-  destructive = true,
+  destructive = false,
 }: ConfirmDialogProps) {
   const handleConfirm = async (e: React.MouseEvent) => {
     e.preventDefault()
@@ -44,6 +46,11 @@ export function ConfirmDialog({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent className="max-w-md rounded-2xl border border-border bg-surface p-6 shadow-xl">
         <AlertDialogHeader className="space-y-2">
+          {destructive && (
+            <span className="mb-2 inline-flex size-10 items-center justify-center rounded-xl border border-destructive/20 bg-destructive/10 text-destructive" aria-hidden="true">
+              <HugeiconsIcon icon={Delete02Icon} className="size-5" />
+            </span>
+          )}
           <AlertDialogTitle className="text-base sm:text-lg font-medium tracking-tight text-foreground">
             {title}
           </AlertDialogTitle>
@@ -52,11 +59,11 @@ export function ConfirmDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <AlertDialogFooter className="mt-6 flex-row justify-end gap-2.5">
+        <AlertDialogFooter className="mt-6 gap-2.5 sm:flex-row">
           <AlertDialogCancel
             disabled={isPending}
             onClick={() => onOpenChange(false)}
-            className="rounded-lg text-xs"
+            className="w-full rounded-lg text-xs sm:w-auto"
           >
             {cancelLabel}
           </AlertDialogCancel>
@@ -67,7 +74,10 @@ export function ConfirmDialog({
                 size="sm"
                 loading={isPending}
                 onClick={handleConfirm}
-                className="rounded-lg text-xs font-medium"
+                leadingIcon={destructive ? <HugeiconsIcon icon={Delete02Icon} className="size-4" aria-hidden="true" /> : undefined}
+                className={destructive
+                  ? "w-full rounded-lg border-destructive bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/40 text-xs font-semibold sm:w-auto"
+                  : "w-full rounded-lg text-xs font-medium sm:w-auto"}
               >
                 {confirmLabel}
               </Button>

@@ -165,7 +165,7 @@ describe("Login Flow — Phase 4 Tests", () => {
     })
   })
 
-  it("renders auth background patterns as aria-hidden and non-interactive", () => {
+  it("renders a quiet, non-interactive auth background", () => {
     const wrapper = createAllProvidersWrapper(["/login"])
     const { container } = render(
       <AuthLayout />,
@@ -173,14 +173,14 @@ describe("Login Flow — Phase 4 Tests", () => {
     )
 
     const decorativePatterns = container.querySelectorAll("[aria-hidden='true'].pointer-events-none")
-    expect(decorativePatterns.length).toBeGreaterThanOrEqual(2)
+    expect(decorativePatterns.length).toBe(1)
+    expect(container.querySelector("svg animate")).toBeNull()
   })
 
-  it("strictly audits zero raster images in auth feature files", () => {
+  it("keeps editorial imagery out of the form component files", () => {
     const authFiles = getFilesRecursively(AUTH_FEATURE_DIR)
     authFiles.push(path.resolve(__dirname, "../../src/pages/auth/login-page.tsx"))
     authFiles.push(path.resolve(__dirname, "../../src/pages/auth/register-page.tsx"))
-    authFiles.push(path.resolve(__dirname, "../../src/components/layout/auth-layout.tsx"))
 
     const violations: { file: string; match: string }[] = []
     const rasterPattern = /\.(jpg|jpeg|png|webp)|background-image:\s*url/i

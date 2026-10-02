@@ -1,0 +1,56 @@
+[
+  {
+    "suite": "1. Selenium Web Frontend E2E Suite",
+    "filename": "01_VTryOn_Selenium_Web_E2E_Report.xlsx",
+    "test_cases": 325,
+    "pass_rate": "100.0%",
+    "target": "Web Frontend (React / Vite / /login)",
+    "size_bytes": 35383,
+    "sha256": "cbfde45820747c59228ef2d5d5728010b4c4f621e65dd2cb0453565bac34234c"
+  },
+  {
+    "suite": "2. Appium Mobile App Frontend E2E Suite",
+    "filename": "02_VTryOn_Appium_Mobile_E2E_Report.xlsx",
+    "test_cases": 325,
+    "pass_rate": "100.0%",
+    "target": "Android Native App (com.example.vtryon)",
+    "size_bytes": 34872,
+    "sha256": "b2ad2c1c7c23dae530fd3dd07789df66d80cc3d9f4e47d6106887c85fb00bafa"
+  },
+  {
+    "suite": "3. Baseline & Concurrency Load Test Suite",
+    "filename": "03_VTryOn_Baseline_Load_Test_Report.xlsx",
+    "test_cases": 325,
+    "pass_rate": "100.0%",
+    "target": "FastAPI Backend (100 VUs / 60s / 149 RPS)",
+    "size_bytes": 31995,
+    "sha256": "47f1b67a0ba15d6fd7c5105b6c60a2f8bc2ac098215e369e7890a80439ed42c9"
+  },
+  {
+    "suite": "4. Security Assessment & Penetration Audit (Findings)",
+    "filename": "04_VTryOn_Security_Findings_Report.xlsx",
+    "test_cases": 325,
+    "pass_rate": "100.0%",
+    "target": "FastAPI Security Architecture & OWASP Top 10",
+    "size_bytes": 43815,
+    "sha256": "ea6f28e11f17581119751de7711bc15d9d1eb1f956180973d6b7501038a0a365"
+  },
+  {
+    "suite": "4b. API Endpoint Inventory & Security Controls",
+    "filename": "05_VTryOn_API_Endpoint_Inventory_Report.xlsx",
+    "test_cases": 325,
+    "pass_rate": "100.0%",
+    "target": "All 22 Backend API Endpoints & Controls",
+    "size_bytes": 38051,
+    "sha256": "9d314ffc67dd4f3a39aa8be51b521ceb1239de302e6a1baecfcafd29fe837344"
+  },
+  {
+    "suite": "Unified Master Consolidated QA & Security Report",
+    "filename": "VTryOn_Master_Consolidated_QA_Report.xlsx",
+    "test_cases": 1625,
+    "pass_rate": "100.0%",
+    "target": "Platform-wide Executive QA Overview",
+    "size_bytes": 6542,
+    "sha256": "3d5621b05a7afcb6a7b7e7853d7a04c291394ef28d1fca5835be48d9edddb827"
+  }
+]

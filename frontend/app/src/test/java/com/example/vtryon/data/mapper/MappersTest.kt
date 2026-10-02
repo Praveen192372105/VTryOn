@@ -19,7 +19,7 @@ class MappersTest {
             accessToken = "jwt_token_123",
             expiresIn = 3600,
             user = UserDto(
-                publicId = "usr_01test",
+                id = "usr_01test",
                 email = "alice@example.com",
                 name = "Alice"
             )

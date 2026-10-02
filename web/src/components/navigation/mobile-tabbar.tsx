@@ -23,13 +23,13 @@ export function MobileTabBar() {
               to={tab.href}
               className={cn(
                 "flex flex-col items-center justify-center flex-1 h-full py-1 text-xs font-medium transition-colors select-none",
-                isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                isActive ? "text-brand" : "text-muted-foreground hover:text-foreground"
               )}
             >
               <div
                 className={cn(
                   "flex items-center justify-center size-9 rounded-xl transition-colors mb-0.5",
-                  isActive ? "bg-surface-subtle border border-border text-foreground shadow-2xs" : "text-muted-foreground"
+                  isActive ? "bg-brand-soft border border-brand/25 text-brand shadow-2xs" : "text-muted-foreground"
                 )}
               >
                 <HugeiconsIcon icon={tab.icon} className="size-5" />

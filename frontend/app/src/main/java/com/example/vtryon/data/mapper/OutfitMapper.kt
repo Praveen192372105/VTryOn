@@ -1,6 +1,7 @@
 package com.example.vtryon.data.mapper
 
 import com.example.vtryon.core.database.OutfitEntity
+import com.example.vtryon.core.network.UrlResolver
 import com.example.vtryon.data.remote.outfit.dto.OutfitDto
 import com.example.vtryon.domain.model.Outfit
 import com.example.vtryon.domain.model.OutfitCategory
@@ -10,7 +11,7 @@ fun OutfitDto.toDomain(): Outfit {
         id = id,
         name = name,
         category = OutfitCategory.fromApiValue(category),
-        imageUrl = imageUrl,
+        imageUrl = UrlResolver.resolveMediaUrl(imageUrl) ?: imageUrl,
         description = description,
         tags = tags,
         isAvailable = isAvailable,

@@ -1,6 +1,7 @@
 package com.example.vtryon.data.remote.outfit
 
 import com.example.vtryon.data.remote.dto.ApiResponseDto
+import com.example.vtryon.data.remote.dto.PaginatedDataDto
 import com.example.vtryon.data.remote.outfit.dto.CreateCustomOutfitResponseDto
 import com.example.vtryon.data.remote.outfit.dto.OutfitDto
 import okhttp3.MultipartBody
@@ -18,7 +19,7 @@ interface OutfitApi {
     @GET("api/v1/outfits")
     suspend fun getOutfits(
         @Query("category") category: String? = null
-    ): Response<ApiResponseDto<List<OutfitDto>>>
+    ): Response<ApiResponseDto<PaginatedDataDto<OutfitDto>>>
 
     @GET("api/v1/outfits/{id}")
     suspend fun getOutfit(

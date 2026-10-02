@@ -15,6 +15,8 @@ interface AuthRepository {
 
     suspend fun logout(): AppResult<Unit>
 
+    suspend fun getCurrentUser(): AppResult<User>
+
     fun observeSession(): Flow<User?>
 
     fun hasActiveSession(): Boolean

@@ -81,7 +81,7 @@ export function GenerateBar({
           `Wait ${secondsLeft}s…`
         ) : (
           <>
-            <HugeiconsIcon icon={SparklesIcon} size={18} className="mr-2 text-amber-300" />
+            <HugeiconsIcon icon={SparklesIcon} size={18} className="mr-2 text-brand" />
             Generate Try-On
           </>
         )}

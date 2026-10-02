@@ -52,13 +52,13 @@ class TryOnProcessingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         currentJobId = arguments?.getString("jobId").orEmpty()
-        binding.tvJobId.text = if (currentJobId.isNotBlank()) "Job ID: $currentJobId" else ""
+        binding.tvJobId.visibility = View.GONE
 
         setupListeners()
         if (currentJobId.isNotBlank()) {
             startPolling(currentJobId)
         } else {
-            showError("Invalid or missing try-on job identifier.")
+            showError("Selected fitting could not be loaded.")
         }
     }
 
@@ -74,7 +74,7 @@ class TryOnProcessingFragment : Fragment() {
         binding.btnRetry.setOnClickListener {
             binding.failureContainer.visibility = View.GONE
             binding.progressRing.visibility = View.VISIBLE
-            binding.tvStatusTitle.text = "Retrying Status Check"
+            binding.tvStatusTitle.text = "Resuming Fitting..."
             if (currentJobId.isNotBlank()) {
                 startPolling(currentJobId)
             }
@@ -93,12 +93,12 @@ class TryOnProcessingFragment : Fragment() {
                         val job = result.data
                         when (job.status) {
                             TryOnStatus.QUEUED -> {
-                                binding.tvStatusTitle.text = "In GPU Queue"
-                                binding.tvStatusSubtitle.text = "Your try-on request is queued on the server."
+                                binding.tvStatusTitle.text = "Preparing Your Fitting"
+                                binding.tvStatusSubtitle.text = "Aligning your portrait with the selected garment..."
                             }
                             TryOnStatus.PROCESSING -> {
-                                binding.tvStatusTitle.text = "AI Diffusion Running"
-                                binding.tvStatusSubtitle.text = "CatVTON model is synthesizing garment drape and warping."
+                                binding.tvStatusTitle.text = "Crafting Your Look"
+                                binding.tvStatusSubtitle.text = "Draping garment with realistic fabric texture..."
                             }
                             TryOnStatus.COMPLETED -> {
                                 // Transition to Result, popping this processing destination
@@ -107,7 +107,7 @@ class TryOnProcessingFragment : Fragment() {
                                 break
                             }
                             TryOnStatus.FAILED -> {
-                                showError("AI Try-On generation failed on the server. Please try with another image or outfit.")
+                                showError("Virtual fitting could not be completed. Please try with another photo or outfit.")
                                 break
                             }
                         }
@@ -116,7 +116,7 @@ class TryOnProcessingFragment : Fragment() {
                         // Offline or transient error: do NOT report as generation failure
                         if (result.error is AppError.NetworkUnavailable) {
                             binding.tvStatusTitle.text = "Reconnecting..."
-                            binding.tvStatusSubtitle.text = "Network connection lost. Waiting to re-establish status check..."
+                            binding.tvStatusSubtitle.text = "Waiting for connection to complete your fitting..."
                         }
                     }
                 }
@@ -127,7 +127,7 @@ class TryOnProcessingFragment : Fragment() {
 
     private fun showError(message: String) {
         binding.progressRing.visibility = View.GONE
-        binding.tvStatusTitle.text = "Generation Issue"
+        binding.tvStatusTitle.text = "Fitting Unavailable"
         binding.tvStatusSubtitle.text = ""
         binding.failureContainer.visibility = View.VISIBLE
         binding.tvFailureReason.text = message

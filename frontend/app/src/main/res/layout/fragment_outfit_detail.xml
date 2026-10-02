@@ -4,8 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/vto_surface_primary">
+    android:background="@color/vto_background">
 
+    <!-- Top Navigation Toolbar -->
     <com.example.vtryon.core.designsystem.component.toolbar.VtoTopBar
         android:id="@+id/detailToolbar"
         android:layout_width="0dp"
@@ -16,6 +17,31 @@
         app:vtoShowBack="true"
         app:vtoTitle="Outfit Details" />
 
+    <!-- Favorite Toggle Button on Toolbar -->
+    <FrameLayout
+        android:id="@+id/btnFavorite"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="@dimen/spacing_16"
+        android:background="@drawable/vto_bg_icon_button"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintBottom_toBottomOf="@id/detailToolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/detailToolbar">
+
+        <ImageView
+            android:id="@+id/ivFavoriteIcon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:contentDescription="Favorite"
+            android:src="@drawable/vto_huge_favourite"
+            app:tint="@color/vto_content_secondary" />
+
+    </FrameLayout>
+
+    <!-- Scrollable Detail Body -->
     <ScrollView
         android:id="@+id/contentScroll"
         android:layout_width="0dp"
@@ -30,53 +56,194 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingHorizontal="@dimen/vto_space_md"
-            android:paddingVertical="@dimen/vto_space_sm">
+            android:paddingHorizontal="@dimen/spacing_16"
+            android:paddingTop="@dimen/spacing_12"
+            android:paddingBottom="@dimen/spacing_24">
 
-            <com.example.vtryon.core.designsystem.component.MediaSurfaceView
-                android:id="@+id/ivOutfitImage"
+            <!-- Garment Image Surface -->
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="320dp"
-                android:layout_marginBottom="@dimen/vto_space_md"
-                app:mediaCornerRadius="@dimen/vto_radius_lg" />
+                android:background="@drawable/bg_dashboard_stat_card">
 
-            <TextView
-                android:id="@+id/tvOutfitName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.VTryOn.HeadlineMedium"
-                android:textColor="@color/vto_content_primary"
-                tools:text="Classic Denim Jacket" />
+                <com.example.vtryon.core.designsystem.component.MediaSurfaceView
+                    android:id="@+id/ivOutfitImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:mediaAspectRatio="free"
+                    app:mediaCornerRadius="14dp"
+                    app:mediaScaleType="fitCenter" />
 
+            </FrameLayout>
+
+            <!-- Category Pill / Label -->
             <TextView
                 android:id="@+id/tvOutfitCategory"
+                style="@style/TextAppearance.VTryOn.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_16"
+                android:letterSpacing="0.08"
+                android:textColor="@color/vto_brand"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                tools:text="TOPS &amp; JACKETS" />
+
+            <!-- Garment Name -->
+            <TextView
+                android:id="@+id/tvOutfitName"
+                style="@style/TextAppearance.VTryOn.HeadlineMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vto_space_xs"
-                android:textAppearance="@style/TextAppearance.VTryOn.BodySmall"
-                android:textColor="@color/vto_content_secondary"
-                tools:text="Upper Body" />
+                android:layout_marginTop="@dimen/spacing_4"
+                android:textColor="@color/vto_content_primary"
+                android:textStyle="bold"
+                tools:text="Classic White Linen Shirt" />
 
+            <!-- Garment Description -->
             <TextView
                 android:id="@+id/tvOutfitDescription"
+                style="@style/TextAppearance.VTryOn.BodyMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vto_space_sm"
+                android:layout_marginTop="@dimen/spacing_8"
                 android:lineSpacingExtra="4dp"
-                android:textAppearance="@style/TextAppearance.VTryOn.BodyMedium"
                 android:textColor="@color/vto_content_secondary"
-                tools:text="Premium quality casual garment crafted for virtual try-on with high-fidelity texture reproduction." />
+                tools:text="Tailored from breathable pure linen, featuring clean collar architecture and natural drape designed for everyday wear." />
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/spacing_20"
+                android:background="@color/vto_border_default" />
+
+            <!-- Studio Try-On Preview Section -->
+            <TextView
+                style="@style/TextAppearance.VTryOn.HeadlineSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_20"
+                android:text="Try-On Preview"
+                android:textColor="@color/vto_content_primary"
+                android:textStyle="bold" />
+
+            <TextView
+                style="@style/TextAppearance.VTryOn.BodySmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Tap a model below to preview and launch fitting"
+                android:textColor="@color/vto_content_secondary" />
+
+            <!-- Responsive 2-Column Model Cards -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="105dp"
+                android:layout_marginTop="@dimen/spacing_12"
+                android:orientation="horizontal">
+
+                <!-- Model 1 Card -->
+                <LinearLayout
+                    android:id="@+id/cardModel1Preview"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/spacing_6"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_dashboard_stat_card"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_12">
+
+                    <TextView
+                        style="@style/TextAppearance.VTryOn.TitleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Model 1"
+                        android:textColor="@color/vto_content_primary"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        style="@style/TextAppearance.VTryOn.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="Casual Portrait"
+                        android:textColor="@color/vto_content_secondary"
+                        android:textSize="10sp" />
+
+                    <TextView
+                        style="@style/TextAppearance.VTryOn.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_8"
+                        android:text="Try on model"
+                        android:textColor="@color/vto_brand"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <!-- Model 2 Card -->
+                <LinearLayout
+                    android:id="@+id/cardModel2Preview"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/spacing_6"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_dashboard_stat_card"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_12">
+
+                    <TextView
+                        style="@style/TextAppearance.VTryOn.TitleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Model 2"
+                        android:textColor="@color/vto_content_primary"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        style="@style/TextAppearance.VTryOn.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="Studio Portrait"
+                        android:textColor="@color/vto_content_secondary"
+                        android:textSize="10sp" />
+
+                    <TextView
+                        style="@style/TextAppearance.VTryOn.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_8"
+                        android:text="Try on model"
+                        android:textColor="@color/vto_brand"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </LinearLayout>
 
         </LinearLayout>
+
     </ScrollView>
 
+    <!-- Sticky Bottom Action Footer -->
     <FrameLayout
         android:id="@+id/bottomActionContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/vto_surface_secondary"
-        android:paddingHorizontal="@dimen/vto_space_md"
-        android:paddingVertical="@dimen/vto_space_sm"
+        android:background="@color/vto_surface_primary"
+        android:paddingHorizontal="@dimen/spacing_16"
+        android:paddingTop="@dimen/spacing_12"
+        android:paddingBottom="@dimen/spacing_32"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -85,10 +252,12 @@
             android:id="@+id/btnTryThisOutfit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:btnText="Try this outfit"
+            app:btnText="Try This Outfit"
             app:btnVariant="primary" />
+
     </FrameLayout>
 
+    <!-- Loading Ring -->
     <com.example.vtryon.core.designsystem.component.feedback.VtoProgressRing
         android:id="@+id/loadingIndicator"
         android:layout_width="48dp"

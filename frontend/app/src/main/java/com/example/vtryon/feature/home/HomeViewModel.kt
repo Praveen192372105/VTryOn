@@ -34,7 +34,7 @@ class HomeViewModel(
 
         viewModelScope.launch {
             observeOutfitsUseCase().collect { outfits ->
-                _uiState.update { it.copy(recentOutfits = outfits.take(4), isLoading = false) }
+                _uiState.update { it.copy(recentOutfits = outfits, isLoading = false) }
             }
         }
     }

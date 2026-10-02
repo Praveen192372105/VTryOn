@@ -9,6 +9,7 @@ import com.example.vtryon.core.database.AppDatabase
 import com.example.vtryon.core.datastore.AppSettingsStore
 import com.example.vtryon.core.network.ApiClient
 import com.example.vtryon.core.security.TokenStorage
+import kotlinx.coroutines.launch
 
 /**
  * Root Application class initializing the core foundation layers:
@@ -56,6 +57,7 @@ class TryOnApplication : Application(), ImageLoaderFactory {
 
         authRepository = com.example.vtryon.data.repository.AuthRepositoryImpl(
             authApi = apiClient.authApi,
+            userApi = apiClient.userApi,
             tokenStorage = tokenStorage
         )
         outfitRepository = com.example.vtryon.data.repository.OutfitRepositoryImpl(
@@ -68,6 +70,19 @@ class TryOnApplication : Application(), ImageLoaderFactory {
             outfitApi = apiClient.outfitApi,
             tryOnDao = database.tryOnDao()
         )
+
+        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+            settingsStore.themeMode.collect { mode ->
+                val nightMode = when (mode) {
+                    AppSettingsStore.ThemeMode.DARK -> androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
+                    AppSettingsStore.ThemeMode.LIGHT -> androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+                    AppSettingsStore.ThemeMode.SYSTEM -> androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+                }
+                if (androidx.appcompat.app.AppCompatDelegate.getDefaultNightMode() != nightMode) {
+                    androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(nightMode)
+                }
+            }
+        }
     }
 
     override fun newImageLoader(): ImageLoader {

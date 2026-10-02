@@ -9,6 +9,7 @@ import {
   ViewIcon,
   LeftToRightListDashIcon,
   Loading03Icon,
+  Delete02Icon,
 } from "@hugeicons/core-free-icons"
 import { ImageFrame } from "../../../components/image"
 import { StatusBadge } from "../../../components/feedback"
@@ -344,8 +345,9 @@ export function ResultViewer({
                   <button
                     type="button"
                     onClick={onDelete}
-                    className="text-muted-foreground hover:text-danger hover:underline transition-colors cursor-pointer shrink-0"
+                    className="inline-flex items-center gap-1.5 text-danger hover:text-danger/80 hover:underline transition-colors cursor-pointer shrink-0"
                   >
+                    <HugeiconsIcon icon={Delete02Icon} className="size-3.5" aria-hidden="true" />
                     Delete this look
                   </button>
                 )}

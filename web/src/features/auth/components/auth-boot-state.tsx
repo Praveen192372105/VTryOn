@@ -1,55 +1,32 @@
-import { LogoMark } from "@/components/brand/LogoMark"
-import { useReducedMotion } from "@/hooks/use-reduced-motion"
-import { cn } from "@/lib/utils"
+import { Logo } from "../../../components/brand/Logo"
+import { motion } from "motion/react"
+import { useReducedMotion } from "../../../hooks/use-reduced-motion"
+import { cn } from "../../../lib/utils"
 
 export interface AuthBootStateProps {
   className?: string
 }
 
 export function AuthBootState({ className }: AuthBootStateProps) {
-  const prefersReduced = useReducedMotion()
-
-  return (
-    <div
-      role="status"
-      aria-label="Checking authentication session"
-      className={cn(
-        "min-h-screen w-full flex flex-col items-center justify-center bg-background text-foreground select-none p-4",
-        className
-      )}
-    >
-      <div className="flex flex-col items-center gap-4">
-        {/* Brand Mark */}
-        <div className="size-11 rounded-xl bg-surface border border-border flex items-center justify-center shadow-xs">
-          <LogoMark size={22} className="text-foreground" decorative={true} />
-        </div>
-
-        {/* Quiet Spinner */}
-        <div className="flex items-center gap-2 text-xs font-mono tracking-wider uppercase text-muted-foreground">
-          <svg
-            className={cn("size-3.5 text-muted-foreground", !prefersReduced && "animate-spin")}
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="3"
-            />
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            />
-          </svg>
-          <span>Authenticating</span>
-        </div>
+  const reduced = useReducedMotion()
+  return <div
+    role="status"
+    aria-label="Checking authentication session"
+    className={cn("min-h-screen w-full flex flex-col items-center justify-center bg-[#f5f2ec] text-[#29251f] p-4", className)}
+  >
+    <div className="flex flex-col items-center gap-5">
+      <div className="[&_.bg-primary]:bg-[#29251f] [&_.bg-primary]:border-[#29251f] [&_svg]:text-[#fffaf2] [&_.text-foreground]:text-[#29251f]">
+        <Logo linkToHome={false} />
+      </div>
+      <span className="text-[11px] font-medium tracking-[0.16em] uppercase text-[#817970]">Preparing your fitting room</span>
+      <div className="h-[2px] w-36 overflow-hidden bg-[#d9d0c5]" aria-hidden="true">
+        <motion.div
+          className="h-full w-1/2 bg-[#a77a57]"
+          initial={reduced ? false : { x: "-100%" }}
+          animate={reduced ? { x: "50%" } : { x: ["-100%", "200%"] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+        />
       </div>
     </div>
-  )
+  </div>
 }

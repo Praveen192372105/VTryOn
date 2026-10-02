@@ -10,8 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:toolbarTitle="Settings"
-        app:toolbarSubtitle="Preferences" />
+        app:toolbarSubtitle="Studio Fitting History"
+        app:toolbarTitle="Profile &amp; History" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -27,52 +27,328 @@
             android:paddingHorizontal="@dimen/screen_padding_horizontal"
             android:paddingVertical="@dimen/spacing_16">
 
+            <!-- Profile Info Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_surface_card"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/card_padding">
+
+                <FrameLayout
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:background="@drawable/bg_profile_avatar">
+
+                    <TextView
+                        android:id="@+id/tvUserAvatar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="U"
+                        android:textColor="@color/vto_brand"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
+
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_12"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tvUserName"
+                            style="@style/TextAppearance.VTryOn.TitleMedium"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="User"
+                            android:textColor="@color/vto_content_primary"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:letterSpacing="0.08"
+                            android:text="MEMBER"
+                            android:textColor="@color/vto_brand"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvUserEmail"
+                        style="@style/TextAppearance.VTryOn.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_2"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="user@example.com"
+                        android:textColor="@color/text_secondary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_2"
+                        android:letterSpacing="0.04"
+                        android:text="Connected Studio Account"
+                        android:textColor="@color/text_tertiary"
+                        android:textSize="10sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Responsive Equal-Width & Equal-Height Stats Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_12"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="76dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_surface_card"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_10">
+
+                    <TextView
+                        android:id="@+id/tvStatFittingsCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textColor="@color/vto_content_primary"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_2"
+                        android:letterSpacing="0.06"
+                        android:text="TOTAL FITTINGS"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="76dp"
+                    android:layout_marginStart="@dimen/spacing_12"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_surface_card"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_10">
+
+                    <TextView
+                        android:id="@+id/tvStatSavedCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textColor="@color/vto_brand"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_2"
+                        android:letterSpacing="0.06"
+                        android:text="SAVED LOOKS"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Appearance Section -->
             <TextView
                 style="@style/TextAppearance.VTryOn.TitleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Account" />
+                android:layout_marginTop="@dimen/spacing_20"
+                android:text="Appearance" />
 
             <LinearLayout
+                android:id="@+id/cardAppearance"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_8"
                 android:background="@drawable/bg_surface_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/spacing_16">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/vto_huge_sun_01"
+                    app:tint="@color/vto_brand" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_12"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/TextAppearance.VTryOn.TitleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Dark Mode"
+                        android:textColor="@color/vto_content_primary" />
+
+                    <TextView
+                        style="@style/TextAppearance.VTryOn.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_2"
+                        android:text="Switch between dark and light appearance"
+                        android:textColor="@color/text_secondary" />
+
+                </LinearLayout>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchDarkMode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <!-- Fitting History Header -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_24"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/TextAppearance.VTryOn.TitleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Fitting History" />
+
+                    <TextView
+                        style="@style/TextAppearance.VTryOn.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_2"
+                        android:text="Past virtual fitting sessions"
+                        android:textColor="@color/text_secondary" />
+
+                </LinearLayout>
+
+                <com.example.vtryon.core.designsystem.component.button.VtoIconButton
+                    android:id="@+id/btnRefreshHistory"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:contentDescription="Refresh history from server" />
+
+            </LinearLayout>
+
+            <!-- History Loading State -->
+            <ProgressBar
+                android:id="@+id/historyLoadingIndicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/spacing_16"
+                android:indeterminateTint="@color/vto_brand"
+                android:visibility="gone" />
+
+            <!-- Empty History State -->
+            <LinearLayout
+                android:id="@+id/emptyHistoryView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_12"
+                android:background="@drawable/bg_surface_card"
+                android:gravity="center"
                 android:orientation="vertical"
-                android:padding="@dimen/card_padding">
+                android:padding="@dimen/spacing_24"
+                android:visibility="gone">
 
                 <TextView
-                    android:id="@+id/tvUserName"
-                    style="@style/TextAppearance.VTryOn.BodyMedium"
+                    style="@style/TextAppearance.VTryOn.TitleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="User" />
+                    android:text="No fitting history yet"
+                    android:textColor="@color/vto_content_primary" />
 
                 <TextView
-                    android:id="@+id/tvUserEmail"
                     style="@style/TextAppearance.VTryOn.Caption"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_4"
-                    android:text="user@example.com"
+                    android:gravity="center"
+                    android:text="Step into the studio to create your first virtual look."
                     android:textColor="@color/text_secondary" />
+
+                <com.example.vtryon.core.designsystem.component.AppButton
+                    android:id="@+id/btnOpenStudio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_12"
+                    app:btnText="Step into Studio"
+                    app:btnVariant="primary" />
 
             </LinearLayout>
 
+            <!-- Fitting History List -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvHistory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_12"
+                android:nestedScrollingEnabled="false" />
+
+            <!-- Account & Session Section -->
             <TextView
                 style="@style/TextAppearance.VTryOn.TitleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_24"
-                android:text="Session" />
+                android:text="Account &amp; Session" />
 
             <com.example.vtryon.core.designsystem.component.AppButton
                 android:id="@+id/btnSignOut"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_8"
-                app:btnVariant="secondary"
-                app:btnText="Sign Out" />
+                app:btnText="Sign Out"
+                app:btnVariant="secondary" />
 
         </LinearLayout>
 

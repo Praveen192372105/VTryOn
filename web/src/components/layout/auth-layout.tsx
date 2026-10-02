@@ -1,34 +1,22 @@
 import { Link, Outlet } from "react-router-dom"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowLeft01Icon } from "@hugeicons/core-free-icons"
 import { AuthBackground } from "../backgrounds"
 import { ROUTES } from "../../app/route-paths"
+import { Logo } from "../brand/Logo"
+import "./auth-layout.css"
 
 export function AuthLayout() {
-  return (
-    <AuthBackground>
-      {/* Top Navigation Bar: Back to Home */}
-      <header className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 flex items-center justify-between z-20 shrink-0">
-        <Link
-          to={ROUTES.home}
-          className="inline-flex items-center gap-2 text-xs font-mono text-muted-foreground hover:text-foreground transition-colors h-10 px-3.5 rounded-lg border border-border bg-surface hover:border-border-strong hover:bg-surface-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer"
-        >
-          <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" />
-          <span>Back to home</span>
-        </Link>
-      </header>
-
-      {/* Main Centered Content Zone: Natural Document Flow & Safe Overflow */}
-      <main className="flex-1 w-full flex flex-col items-center justify-center px-4 py-6 sm:py-8 auth-viewport-short z-20">
-        <div className="w-full my-auto flex justify-center">
-          <Outlet />
-        </div>
-      </main>
-
-      {/* Minimal Footer */}
-      <footer className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 text-center text-xs font-mono text-muted-foreground z-20 shrink-0">
-        <span>© {new Date().getFullYear()} V Try-On • Private & Account-Isolated Architecture</span>
-      </footer>
-    </AuthBackground>
-  )
+  return <AuthBackground>
+    <div className="auth-editorial">
+      <img src="/images/editorial-portrait.jpg" alt="" aria-hidden="true" />
+      <div className="auth-editorial-shade" />
+      <Link className="auth-editorial-brand" to={ROUTES.home}><Logo linkToHome={false} className="auth-editorial-logo" /></Link>
+      <div className="auth-editorial-copy"><span>YOUR FITTING ROOM AWAITS</span><h2>Style starts<br />with <em>you.</em></h2><p>A more personal way to explore what feels right.</p></div>
+      <div className="auth-editorial-index">01 / 03 <span>EXPLORE YOUR NEXT LOOK</span></div>
+    </div>
+    <div className="auth-content-column">
+      <header className="auth-topbar"><Link to={ROUTES.home} className="auth-home-link h-10"><span aria-hidden="true">←</span> Back to home</Link><span>YOUR PERSONAL FITTING ROOM</span></header>
+      <main className="auth-main auth-viewport-short"><Outlet /></main>
+      <footer className="auth-footer"><span>© {new Date().getFullYear()} V Try-On</span><div><Link to={ROUTES.privacy}>Privacy</Link><Link to={ROUTES.terms}>Terms</Link></div></footer>
+    </div>
+  </AuthBackground>
 }

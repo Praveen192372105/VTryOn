@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardGarment"
+    android:layout_width="112dp"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="@dimen/spacing_8"
+    android:background="@drawable/bg_garment_unselected"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical"
+    android:padding="@dimen/spacing_6">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp">
+
+        <com.example.vtryon.core.designsystem.component.MediaSurfaceView
+            android:id="@+id/ivGarmentThumb"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:mediaCornerRadius="@dimen/radius_md" />
+
+        <ImageView
+            android:id="@+id/ivSelectedCheck"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="top|end"
+            android:layout_margin="4dp"
+            android:background="@drawable/bg_badge_pill"
+            android:backgroundTint="@color/vto_surface_elevated"
+            android:padding="2dp"
+            android:src="@drawable/vto_huge_checkmark_circle_02"
+            android:visibility="gone"
+            app:tint="@color/vto_success" />
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tvGarmentName"
+        style="@style/TextAppearance.VTryOn.BodySmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_6"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/content_primary"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvGarmentCategory"
+        style="@style/TextAppearance.VTryOn.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_2"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/text_tertiary" />
+
+</LinearLayout>

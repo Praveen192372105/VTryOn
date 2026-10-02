@@ -31,7 +31,8 @@ class MediaSurfaceView @JvmOverloads constructor(
     enum class AspectRatio(val ratio: Float) {
         SQUARE(1.0f),
         PORTRAIT(4f / 3f), // Height = Width * 4 / 3 (standard 3:4 fashion format)
-        CINEMATIC(9f / 16f)
+        CINEMATIC(9f / 16f),
+        FREE(0f)
     }
 
     val imageView = AppCompatImageView(context).apply {
@@ -76,6 +77,13 @@ class MediaSurfaceView @JvmOverloads constructor(
             val ratioOrdinal = a.getInt(R.styleable.MediaSurfaceView_mediaAspectRatio, 1)
             aspectRatio = AspectRatio.entries.getOrElse(ratioOrdinal) { AspectRatio.PORTRAIT }
 
+            val scaleTypeOrdinal = a.getInt(R.styleable.MediaSurfaceView_mediaScaleType, 0)
+            imageView.scaleType = when (scaleTypeOrdinal) {
+                1 -> ImageView.ScaleType.FIT_CENTER
+                2 -> ImageView.ScaleType.CENTER_INSIDE
+                else -> ImageView.ScaleType.CENTER_CROP
+            }
+
             cornerRadiusPx = a.getDimension(R.styleable.MediaSurfaceView_mediaCornerRadius, cornerRadiusPx)
             a.recycle()
         }
@@ -86,6 +94,10 @@ class MediaSurfaceView @JvmOverloads constructor(
     fun setAspectRatio(ratio: AspectRatio) {
         this.aspectRatio = ratio
         requestLayout()
+    }
+
+    fun setScaleType(scaleType: ImageView.ScaleType) {
+        imageView.scaleType = scaleType
     }
 
     fun applyCornerRadius(radiusPx: Float) {
@@ -104,7 +116,13 @@ class MediaSurfaceView @JvmOverloads constructor(
         loadingIndicator.visibility = View.VISIBLE
         errorContainer.visibility = View.GONE
 
-        currentDisposable = imageView.load(data) {
+        val resolvedData = if (data is String) {
+            com.example.vtryon.core.network.UrlResolver.resolveMediaUrl(data)
+        } else {
+            data
+        }
+
+        currentDisposable = imageView.load(resolvedData) {
             crossfade(true)
             listener(
                 onStart = {
@@ -130,9 +148,16 @@ class MediaSurfaceView @JvmOverloads constructor(
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val width = MeasureSpec.getSize(widthMeasureSpec)
-        val calculatedHeight = (width * aspectRatio.ratio).toInt()
-        val finalHeightSpec = MeasureSpec.makeMeasureSpec(calculatedHeight, MeasureSpec.EXACTLY)
-        super.onMeasure(widthMeasureSpec, finalHeightSpec)
+        val heightMode = MeasureSpec.getMode(heightMeasureSpec)
+        val heightSize = MeasureSpec.getSize(heightMeasureSpec)
+
+        if (aspectRatio == AspectRatio.FREE || (heightMode == MeasureSpec.EXACTLY && heightSize > 0)) {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        } else {
+            val width = MeasureSpec.getSize(widthMeasureSpec)
+            val calculatedHeight = (width * aspectRatio.ratio).toInt()
+            val finalHeightSpec = MeasureSpec.makeMeasureSpec(calculatedHeight, MeasureSpec.EXACTLY)
+            super.onMeasure(widthMeasureSpec, finalHeightSpec)
+        }
     }
 }

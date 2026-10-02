@@ -27,38 +27,61 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/resultToolbar">
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingHorizontal="@dimen/vto_space_md"
-            android:paddingVertical="@dimen/vto_space_sm">
+            android:layout_height="wrap_content">
 
-            <com.example.vtryon.core.designsystem.component.MediaSurfaceView
-                android:id="@+id/ivResult"
+            <!-- Result Success Layout -->
+            <LinearLayout
+                android:id="@+id/layoutResultSuccess"
                 android:layout_width="match_parent"
-                android:layout_height="380dp"
-                app:mediaCornerRadius="@dimen/vto_radius_lg" />
-
-            <TextView
-                android:id="@+id/tvStatus"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vto_space_md"
-                android:textAppearance="@style/TextAppearance.VTryOn.HeadlineSmall"
-                android:textColor="@color/vto_content_primary"
-                tools:text="Status: Completed" />
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/vto_space_md"
+                android:paddingVertical="@dimen/vto_space_sm">
 
-            <TextView
-                android:id="@+id/tvJobId"
-                android:layout_width="wrap_content"
+                <com.example.vtryon.core.designsystem.component.MediaSurfaceView
+                    android:id="@+id/ivResult"
+                    android:layout_width="match_parent"
+                    android:layout_height="400dp"
+                    app:mediaAspectRatio="free"
+                    app:mediaScaleType="fitCenter"
+                    app:mediaCornerRadius="@dimen/vto_radius_lg" />
+
+                <TextView
+                    android:id="@+id/tvStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/vto_space_md"
+                    android:text="Your Look is Ready"
+                    android:textAppearance="@style/TextAppearance.VTryOn.HeadlineSmall"
+                    android:textColor="@color/vto_content_primary" />
+
+                <TextView
+                    android:id="@+id/tvSubtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/vto_space_xs"
+                    android:textAppearance="@style/TextAppearance.VTryOn.BodyMedium"
+                    android:textColor="@color/vto_content_secondary"
+                    tools:text="Virtual fitting completed" />
+
+            </LinearLayout>
+
+            <!-- No Result / Error Empty State -->
+            <com.example.vtryon.core.designsystem.component.AppEmptyStateView
+                android:id="@+id/emptyStateView"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vto_space_xs"
-                android:textAppearance="@style/TextAppearance.VTryOn.Caption"
-                android:textColor="@color/vto_content_tertiary"
-                tools:text="Job ID: 01jseedtryon000000000001" />
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="@dimen/vto_space_md"
+                android:layout_marginVertical="@dimen/spacing_32"
+                android:visibility="gone"
+                app:emptyIcon="@drawable/vto_huge_alert_circle"
+                app:emptyTitle="Look Not Found"
+                app:emptyDescription="This try-on result is no longer available or could not be loaded." />
 
-        </LinearLayout>
+        </FrameLayout>
     </ScrollView>
 
     <LinearLayout
@@ -66,19 +89,31 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/vto_surface_secondary"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:paddingHorizontal="@dimen/vto_space_md"
-        android:paddingVertical="@dimen/vto_space_sm"
+        android:paddingTop="@dimen/vto_space_sm"
+        android:paddingBottom="@dimen/spacing_32"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <com.example.vtryon.core.designsystem.component.AppButton
-            android:id="@+id/btnDone"
-            android:layout_width="match_parent"
+            android:id="@+id/btnDownload"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:btnText="Try Another Look"
+            android:layout_marginEnd="@dimen/spacing_8"
+            android:layout_weight="1"
+            app:btnText="Download Look"
             app:btnVariant="primary" />
+
+        <com.example.vtryon.core.designsystem.component.AppButton
+            android:id="@+id/btnDone"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_8"
+            android:layout_weight="1"
+            app:btnText="Try Another"
+            app:btnVariant="secondary" />
 
     </LinearLayout>
 

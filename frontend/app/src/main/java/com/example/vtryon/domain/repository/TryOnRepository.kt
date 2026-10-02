@@ -28,6 +28,8 @@ interface TryOnRepository {
 
     suspend fun deleteTryOn(id: String): AppResult<Unit>
 
+    suspend fun toggleSaveTryOn(id: String, isSaved: Boolean): AppResult<Unit>
+
     suspend fun getActiveJob(): TryOnJob?
 
     suspend fun clearActiveJob()

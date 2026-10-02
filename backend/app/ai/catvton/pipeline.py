@@ -26,7 +26,12 @@ class CatVTONInferencePipeline:
         self.settings = settings
         self.repo_path = repo_path
         self._pipeline = None
-        self._weight_dtype = torch.float16 if settings.mixed_precision == "fp16" else torch.bfloat16
+        if settings.device == "cpu" or settings.mixed_precision in ("fp32", "no"):
+            self._weight_dtype = torch.float32
+        elif settings.mixed_precision == "fp16":
+            self._weight_dtype = torch.float16
+        else:
+            self._weight_dtype = torch.bfloat16
 
     def load(self):
         """Initializes and loads the diffusion pipeline once."""
@@ -45,7 +50,10 @@ class CatVTONInferencePipeline:
         base_path = self.settings.base_model_path
         try:
             from huggingface_hub import snapshot_download
-            base_path = snapshot_download(self.settings.base_model_path, local_files_only=True)
+            base_path = snapshot_download(
+                self.settings.base_model_path,
+                allow_patterns=["scheduler/*", "unet/*"],
+            )
         except Exception:
             pass
 

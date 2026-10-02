@@ -9,6 +9,7 @@ import com.example.vtryon.domain.model.TryOnJob
 data class TryOnUiState(
     val personImageUri: Uri? = null,
     val selectedOutfit: Outfit? = null,
+    val availableOutfits: List<Outfit> = emptyList(),
     val category: OutfitCategory = OutfitCategory.UPPER_BODY,
     val activeJob: TryOnJob? = null,
     val isSubmitting: Boolean = false,
@@ -20,6 +21,7 @@ sealed interface TryOnUiEvent {
     data class PersonPhotoPicked(val uri: Uri) : TryOnUiEvent
     data class OutfitSelected(val outfit: Outfit) : TryOnUiEvent
     data class CategorySelected(val category: OutfitCategory) : TryOnUiEvent
+    data class PreselectOutfitId(val outfitId: String) : TryOnUiEvent
     data object PickPhotoClicked : TryOnUiEvent
     data object GenerateClicked : TryOnUiEvent
     data object RetryClicked : TryOnUiEvent

@@ -1,34 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/spacing_6"
-    android:background="@drawable/bg_surface_card"
+    android:background="@drawable/bg_dashboard_stat_card"
+    android:clickable="true"
+    android:focusable="true"
     android:orientation="vertical"
-    android:padding="@dimen/spacing_8">
+    android:padding="@dimen/spacing_10">
 
     <com.example.vtryon.core.designsystem.component.MediaSurfaceView
         android:id="@+id/ivOutfit"
         android:layout_width="match_parent"
-        android:layout_height="180dp"
-        app:mediaCornerRadius="@dimen/radius_md" />
-
-    <TextView
-        android:id="@+id/tvOutfitName"
-        style="@style/TextAppearance.VTryOn.TitleSmall"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_8"
-        android:ellipsize="end"
-        android:maxLines="1" />
+        android:layout_height="190dp"
+        app:mediaAspectRatio="free"
+        app:mediaCornerRadius="12dp"
+        app:mediaScaleType="fitCenter" />
 
     <TextView
         android:id="@+id/tvOutfitCategory"
         style="@style/TextAppearance.VTryOn.Caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_2"
-        android:textColor="@color/text_secondary" />
+        android:layout_marginTop="@dimen/spacing_8"
+        android:letterSpacing="0.08"
+        android:textColor="@color/vto_brand"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        tools:text="TOPS" />
+
+    <TextView
+        android:id="@+id/tvOutfitName"
+        style="@style/TextAppearance.VTryOn.TitleSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/vto_content_primary"
+        android:textStyle="bold"
+        tools:text="Classic White Linen Shirt" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_6"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/TextAppearance.VTryOn.Caption"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="View details"
+            android:textColor="@color/vto_content_secondary"
+            android:textSize="11sp" />
+
+        <ImageView
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:contentDescription="Open"
+            android:src="@drawable/vto_huge_arrow_right_02"
+            app:tint="@color/vto_brand" />
+
+    </LinearLayout>
 
 </LinearLayout>

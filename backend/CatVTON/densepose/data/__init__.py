@@ -19,7 +19,10 @@ from .image_list_dataset import ImageListDataset
 from .utils import is_relative_local_path, maybe_prepend_base_path
 
 # ensure the builtin datasets are registered
-from . import datasets
+try:
+    from . import datasets
+except (ImportError, ModuleNotFoundError):
+    pass
 
 # ensure the bootstrap datasets builders are registered
 from . import build

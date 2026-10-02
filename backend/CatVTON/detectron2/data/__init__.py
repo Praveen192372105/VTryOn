@@ -14,6 +14,10 @@ from .common import DatasetFromList, MapDataset, ToIterableDataset
 from .dataset_mapper import DatasetMapper
 
 # ensure the builtin datasets are registered
-from . import datasets, samplers  # isort:skip
+try:
+    from . import datasets
+except ImportError:
+    pass
+from . import samplers  # isort:skip
 
 __all__ = [k for k in globals().keys() if not k.startswith("_")]

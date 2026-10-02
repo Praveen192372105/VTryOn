@@ -53,12 +53,27 @@ class ApiClient(
     }
 
     val authApi: com.example.vtryon.data.remote.auth.AuthApi by lazy { createService(com.example.vtryon.data.remote.auth.AuthApi::class.java) }
+    val userApi: com.example.vtryon.data.remote.user.UserApi by lazy { createService(com.example.vtryon.data.remote.user.UserApi::class.java) }
     val outfitApi: com.example.vtryon.data.remote.outfit.OutfitApi by lazy { createService(com.example.vtryon.data.remote.outfit.OutfitApi::class.java) }
     val tryOnApi: com.example.vtryon.data.remote.tryon.TryOnApi by lazy { createService(com.example.vtryon.data.remote.tryon.TryOnApi::class.java) }
     val uploadApi: com.example.vtryon.data.remote.upload.UploadApi by lazy { createService(com.example.vtryon.data.remote.upload.UploadApi::class.java) }
 
     companion object {
-        // Standard Android Emulator loopback mapping to localhost:8000
-        const val DEFAULT_BASE_URL = "http://10.0.2.2:8000/"
+        // Automatically detect if running inside Android Emulator or physical device
+        val isEmulator: Boolean
+            get() = (android.os.Build.FINGERPRINT.startsWith("generic")
+                    || android.os.Build.FINGERPRINT.startsWith("unknown")
+                    || android.os.Build.MODEL.contains("google_sdk")
+                    || android.os.Build.MODEL.contains("Emulator")
+                    || android.os.Build.MODEL.contains("Android SDK built for x86")
+                    || android.os.Build.HARDWARE.contains("goldfish")
+                    || android.os.Build.HARDWARE.contains("ranchu"))
+
+        // Host machine IP from ipconfig: 192.168.31.44
+        // Standard Android Emulator loopback is 10.0.2.2; physical device connects directly to host IP
+        const val HOST_IP = "192.168.31.44"
+
+        val DEFAULT_BASE_URL: String
+            get() = if (isEmulator) "http://10.0.2.2:8000/" else "http://$HOST_IP:8000/"
     }
 }

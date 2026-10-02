@@ -87,7 +87,7 @@ export default function TryOnDetailPage() {
       variant="ghost"
       size="sm"
       onClick={() => setIsDeleteDialogOpen(true)}
-      className="text-muted-foreground hover:text-danger hover:bg-danger-subtle/20 gap-1.5 text-xs cursor-pointer focus-visible:ring-2 focus-visible:ring-ring"
+      className="text-danger hover:text-danger hover:bg-danger-subtle gap-1.5 text-xs cursor-pointer focus-visible:ring-2 focus-visible:ring-danger"
       aria-label="Delete this try-on"
     >
       <HugeiconsIcon icon={Delete02Icon} className="size-3.5" />

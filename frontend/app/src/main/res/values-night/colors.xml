@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Editorial Brand Tokens (Matching Web Dark Theme: Warm Amber / Camel) -->
+    <color name="vto_brand">#FFD3A77F</color>
+    <color name="vto_brand_soft">#FF48382C</color>
+    <color name="vto_brand_dark">#FF855D40</color>
+    <color name="vto_brand_muted">#FFA88260</color>
+    <color name="vto_brand_surface">#1CD3A77F</color>
+    <color name="vto_brand_border">#4DD3A77F</color>
+
+    <!-- Dashboard Hero Card Theme Tokens (Dark: Deep Warm Espresso) -->
+    <color name="vto_hero_bg_start">#FF231C16</color>
+    <color name="vto_hero_bg_center">#FF181614</color>
+    <color name="vto_hero_bg_end">#FF101010</color>
+    <color name="vto_hero_border">#4DD3A77F</color>
+
     <!-- VTO Design System Tokens (Dark Theme: Monochrome Editorial) -->
     <color name="vto_background">#FF09090B</color>
     <color name="vto_surface_primary">#FF121214</color>

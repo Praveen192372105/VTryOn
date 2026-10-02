@@ -99,7 +99,7 @@ export function OutfitPagination({
               className={cn(
                 "inline-flex items-center justify-center size-8 rounded-lg text-xs font-mono transition-colors cursor-pointer",
                 isCurrent
-                  ? "bg-foreground text-background font-semibold shadow-xs"
+                  ? "bg-primary text-primary-foreground font-semibold shadow-xs"
                   : "border border-border bg-surface text-muted-foreground hover:text-foreground hover:bg-surface-subtle"
               )}
             >

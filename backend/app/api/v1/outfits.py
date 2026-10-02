@@ -10,6 +10,7 @@ from app.api.dependencies import (
 from app.core.config import settings
 from app.core.rate_limit import RateLimiter, enforce_rate_limit, get_rate_limiter
 from app.core.responses import ApiResponse
+from app.core.cache import cache
 from app.domain.ownership import CurrentUser
 from app.schemas.outfit import OutfitListItem, OutfitQueryFilter, OutfitResponse
 from app.schemas.pagination import PaginatedData, PaginationParams
@@ -26,6 +27,12 @@ router = APIRouter(tags=["Outfits"])
     status_code=status.HTTP_201_CREATED,
     summary="Upload a custom garment to use for virtual try-on",
     operation_id="upload_custom_outfit",
+)
+@router.post(
+    "",
+    response_model=ApiResponse[OutfitResponse],
+    status_code=status.HTTP_201_CREATED,
+    include_in_schema=False,
 )
 async def upload_custom_outfit(
     file: UploadFile = File(...),
@@ -51,6 +58,7 @@ async def upload_custom_outfit(
         name=name,
         category=category,
     )
+    cache.clear("outfits:")
     return ApiResponse(data=outfit_dto)
 
 
@@ -67,11 +75,20 @@ def list_outfits(
     current_user: Optional[CurrentUser] = Depends(get_current_user_optional),
     service: OutfitService = Depends(get_outfit_service),
 ) -> ApiResponse[PaginatedData[OutfitListItem]]:
+    cache_key = None
+    if current_user is None:
+        cache_key = f"outfits:list:{filters.category}:{filters.search}:{pagination.page}:{pagination.limit}"
+        cached_data = cache.get(cache_key)
+        if cached_data is not None:
+            return ApiResponse(data=PaginatedData[OutfitListItem](**cached_data))
+
     paginated = service.list_active_outfits(
         filters=filters,
         pagination=pagination,
         current_user=current_user,
     )
+    if cache_key:
+        cache.set(cache_key, paginated.model_dump(), ttl_seconds=60)
     return ApiResponse(data=paginated)
 
 

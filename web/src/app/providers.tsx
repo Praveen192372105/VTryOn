@@ -8,7 +8,7 @@ import { ThemeProvider } from "../lib/theme/theme-provider"
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider defaultTheme="dark">
+    <ThemeProvider defaultTheme="light">
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <TooltipProvider>

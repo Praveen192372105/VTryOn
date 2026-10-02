@@ -31,6 +31,7 @@ class UseCaseTest {
         override suspend fun register(name: String, email: String, password: String): AppResult<User> =
             AppResult.Success(User("usr_02", email, name))
         override suspend fun logout(): AppResult<Unit> = AppResult.Success(Unit)
+        override suspend fun getCurrentUser(): AppResult<User> = AppResult.Success(User("usr_01", "valid@example.com", "Valid User"))
         override fun observeSession(): Flow<User?> = emptyFlow()
         override fun hasActiveSession(): Boolean = false
     }
@@ -57,6 +58,7 @@ class UseCaseTest {
         override fun observeTryOnHistory(): Flow<List<TryOnJob>> = emptyFlow()
         override suspend fun refreshTryOnHistory(): AppResult<Unit> = AppResult.Success(Unit)
         override suspend fun deleteTryOn(id: String): AppResult<Unit> = AppResult.Success(Unit)
+        override suspend fun toggleSaveTryOn(id: String, isSaved: Boolean): AppResult<Unit> = AppResult.Success(Unit)
         override suspend fun getActiveJob(): TryOnJob? = null
         override suspend fun clearActiveJob() {}
     }

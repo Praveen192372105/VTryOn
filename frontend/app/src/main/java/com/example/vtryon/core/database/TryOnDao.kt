@@ -28,10 +28,10 @@ interface TryOnDao {
     suspend fun getLatestActive(): TryOnEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertTryOn(tryOn: TryOnEntity)
+    suspend fun insertTryOn(tryOn: TryOnEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(tryOn: TryOnEntity)
+    suspend fun insert(tryOn: TryOnEntity): Long
 
     @Query("UPDATE try_on_jobs SET status = :status, resultImageUrl = :resultUrl, errorMessage = :errorMsg, updatedAt = :timestamp WHERE publicId = :publicId")
     suspend fun updateStatus(
@@ -39,15 +39,15 @@ interface TryOnDao {
         status: String,
         resultUrl: String?,
         errorMsg: String?,
-        timestamp: Long = System.currentTimeMillis()
-    )
+        timestamp: Long
+    ): Int
 
     @Query("UPDATE try_on_jobs SET isSavedLocally = :isSaved WHERE publicId = :publicId")
-    suspend fun updateSavedLocally(publicId: String, isSaved: Boolean)
+    suspend fun updateSavedLocally(publicId: String, isSaved: Boolean): Int
 
     @Query("DELETE FROM try_on_jobs WHERE publicId = :publicId")
-    suspend fun deleteTryOn(publicId: String)
+    suspend fun deleteTryOn(publicId: String): Int
 
     @Query("DELETE FROM try_on_jobs WHERE publicId = :publicId")
-    suspend fun deleteByPublicId(publicId: String)
+    suspend fun deleteByPublicId(publicId: String): Int
 }

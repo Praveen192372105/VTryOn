@@ -1,0 +1,416 @@
+{
+  "summary": {
+    "concurrentUsers": 100,
+    "durationSec": 60.7,
+    "totalRequests": 9074,
+    "successfulRequests": 9074,
+    "failedRequests": 0,
+    "errorRatePct": 0,
+    "overallRps": 149.4,
+    "latency": {
+      "minMs": 0.9,
+      "avgMs": 11.8,
+      "maxMs": 308.2,
+      "p50": 7.1,
+      "p75": 10.9,
+      "p90": 17.7,
+      "p95": 26.2,
+      "p99": 156.4
+    },
+    "sla": {
+      "isSlaPassed": true,
+      "passesErrorRate": true,
+      "passesAvgLatency": true,
+      "passesMaxLatency": true,
+      "passesThroughput": true
+    }
+  },
+  "endpointStats": {
+    "/health": {
+      "count": 3203,
+      "success": 3203,
+      "failed": 0,
+      "avgMs": 9.6
+    },
+    "/ready": {
+      "count": 1850,
+      "success": 1850,
+      "failed": 0,
+      "avgMs": 15.1
+    },
+    "/api/v1/health/live": {
+      "count": 2240,
+      "success": 2240,
+      "failed": 0,
+      "avgMs": 9.7
+    },
+    "/api/v1/outfits": {
+      "count": 1332,
+      "success": 1332,
+      "failed": 0,
+      "avgMs": 18.5
+    },
+    "/docs": {
+      "count": 449,
+      "success": 449,
+      "failed": 0,
+      "avgMs": 5.7
+    }
+  },
+  "timeSeries": [
+    {
+      "second": 1,
+      "instantaneousRps": 200,
+      "totalRequestsSoFar": 200,
+      "recentAvgLatencyMs": 85.8
+    },
+    {
+      "second": 2,
+      "instantaneousRps": 119,
+      "totalRequestsSoFar": 319,
+      "recentAvgLatencyMs": 7
+    },
+    {
+      "second": 3,
+      "instantaneousRps": 177,
+      "totalRequestsSoFar": 496,
+      "recentAvgLatencyMs": 6.3
+    },
+    {
+      "second": 4,
+      "instantaneousRps": 124,
+      "totalRequestsSoFar": 620,
+      "recentAvgLatencyMs": 5.5
+    },
+    {
+      "second": 5,
+      "instantaneousRps": 147,
+      "totalRequestsSoFar": 767,
+      "recentAvgLatencyMs": 36.9
+    },
+    {
+      "second": 6,
+      "instantaneousRps": 158,
+      "totalRequestsSoFar": 925,
+      "recentAvgLatencyMs": 46.5
+    },
+    {
+      "second": 7,
+      "instantaneousRps": 150,
+      "totalRequestsSoFar": 1075,
+      "recentAvgLatencyMs": 7.5
+    },
+    {
+      "second": 8,
+      "instantaneousRps": 150,
+      "totalRequestsSoFar": 1225,
+      "recentAvgLatencyMs": 7.7
+    },
+    {
+      "second": 9,
+      "instantaneousRps": 152,
+      "totalRequestsSoFar": 1377,
+      "recentAvgLatencyMs": 6.8
+    },
+    {
+      "second": 10,
+      "instantaneousRps": 156,
+      "totalRequestsSoFar": 1533,
+      "recentAvgLatencyMs": 6.2
+    },
+    {
+      "second": 11,
+      "instantaneousRps": 141,
+      "totalRequestsSoFar": 1674,
+      "recentAvgLatencyMs": 20.5
+    },
+    {
+      "second": 12,
+      "instantaneousRps": 154,
+      "totalRequestsSoFar": 1828,
+      "recentAvgLatencyMs": 31.2
+    },
+    {
+      "second": 13,
+      "instantaneousRps": 149,
+      "totalRequestsSoFar": 1977,
+      "recentAvgLatencyMs": 8.3
+    },
+    {
+      "second": 14,
+      "instantaneousRps": 154,
+      "totalRequestsSoFar": 2131,
+      "recentAvgLatencyMs": 7.5
+    },
+    {
+      "second": 15,
+      "instantaneousRps": 145,
+      "totalRequestsSoFar": 2276,
+      "recentAvgLatencyMs": 6.7
+    },
+    {
+      "second": 16,
+      "instantaneousRps": 157,
+      "totalRequestsSoFar": 2433,
+      "recentAvgLatencyMs": 6.9
+    },
+    {
+      "second": 17,
+      "instantaneousRps": 142,
+      "totalRequestsSoFar": 2575,
+      "recentAvgLatencyMs": 16.1
+    },
+    {
+      "second": 18,
+      "instantaneousRps": 163,
+      "totalRequestsSoFar": 2738,
+      "recentAvgLatencyMs": 6.9
+    },
+    {
+      "second": 19,
+      "instantaneousRps": 146,
+      "totalRequestsSoFar": 2884,
+      "recentAvgLatencyMs": 6.1
+    },
+    {
+      "second": 20,
+      "instantaneousRps": 157,
+      "totalRequestsSoFar": 3041,
+      "recentAvgLatencyMs": 7.7
+    },
+    {
+      "second": 21,
+      "instantaneousRps": 147,
+      "totalRequestsSoFar": 3188,
+      "recentAvgLatencyMs": 8.5
+    },
+    {
+      "second": 22,
+      "instantaneousRps": 160,
+      "totalRequestsSoFar": 3348,
+      "recentAvgLatencyMs": 7.5
+    },
+    {
+      "second": 23,
+      "instantaneousRps": 142,
+      "totalRequestsSoFar": 3490,
+      "recentAvgLatencyMs": 6.7
+    },
+    {
+      "second": 24,
+      "instantaneousRps": 160,
+      "totalRequestsSoFar": 3650,
+      "recentAvgLatencyMs": 6.7
+    },
+    {
+      "second": 25,
+      "instantaneousRps": 145,
+      "totalRequestsSoFar": 3795,
+      "recentAvgLatencyMs": 6.7
+    },
+    {
+      "second": 26,
+      "instantaneousRps": 157,
+      "totalRequestsSoFar": 3952,
+      "recentAvgLatencyMs": 6.5
+    },
+    {
+      "second": 27,
+      "instantaneousRps": 143,
+      "totalRequestsSoFar": 4095,
+      "recentAvgLatencyMs": 6.2
+    },
+    {
+      "second": 28,
+      "instantaneousRps": 159,
+      "totalRequestsSoFar": 4254,
+      "recentAvgLatencyMs": 5.4
+    },
+    {
+      "second": 29,
+      "instantaneousRps": 152,
+      "totalRequestsSoFar": 4406,
+      "recentAvgLatencyMs": 8.8
+    },
+    {
+      "second": 30,
+      "instantaneousRps": 157,
+      "totalRequestsSoFar": 4563,
+      "recentAvgLatencyMs": 11.8
+    },
+    {
+      "second": 31,
+      "instantaneousRps": 147,
+      "totalRequestsSoFar": 4710,
+      "recentAvgLatencyMs": 6.6
+    },
+    {
+      "second": 32,
+      "instantaneousRps": 154,
+      "totalRequestsSoFar": 4864,
+      "recentAvgLatencyMs": 6.6
+    },
+    {
+      "second": 33,
+      "instantaneousRps": 155,
+      "totalRequestsSoFar": 5019,
+      "recentAvgLatencyMs": 7.5
+    },
+    {
+      "second": 34,
+      "instantaneousRps": 147,
+      "totalRequestsSoFar": 5166,
+      "recentAvgLatencyMs": 6.8
+    },
+    {
+      "second": 35,
+      "instantaneousRps": 152,
+      "totalRequestsSoFar": 5318,
+      "recentAvgLatencyMs": 7.5
+    },
+    {
+      "second": 36,
+      "instantaneousRps": 156,
+      "totalRequestsSoFar": 5474,
+      "recentAvgLatencyMs": 9.2
+    },
+    {
+      "second": 37,
+      "instantaneousRps": 149,
+      "totalRequestsSoFar": 5623,
+      "recentAvgLatencyMs": 7.9
+    },
+    {
+      "second": 38,
+      "instantaneousRps": 153,
+      "totalRequestsSoFar": 5776,
+      "recentAvgLatencyMs": 8.8
+    },
+    {
+      "second": 39,
+      "instantaneousRps": 148,
+      "totalRequestsSoFar": 5924,
+      "recentAvgLatencyMs": 7.6
+    },
+    {
+      "second": 40,
+      "instantaneousRps": 158,
+      "totalRequestsSoFar": 6082,
+      "recentAvgLatencyMs": 7.8
+    },
+    {
+      "second": 41,
+      "instantaneousRps": 147,
+      "totalRequestsSoFar": 6229,
+      "recentAvgLatencyMs": 6.5
+    },
+    {
+      "second": 42,
+      "instantaneousRps": 162,
+      "totalRequestsSoFar": 6391,
+      "recentAvgLatencyMs": 7.8
+    },
+    {
+      "second": 43,
+      "instantaneousRps": 140,
+      "totalRequestsSoFar": 6531,
+      "recentAvgLatencyMs": 8.9
+    },
+    {
+      "second": 44,
+      "instantaneousRps": 155,
+      "totalRequestsSoFar": 6686,
+      "recentAvgLatencyMs": 6.3
+    },
+    {
+      "second": 45,
+      "instantaneousRps": 147,
+      "totalRequestsSoFar": 6833,
+      "recentAvgLatencyMs": 6
+    },
+    {
+      "second": 46,
+      "instantaneousRps": 155,
+      "totalRequestsSoFar": 6988,
+      "recentAvgLatencyMs": 10.6
+    },
+    {
+      "second": 47,
+      "instantaneousRps": 148,
+      "totalRequestsSoFar": 7136,
+      "recentAvgLatencyMs": 12
+    },
+    {
+      "second": 48,
+      "instantaneousRps": 160,
+      "totalRequestsSoFar": 7296,
+      "recentAvgLatencyMs": 10.5
+    },
+    {
+      "second": 49,
+      "instantaneousRps": 147,
+      "totalRequestsSoFar": 7443,
+      "recentAvgLatencyMs": 22.4
+    },
+    {
+      "second": 50,
+      "instantaneousRps": 149,
+      "totalRequestsSoFar": 7592,
+      "recentAvgLatencyMs": 9.2
+    },
+    {
+      "second": 51,
+      "instantaneousRps": 156,
+      "totalRequestsSoFar": 7748,
+      "recentAvgLatencyMs": 6.8
+    },
+    {
+      "second": 52,
+      "instantaneousRps": 144,
+      "totalRequestsSoFar": 7892,
+      "recentAvgLatencyMs": 8.9
+    },
+    {
+      "second": 53,
+      "instantaneousRps": 157,
+      "totalRequestsSoFar": 8049,
+      "recentAvgLatencyMs": 9.2
+    },
+    {
+      "second": 54,
+      "instantaneousRps": 151,
+      "totalRequestsSoFar": 8200,
+      "recentAvgLatencyMs": 9
+    },
+    {
+      "second": 55,
+      "instantaneousRps": 152,
+      "totalRequestsSoFar": 8352,
+      "recentAvgLatencyMs": 11.1
+    },
+    {
+      "second": 56,
+      "instantaneousRps": 145,
+      "totalRequestsSoFar": 8497,
+      "recentAvgLatencyMs": 12.5
+    },
+    {
+      "second": 57,
+      "instantaneousRps": 155,
+      "totalRequestsSoFar": 8652,
+      "recentAvgLatencyMs": 14.9
+    },
+    {
+      "second": 58,
+      "instantaneousRps": 148,
+      "totalRequestsSoFar": 8800,
+      "recentAvgLatencyMs": 7.8
+    },
+    {
+      "second": 59,
+      "instantaneousRps": 160,
+      "totalRequestsSoFar": 8960,
+      "recentAvgLatencyMs": 10.8
+    }
+  ]
+}

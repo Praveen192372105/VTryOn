@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
-import { screen, fireEvent } from "@testing-library/react"
+import { screen, fireEvent, render } from "@testing-library/react"
 import SettingsPage from "../settings-page"
-import { renderWithProviders } from "../../../test/render"
+import { renderWithProviders, createAllProvidersWrapper } from "../../../test/render"
+import { ThemeProvider } from "../../../lib/theme/theme-provider"
 import * as authHook from "../../../features/auth/use-auth"
 
 describe("SettingsPage", () => {
@@ -51,15 +52,18 @@ describe("SettingsPage", () => {
   })
 
   it("renders 3 theme options and allows selecting different themes", () => {
-    renderWithProviders(<SettingsPage />, { initialEntries: ["/app/settings"] })
+    const BaseWrapper = createAllProvidersWrapper(["/app/settings"])
+    render(<SettingsPage />, {
+      wrapper: ({ children }) => <ThemeProvider defaultTheme="light"><BaseWrapper>{children}</BaseWrapper></ThemeProvider>,
+    })
 
     expect(screen.getByRole("radio", { name: /Dark/i })).toBeInTheDocument()
     expect(screen.getByRole("radio", { name: /Light/i })).toBeInTheDocument()
     expect(screen.getByRole("radio", { name: /System/i })).toBeInTheDocument()
 
-    const lightOption = screen.getByRole("radio", { name: /Light/i })
-    fireEvent.click(lightOption)
-    expect(lightOption).toHaveAttribute("aria-checked", "true")
+    const darkOption = screen.getByRole("radio", { name: /Dark/i })
+    fireEvent.click(darkOption)
+    expect(darkOption).toHaveAttribute("aria-checked", "true")
   })
 
   it("calls logout when Sign Out button is clicked", () => {
