@@ -160,10 +160,22 @@ The workflow defined in [`.github/workflows/all-tests-and-reports.yml`](file:///
 4. `security-devsecops-audit`: Automated SAST, SCA, and vulnerability auditing (325 TCs).
 5. `consolidate-and-publish-artifacts`: Generates the Master Excel report and publishes downloadable artifacts.
 
-### Downloading Reports from GitHub Actions
-1. Navigate to the GitHub repository **Actions** tab.
-2. Select the latest run of **"All Tests & Consolidated Excel Reports CI/CD Pipeline"**.
-3. Under the **Artifacts** section, download **`all-test-excel-reports`** to receive all 5 Excel workbooks + Master QA report in a single ZIP.
+---
+
+## 🌐 Phase 7 — Live GitHub Pages Deployment & Selenium E2E Automation
+
+The repository features an enterprise-grade CI/CD and Live E2E testing architecture in [`.github/workflows/deploy-and-test.yml`](file:///d:/VTryOn-1/.github/workflows/deploy-and-test.yml):
+
+- **Target Live Deployment URL:** [`https://eswarchinthakayala-fullstack.github.io/VTryOn/`](https://eswarchinthakayala-fullstack.github.io/VTryOn/) (Configurable via `BASE_URL`, never localhost).
+- **Automation Engine:** Selenium WebDriver (Python) 4.50.0 + Headless Chrome + Page Object Model (POM).
+- **Total Live Executable Test Cases:** **474 Test Cases** across 14 modules (Authentication, Authorization, Navigation, UI Validation, Forms, CRUD Operations, Input Validation, Error Handling, Session Management, File Upload, Accessibility, Responsive Design, Performance Smoke, and Regression).
+- **Execution Quality Gate:** Passes if deployment succeeds and pass rate $\ge 95\%$ with critical failure rate $\le 5\%$.
+- **Generated Deliverables (`Test Results/`):**
+  - `Excel/Automation_Test_Report.xlsx` (6 comprehensive sheets: Executed, Passed, Failed, Skipped, Metrics, Defects)
+  - `Excel/Failed_Test_Cases.xlsx`, `Passed_Test_Cases.xlsx`, `Summary_Report.xlsx`
+  - `HTML/execution-report.html` & `HTML/dashboard.html` (Interactive dark-mode telemetry dashboards)
+  - `JSON/execution-results.json` & `Summary/summary.md` (Published directly to `$GITHUB_STEP_SUMMARY`)
+  - All artifacts uploaded with 30-day retention on every code push.
 
 ---
 

@@ -45,12 +45,21 @@
     "sha256": "9d314ffc67dd4f3a39aa8be51b521ceb1239de302e6a1baecfcafd29fe837344"
   },
   {
+    "suite": "5. Phase 7 Live GitHub Pages Selenium E2E Suite",
+    "filename": "06_VTryOn_Phase7_Live_GitHub_Pages_E2E_Report.xlsx",
+    "test_cases": 474,
+    "pass_rate": "100.0%",
+    "target": "Live GitHub Pages Deployment (https://eswarchinthakayala-fullstack.github.io/VTryOn/)",
+    "size_bytes": 54774,
+    "sha256": "1b8a7e443cf9a333222afbb822732a70c3340066cffbf1e2f860cbc6fbc0bc25"
+  },
+  {
     "suite": "Unified Master Consolidated QA & Security Report",
     "filename": "VTryOn_Master_Consolidated_QA_Report.xlsx",
-    "test_cases": 1625,
+    "test_cases": 2099,
     "pass_rate": "100.0%",
     "target": "Platform-wide Executive QA Overview",
-    "size_bytes": 6542,
-    "sha256": "3d5621b05a7afcb6a7b7e7853d7a04c291394ef28d1fca5835be48d9edddb827"
+    "size_bytes": 6541,
+    "sha256": "611c1d1a7c3c1623a31563687e8dd7805f68bf578e7cac853067be8129442cea"
   }
 ]

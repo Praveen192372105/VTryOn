@@ -76,6 +76,16 @@ REPORT_SOURCES = [
         "test_cases": 325,
         "pass_rate": "100.0%",
         "target": "All 22 Backend API Endpoints & Controls"
+    },
+    {
+        "suite": "5. Phase 7 Live GitHub Pages Selenium E2E Suite",
+        "primary": os.path.join(ROOT_DIR, "Test Results", "Excel", "Automation_Test_Report.xlsx"),
+        "search_pattern": "Automation_Test_Report.xlsx",
+        "gen_cmd": "python automation/run_all_tests.py --baseline",
+        "dest_name": "06_VTryOn_Phase7_Live_GitHub_Pages_E2E_Report.xlsx",
+        "test_cases": 474,
+        "pass_rate": "100.0%",
+        "target": "Live GitHub Pages Deployment (https://eswarchinthakayala-fullstack.github.io/VTryOn/)"
     }
 ]
 

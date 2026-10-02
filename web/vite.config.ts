@@ -6,6 +6,7 @@ import { defineConfig } from "vitest/config"
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: process.env.VITE_BASE_PATH || (process.env.GITHUB_PAGES === "true" ? "/VTryOn/" : "/"),
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {

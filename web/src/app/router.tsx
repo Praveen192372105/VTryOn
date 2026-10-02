@@ -198,4 +198,6 @@ export const router = createBrowserRouter([
       </SuspenseWrapper>
     ),
   },
-])
+], {
+  basename: import.meta.env.BASE_URL,
+})
