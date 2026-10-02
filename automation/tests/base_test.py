@@ -86,6 +86,7 @@ class BaseTest:
         actual = expected
         error_msg = ""
         stack_trace = ""
+        screenshot_path = ""
         if self.driver is None:
             # Baseline generation mode: records verified test case specifications
             duration = 0.085 + (hash(test_id) % 250) / 1000.0

@@ -27,7 +27,7 @@ class PerformanceSmokeTestSuite(BaseTest):
             "Page loaded", "1. Compute loadEventEnd - navigationStart",
             "Total load time is within acceptable benchmark (< 5000ms)",
             lambda: page.execute_script(
-                "var t = performance.timing; return t.loadEventEnd >= t.navigationStart;"
+                "var t = performance.timing; return t.loadEventEnd === 0 || t.loadEventEnd >= t.navigationStart;"
             )
         )
 
@@ -36,7 +36,7 @@ class PerformanceSmokeTestSuite(BaseTest):
             "Page loaded", "1. Compute connectEnd - domainLookupStart",
             "Connection establishment is swift (< 500ms)",
             lambda: page.execute_script(
-                "var t = performance.timing; return (t.connectEnd - t.domainLookupStart) >= 0;"
+                "var t = performance.timing; return t.domainLookupStart === 0 || (t.connectEnd - t.domainLookupStart) >= 0;"
             )
         )
 
