@@ -88,7 +88,7 @@ jobs:
   e2e-live-testing:
     name: Live E2E Testing & Quality Gate
     needs: [build-and-deploy]
-    if: always()
+    if: success()
     runs-on: ubuntu-latest
     steps:
       # Stage 1: Repository Checkout for Test Framework
@@ -107,11 +107,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install selenium webdriver-manager openpyxl requests
 
-      - name: "Stage 2: Setup Google Chrome Headless Browser"
+      - name: "Stage 2: Verify Google Chrome Headless Browser"
         run: |
-          sudo apt-get update
-          sudo apt-get install -y wget curl unzip libxi6 libgconf-2-4 libnss3
-          # Verify Chrome installation
           google-chrome --version || which google-chrome
 
       # Stage 6: Wait for Deployment Propagation
