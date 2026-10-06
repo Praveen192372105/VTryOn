@@ -1,3 +1,4 @@
+# Trigger fresh GitHub Pages deployment
 name: Live Deployment & E2E Testing Pipeline
 
 on:
