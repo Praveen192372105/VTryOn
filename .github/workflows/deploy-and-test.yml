@@ -10,7 +10,7 @@ on:
       base_url:
         description: 'Custom Live Base URL (default: GitHub Pages)'
         required: false
-        default: 'https://eswarchinthakayala-fullstack.github.io/VTryOn/'
+        default: 'https://praveen192372105.github.io/VTryOn/'
 
 permissions:
   contents: write
@@ -22,7 +22,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  DEFAULT_PAGES_URL: "https://eswarchinthakayala-fullstack.github.io/VTryOn/"
+  DEFAULT_PAGES_URL: "https://praveen192372105.github.io/VTryOn/"
 
 jobs:
   # ============================================================================

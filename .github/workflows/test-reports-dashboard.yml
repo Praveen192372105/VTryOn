@@ -16,7 +16,7 @@ on:
       base_url:
         description: 'Target Base URL for Dashboard'
         required: false
-        default: 'https://eswarchinthakayala-fullstack.github.io/VTryOn/'
+        default: 'https://praveen192372105.github.io/VTryOn/'
 
 permissions:
   contents: write
@@ -79,10 +79,10 @@ jobs:
           # 📊 VTryOn Test Engineering & Quality Dashboard
 
           ### Live Deployed Application & Test Portal
-          - **Live Fitting Room App:** [https://eswarchinthakayala-fullstack.github.io/VTryOn/](https://eswarchinthakayala-fullstack.github.io/VTryOn/)
-          - **Interactive Live Dashboard:** [https://eswarchinthakayala-fullstack.github.io/VTryOn/dashboard.html](https://eswarchinthakayala-fullstack.github.io/VTryOn/dashboard.html)
-          - **474-Test Execution Report:** [https://eswarchinthakayala-fullstack.github.io/VTryOn/report.html](https://eswarchinthakayala-fullstack.github.io/VTryOn/report.html)
-          - **Complete QA Reports Portal:** [https://eswarchinthakayala-fullstack.github.io/VTryOn/reports/](https://eswarchinthakayala-fullstack.github.io/VTryOn/reports/)
+          - **Live Fitting Room App:** [https://praveen192372105.github.io/VTryOn/](https://praveen192372105.github.io/VTryOn/)
+          - **Interactive Live Dashboard:** [https://praveen192372105.github.io/VTryOn/dashboard.html](https://praveen192372105.github.io/VTryOn/dashboard.html)
+          - **474-Test Execution Report:** [https://praveen192372105.github.io/VTryOn/report.html](https://praveen192372105.github.io/VTryOn/report.html)
+          - **Complete QA Reports Portal:** [https://praveen192372105.github.io/VTryOn/reports/](https://praveen192372105.github.io/VTryOn/reports/)
 
           ---
 
