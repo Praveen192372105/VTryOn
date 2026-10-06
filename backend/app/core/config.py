@@ -468,6 +468,16 @@ class Settings(BaseSettings):
         if self.CATVTON_IMAGE_HEIGHT:
             self.CATVTON_HEIGHT = self.CATVTON_IMAGE_HEIGHT
 
+        # CatVTON Device GPU/CPU Auto-Fallback Safety
+        try:
+            import torch
+            if self.CATVTON_DEVICE == "cuda" and not torch.cuda.is_available():
+                self.CATVTON_DEVICE = "cpu"
+                self.CATVTON_DTYPE = "fp32"
+        except Exception:
+            pass
+
+
         # 8. Celery Timeout and Visibility Validation
         if self.CELERY_GPU_SOFT_TIME_LIMIT_SECONDS <= 0:
             raise ValueError("CELERY_GPU_SOFT_TIME_LIMIT_SECONDS must be greater than 0")

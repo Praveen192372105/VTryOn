@@ -26,7 +26,13 @@ class CatVTONInferencePipeline:
         self.settings = settings
         self.repo_path = repo_path
         self._pipeline = None
-        if settings.device == "cpu" or settings.mixed_precision in ("fp32", "no"):
+
+        eff_device = settings.device
+        if eff_device == "cuda" and not torch.cuda.is_available():
+            eff_device = "cpu"
+        self.effective_device = eff_device
+
+        if self.effective_device == "cpu" or settings.mixed_precision in ("fp32", "no"):
             self._weight_dtype = torch.float32
         elif settings.mixed_precision == "fp16":
             self._weight_dtype = torch.float16
@@ -45,7 +51,7 @@ class CatVTONInferencePipeline:
         from model.pipeline import CatVTONPipeline
 
         logger.info(
-            f"Loading CatVTON pipeline [device={self.settings.device}, dtype={self._weight_dtype}, tf32={self.settings.allow_tf32}]..."
+            f"Loading CatVTON pipeline [device={self.effective_device}, dtype={self._weight_dtype}, tf32={self.settings.allow_tf32}]..."
         )
         base_path = self.settings.base_model_path
         try:
@@ -64,10 +70,11 @@ class CatVTONInferencePipeline:
                 attn_ckpt_version=self.settings.attn_ckpt_version,
                 weight_dtype=self._weight_dtype,
                 use_tf32=self.settings.allow_tf32,
-                device=self.settings.device,
+                device=self.effective_device,
                 skip_safety_check=True,
             )
-            logger.info("CatVTON diffusion pipeline loaded successfully into GPU memory.")
+            logger.info("CatVTON diffusion pipeline loaded successfully into memory.")
+
         except torch.cuda.OutOfMemoryError as oom:
             torch.cuda.empty_cache()
             raise CatVTONOOMError(f"CUDA OOM while loading CatVTON pipeline: {oom}") from oom

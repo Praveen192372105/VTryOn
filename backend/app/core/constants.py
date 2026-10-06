@@ -9,6 +9,13 @@ class Environment(StrEnum):
     TESTING = "testing"
 
 
+class GarmentCategory(StrEnum):
+    UPPER_BODY = "upper_body"
+    LOWER_BODY = "lower_body"
+    DRESSES = "dresses"
+
+
+
 class ModelLoadState(StrEnum):
     NOT_LOADED = "not_loaded"
     LOADING = "loading"

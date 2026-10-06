@@ -98,18 +98,18 @@ def seed_database():
             saved_img_key = default_storage.save(img_key, img_bytes, content_type="image/jpeg")
             saved_thumb_key = default_storage.save(thumb_key, thumb_bytes, content_type="image/jpeg")
 
-            outfit = Outfit(
+            outfit = outfit_repo.create(
                 name=item["name"],
                 slug=item["slug"],
                 category=item["category"],
                 storage_key=saved_img_key,
-                thumbnail_key=saved_thumb_key,
+                thumbnail_storage_key=saved_thumb_key,
                 description=item["description"],
                 is_active=True,
             )
-            outfit_repo.create(outfit)
             print(f"  + Seeded outfit: {item['name']} ({item['category']})")
 
+        db.commit()
         print("Seeding completed successfully!")
     finally:
         db.close()

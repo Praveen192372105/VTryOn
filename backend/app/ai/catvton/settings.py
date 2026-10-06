@@ -59,9 +59,19 @@ class CatVTONSettings:
         if not attn_version:
             attn_version = "vitonhd" if height <= 512 else "mix"
 
+        raw_device = getattr(settings, "CATVTON_DEVICE", "cuda")
+        if raw_device == "cuda":
+            import torch
+            if not torch.cuda.is_available():
+                resolved_device = "cpu"
+            else:
+                resolved_device = "cuda"
+        else:
+            resolved_device = raw_device
+
         return cls(
             catvton_root=settings.resolved_catvton_root,
-            device=getattr(settings, "CATVTON_DEVICE", "cuda"),
+            device=resolved_device,
             mixed_precision=dtype,
             width=width,
             height=height,
@@ -73,7 +83,8 @@ class CatVTONSettings:
             target_latency_seconds=int(getattr(settings, "CATVTON_TARGET_LATENCY_SECONDS", 60)),
             hard_timeout_seconds=int(getattr(settings, "CATVTON_HARD_TIMEOUT_SECONDS", 90)),
             cache_preprocessing=bool(getattr(settings, "CATVTON_CACHE_PREPROCESSING", True)),
-            preset=preset,
+            preset=chosen_preset,
             automasker_device=getattr(settings, "CATVTON_AUTOMASKER_DEVICE", "cpu"),
             attn_ckpt_version=attn_version,
         )
+

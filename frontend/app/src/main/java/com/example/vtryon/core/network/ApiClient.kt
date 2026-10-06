@@ -69,9 +69,10 @@ class ApiClient(
                     || android.os.Build.HARDWARE.contains("goldfish")
                     || android.os.Build.HARDWARE.contains("ranchu"))
 
-        // Host machine IP from ipconfig: 192.168.31.44
+        // Host machine IP from ipconfig: 192.168.1.6
         // Standard Android Emulator loopback is 10.0.2.2; physical device connects directly to host IP
-        const val HOST_IP = "192.168.31.44"
+        const val HOST_IP = "192.168.1.6"
+
 
         val DEFAULT_BASE_URL: String
             get() = if (isEmulator) "http://10.0.2.2:8000/" else "http://$HOST_IP:8000/"

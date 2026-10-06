@@ -252,3 +252,14 @@ def validate_image(data: bytes) -> bool:
     except Exception:
         return False
 
+
+def create_thumbnail(data: bytes, size: tuple[int, int] = (256, 341)) -> bytes:
+    """Generate a JPEG thumbnail from image bytes."""
+    with Image.open(io.BytesIO(data)) as img:
+        rgb_img = convert_to_rgb(img)
+        rgb_img.thumbnail(size, Image.Resampling.LANCZOS)
+        out_buf = io.BytesIO()
+        rgb_img.save(out_buf, format="JPEG", quality=85)
+        return out_buf.getvalue()
+
+

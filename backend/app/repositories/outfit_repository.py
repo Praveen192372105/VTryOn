@@ -15,6 +15,10 @@ class OutfitRepository:
     def __init__(self, db: Session):
         self.db = db
 
+    def count(self) -> int:
+        """Count total outfits in catalogue."""
+        return self.db.scalar(select(func.count(Outfit.id))) or 0
+
     def get_by_id(self, outfit_id: int) -> Optional[Outfit]:
         """Lookup outfit by internal primary key."""
         return self.db.execute(

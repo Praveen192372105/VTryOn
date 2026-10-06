@@ -61,5 +61,9 @@ fvcore>=0.1.5
 omegaconf>=2.3.0
 pycocotools>=2.0.8
 peft>=0.12.0
+cloudpickle>=3.0.0
+matplotlib>=3.8.0
 tqdm>=4.66.0
 PyYAML>=6.0.1
+
+
